@@ -57,5 +57,6 @@ setup(
                       "psutil",
                       "pre-commit",
                       "flake8",
-                      "pylint"],
+                      "pylint",
+                      "NREL-reV"],
 )
