@@ -4,7 +4,7 @@ NSRDB feature extractor
 """
 import logging
 import pandas as pd
-from reV import NSRDB
+from rex import NSRDB
 
 logger = logging.getLogger(__name__)
 

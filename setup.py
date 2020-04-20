@@ -58,5 +58,7 @@ setup(
                       "pre-commit",
                       "flake8",
                       "pylint",
-                      "NREL-reV"],
+                      "NREL-reV",
+                      "NREL-rex",
+                      ],
 )
