@@ -1214,6 +1214,32 @@ class RandomForestModel(MLModelBase):
 
         self._model.fit(features, labels, **kwargs)
 
+    def save_model(self, path):
+        """
+        Save Random Forest Model to path.
+
+        Parameters
+        ----------
+        path : str
+            Path to save model to
+        """
+        if path.endswith('.json'):
+            dir_path = os.path.dirname(path)
+        else:
+            dir_path = path
+            path = os.path.join(dir_path, os.path.basename(path) + '.json')
+
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+
+        model_params = {'feature_names': self.feature_names,
+                        'label_names': self.label_names,
+                        'norm_params': self.normalization_parameters,
+                        'model_params': self.model.get_params()}
+
+        with open(path, 'w') as f:
+            json.dump(model_params, f, indent=2, sort_keys=True)
+
     @classmethod
     def build_and_train(cls, features, labels, norm_labels=True,
                         save_path=None, build_kwargs=None, train_kwargs=None):
@@ -1257,5 +1283,41 @@ class RandomForestModel(MLModelBase):
         if save_path is not None:
             pass
             # model.save_model(save_path)
+
+        return model
+
+    @classmethod
+    def load(cls, path):
+        """
+        Load model from model path.
+
+        Parameters
+        ----------
+        path : str
+            Directory path to TfModel to load model from. There should be a
+            tensorflow saved model directory with a parallel pickle file for
+            the TfModel framework.
+
+        Returns
+        -------
+        model : TfModel
+            Loaded TfModel from disk.
+        """
+        if not path.endswith('.json'):
+            path = os.path.join(path, os.path.basename(path) + '.json')
+
+        if not os.path.exists(path):
+            e = ('{} does not exist'.format(path))
+            logger.error(e)
+            raise IOError(e)
+
+        with open(path, 'r') as f:
+            model_params = json.load(f)
+
+        loaded = RandomForestModel()
+        # pylint: disable=no-member
+        loaded = loaded.set_params(**model_params.pop('model_params'))
+
+        model = cls(loaded, **model_params)
 
         return model
