@@ -21,7 +21,7 @@ class MLModelBase:
     Machine Learning Model Base
     """
 
-    def __init__(self, model, feature_names=None, label_names=None,
+    def __init__(self, model, feature_names=None, label_name=None,
                  norm_params=None):
         """
         Parameters
@@ -30,16 +30,16 @@ class MLModelBase:
             Sci-kit learn or tensorflow model
         feature_names : list
             Ordered list of feature names.
-        label_names : str
-            labels (output) variable name.
+        label_name : str
+            label (output) variable name.
         norm_params : dict, optional
-            Dictionary mapping feature and labels names (keys) to normalization
+            Dictionary mapping feature and label names (keys) to normalization
             parameters (mean, stdev), by default None
         """
         self._model = model
         self._feature_names = feature_names
 
-        self._label_names = label_names
+        self._label_name = label_name
         if norm_params is None:
             norm_params = {}
 
@@ -52,7 +52,7 @@ class MLModelBase:
 
     def __getitem__(self, features):
         """
-        Use model to predict labels from given features
+        Use model to predict label from given features
 
         Parameters
         ----------
@@ -62,7 +62,7 @@ class MLModelBase:
         Returns
         -------
         pandas.DataFrame
-            labels prediction
+            label prediction
         """
         return self.predict(features)
 
@@ -94,20 +94,20 @@ class MLModelBase:
         return self._feature_names
 
     @property
-    def label_names(self):
+    def label_name(self):
         """
-        labels variable name
+        label variable name
 
         Returns
         -------
         str
         """
-        return self._label_names
+        return self._label_name
 
     @property
     def normalization_parameters(self):
         """
-        Features and labels (un)normalization parameters
+        Features and label (un)normalization parameters
 
         Returns
         -------
@@ -118,7 +118,7 @@ class MLModelBase:
     @property
     def means(self):
         """
-        Mapping feature/labels names to the mean values for
+        Mapping feature/label names to the mean values for
         (un)normalization
 
         Returns
@@ -132,7 +132,7 @@ class MLModelBase:
     @property
     def stdevs(self):
         """
-        Mapping feature/labels names to the stdev values for
+        Mapping feature/label names to the stdev values for
         (un)normalization
 
         Returns
@@ -193,18 +193,18 @@ class MLModelBase:
         return stdevs
 
     @property
-    def label_means(self):
+    def label_mean(self):
         """
-        labels means, used for (un)normalization
+        label means, used for (un)normalization
 
         Returns
         -------
         dict
         """
         means = None
-        if self._label_names is not None:
+        if self._label_name is not None:
             means = {}
-            for l_n in self._label_names:
+            for l_n in self._label_name:
                 v = self._norm_params.get(l_n, None)
                 if v is not None:
                     means[l_n] = v['mean']
@@ -212,18 +212,18 @@ class MLModelBase:
         return means
 
     @property
-    def label_stdevs(self):
+    def label_stdev(self):
         """
-        labels stdevs, used for (un)normalization
+        label stdevs, used for (un)normalization
 
         Returns
         -------
         dict
         """
         stdevs = None
-        if self._label_names is not None:
+        if self._label_name is not None:
             stdevs = {}
-            for l_n in self._label_names:
+            for l_n in self._label_name:
                 v = self._norm_params.get(l_n, None)
                 if v is not None:
                     stdevs[l_n] = v['stdev']
@@ -253,11 +253,12 @@ class MLModelBase:
         stdev : float
             stdev used for normalization
         """
+
         if mean is None:
-            mean = np.nanmean(native_arr)
+            mean = np.nanmean(native_arr, axis=0)
 
         if stdev is None:
-            stdev = np.nanstd(native_arr)
+            stdev = np.nanstd(native_arr, axis=0)
 
         norm_arr = native_arr - mean
         norm_arr /= stdev
@@ -313,18 +314,18 @@ class MLModelBase:
         Parameters
         ----------
         features : obj
-            Features or labels to use with model
+            Features or label to use with model
 
         Returns
         -------
         features : obj
-            Normalized (if desired) features or labels
+            Normalized (if desired) features or label
         """
         return features
 
     def predict(self, features, **kwargs):
         """
-        Use model to predict labels from given features
+        Use model to predict label from given features
 
         Parameters
         ----------
@@ -336,12 +337,12 @@ class MLModelBase:
         Returns
         -------
         prediction : dict
-            labels prediction
+            label prediction
         """
         features = self._parse_features(features)
 
         prediction = pd.DataFrame(self._model.predict(features, **kwargs),
-                                  columns=[self.label_names])
+                                  columns=[self.label_name])
 
         prediction = self.unnormalize_prediction(prediction)
 
@@ -352,7 +353,7 @@ class TfModel(MLModelBase):
     """
     TensorFlow Keras Model
     """
-    def __init__(self, model, feature_names=None, label_names=None,
+    def __init__(self, model, feature_names=None, label_name=None,
                  norm_params=None):
         """
         Parameters
@@ -361,23 +362,23 @@ class TfModel(MLModelBase):
             Tensorflow Keras Model
         feature_names : list
             Ordered list of feature names.
-        label_names : str
-            labels (output) variable name.
+        label_name : str
+            label (output) variable name.
         norm_params : dict, optional
-            Dictionary mapping feature and labels names (keys) to normalization
+            Dictionary mapping feature and label names (keys) to normalization
             parameters (mean, stdev), by default None
         """
         super().__init__(model, feature_names=feature_names,
-                         label_names=label_names, norm_params=norm_params)
+                         label_name=label_name, norm_params=norm_params)
 
-        if isinstance(self._label_names, list):
-            if len(self._label_names) > 1:
-                msg = ("Only a single labels can be supplied, but {} were"
-                       .format(len(label_names)))
+        if isinstance(self._label_name, list):
+            if len(self._label_name) > 1:
+                msg = ("Only a single label can be supplied, but {} were"
+                       .format(len(label_name)))
                 logger.error(msg)
                 raise ValueError(msg)
 
-            self._label_names = self._label_names[0]
+            self._label_name = self._label_name[0]
 
         self._history = None
 
@@ -732,13 +733,13 @@ class TfModel(MLModelBase):
         prediction : ndarray
             Unnormalized prediction
         """
-        norm_params = self.get_feature_norm_params(self._label_names)
+        norm_params = self.get_feature_norm_params(self._label_name)
         if norm_params is not None:
             prediction = self._unnormalize(prediction, norm_params['mean'],
                                            norm_params['stdev'])
         else:
             msg = ("Normalization Parameters unavailable for {}"
-                   .format(self._label_names))
+                   .format(self._label_name))
             logger.warning(msg)
             warn(msg)
 
@@ -746,27 +747,27 @@ class TfModel(MLModelBase):
 
     def _parse_features(self, features, normalize=True, clean_names=True):
         """
-        Parse features or labels, normalize, and clean names if requested
+        Parse features or label, normalize, and clean names if requested
 
         Parameters
         ----------
         features : dict | pandas.DataFrame
-            Features or labels to use with model
+            Features or label to use with model
         normalize : bool, optional
-            Flag to normalize features or labels, by default True
+            Flag to normalize features or label, by default True
         clean_names : bool, optional
-            Flag to clean feature or labels names, by default True
+            Flag to clean feature or label names, by default True
 
         Returns
         -------
         features : dict
-            Dictionary of normalized (if desired) features or labels
+            Dictionary of normalized (if desired) features or label
         """
         if isinstance(features, pd.DataFrame):
             features = {name: np.array(value)
                         for name, value in features.items()}
         elif not isinstance(features, dict):
-            msg = ("Features and labels must be supplied as a pandas.DataFrame"
+            msg = ("Features and label must be supplied as a pandas.DataFrame"
                    " or python dictionary, but recieved: {}"
                    .format(type(features)))
             logger.error(msg)
@@ -781,19 +782,19 @@ class TfModel(MLModelBase):
 
         return features
 
-    def train_model(self, features, labels, norm_labels=True, epochs=100,
+    def train_model(self, features, label, norm_label=True, epochs=100,
                     validation_split=0.2, early_stop=True, **kwargs):
         """
-        Train the model with the provided features and labels
+        Train the model with the provided features and label
 
         Parameters
         ----------
         features : dict | pandas.DataFrame
             Input features to train on
-        labels : dict | pandas.DataFrame
-            labels to train on
-        norm_labels : bool
-            Flag to normalize labels
+        label : dict | pandas.DataFrame
+            label to train on
+        norm_label : bool
+            Flag to normalize label
         epochs : int, optional
             Number of epochs to train the model, by default 100
         validation_split : float, optional
@@ -807,16 +808,16 @@ class TfModel(MLModelBase):
         features = self._parse_features(features)
         self._feature_names = list(features.keys())
 
-        labels = self._parse_features(labels, normalize=norm_labels)
+        label = self._parse_features(label, normalize=norm_label)
 
-        if len(labels) > 1:
-            msg = ("Only a single labels can be supplied, but {} were"
-                   .format(len(labels)))
+        if len(label) > 1:
+            msg = ("Only a single label can be supplied, but {} were"
+                   .format(len(label)))
             logger.error(msg)
             raise ValueError(msg)
         else:
-            self._label_names = list(labels.keys())[0]
-            labels = list(labels.values())[0]
+            self._label_name = list(label.keys())[0]
+            label = list(label.values())[0]
 
         if self._history is not None:
             msg = 'Model has already been trained and will be re-fit!'
@@ -838,16 +839,16 @@ class TfModel(MLModelBase):
             split = int(len(list(features.values())[0]) * validation_split)
             validate_features = {name: arr[-split:]
                                  for name, arr in features.items()}
-            validate_label = labels[-split:]
+            validate_label = label[-split:]
             validation_data = (validate_features, validate_label)
 
             features = {name: arr[:-split]
                         for name, arr in features.items()}
-            labels = labels[:-split]
+            label = label[:-split]
         else:
             validation_data = None
 
-        self._history = self._model.fit(x=features, y=labels, epochs=epochs,
+        self._history = self._model.fit(x=features, y=label, epochs=epochs,
                                         validation_data=validation_data,
                                         **kwargs)
 
@@ -874,7 +875,7 @@ class TfModel(MLModelBase):
         tf.saved_model.save(self.model, path)
 
         model_params = {'feature_names': self.feature_names,
-                        'label_names': self.label_names,
+                        'label_name': self.label_name,
                         'norm_params': self.normalization_parameters}
 
         json_path = path.rstrip('/') + '.json'
@@ -923,22 +924,22 @@ class TfModel(MLModelBase):
         return cls(model)
 
     @classmethod
-    def build_and_train(cls, features, labels, feature_columns=None,
+    def build_and_train(cls, features, label, feature_columns=None,
                         model_layers=None, learning_rate=0.001,
                         loss="mean_squared_error", metrics=('mae', 'mse'),
-                        norm_labels=True, epochs=100, validation_split=0.2,
+                        norm_label=True, epochs=100, validation_split=0.2,
                         early_stop=True, save_path=None,
                         build_kwargs=None, train_kwargs=None):
         """
         Build tensorflow sequential model from given features, layers and
-        kwargs and then train with given labels and kwargs
+        kwargs and then train with given label and kwargs
 
         Parameters
         ----------
         features : dict | pandas.DataFrame
             Model features
-        labels : dict | pandas.DataFrame
-            labels to train on
+        label : dict | pandas.DataFrame
+            label to train on
         feature_columns : list, optional
             list of feature column descriptions (dictionaries)
             if None use numeric columns with the feature_attr name,
@@ -953,8 +954,8 @@ class TfModel(MLModelBase):
         metrics : list, optional
             List of metrics to be evaluated by the model during training and
             testing, by default ('mae', 'mse')
-        norm_labels : bool
-            Flag to normalize labels
+        norm_label : bool
+            Flag to normalize label
         epochs : int, optional
             Number of epochs to train the model, by default 100
         validation_split : float, optional
@@ -987,7 +988,7 @@ class TfModel(MLModelBase):
         if train_kwargs is None:
             train_kwargs = {}
 
-        model.train_model(features, labels, norm_labels=norm_labels,
+        model.train_model(features, label, norm_label=norm_label,
                           epochs=epochs, validation_split=validation_split,
                           early_stop=early_stop, **train_kwargs)
 
@@ -1041,7 +1042,7 @@ class RandomForestModel(MLModelBase):
     scikit learn Random Forest Regression
     """
 
-    def __init__(self, model, feature_names=None, label_names=None,
+    def __init__(self, model, feature_names=None, label_name=None,
                  norm_params=None):
         """
         Parameters
@@ -1050,14 +1051,14 @@ class RandomForestModel(MLModelBase):
             Sklearn Random Forest Model
         feature_names : list
             Ordered list of feature names.
-        label_names : str
-            labels (output) variable name.
+        label_name : str
+            label (output) variable name.
         norm_params : dict, optional
-            Dictionary mapping feature and labels names (keys) to normalization
+            Dictionary mapping feature and label names (keys) to normalization
             parameters (mean, stdev), by default None
         """
         super().__init__(model, feature_names=feature_names,
-                         label_names=label_names, norm_params=norm_params)
+                         label_name=label_name, norm_params=norm_params)
 
     @staticmethod
     def build_model(**kwargs):
@@ -1080,12 +1081,12 @@ class RandomForestModel(MLModelBase):
 
     def _get_norm_params(self, names):
         """
-        Get means and stdevs for given feature/labels names
+        Get means and stdevs for given feature/label names
 
         Parameters
         ----------
         names : list
-            list of feature/labels names to get normalization params for
+            list of feature/label names to get normalization params for
 
         Returns
         -------
@@ -1098,7 +1099,7 @@ class RandomForestModel(MLModelBase):
         stdevs = []
         for name in names:
             v = self._norm_params.get(name, None)
-            if v is not None:
+            if v is None:
                 means = None
                 stdevs = None
                 break
@@ -1115,18 +1116,18 @@ class RandomForestModel(MLModelBase):
         Parameters
         ----------
         df : pandas.DataFrame
-            DataFrame of features/labels to normalize
+            DataFrame of features/label to normalize
 
         Returns
         -------
         norm_df : pandas.DataFrame
-            Normalized features/labels
+            Normalized features/label
         """
         df = pd.get_dummies(df)
         means, stdevs = self._get_norm_params(df.columns)
 
-        norm_df, means, stdevs = self._normalize(df, means=means,
-                                                 stdevs=stdevs)
+        norm_df, means, stdevs = self._normalize(df, mean=means,
+                                                 stdev=stdevs)
         for i, c in enumerate(df.columns):
             norm_params = {c: {'mean': means[i], 'stdev': stdevs[i]}}
             self._norm_params.update(norm_params)
@@ -1147,30 +1148,30 @@ class RandomForestModel(MLModelBase):
         prediction : ndarray
             Native prediction
         """
-        means = self.label_means
-        if means is not None:
-            stdevs = self.label_stdevs
+        means = self.label_mean
+        if means:
+            stdevs = self.label_stdev
             prediction = self._unnormalize(prediction, means, stdevs)
 
         return prediction
 
     def _parse_features(self, features, normalize=True, names=False):
         """
-        Parse features or labels, normalize, and clean names if requested
+        Parse features or label, normalize, and clean names if requested
 
         Parameters
         ----------
         features : panda.DataFrame
-            Features or labels to use with model
+            Features or label to use with model
         normalize : bool, optional
-            Flag to normalize features or labels, by default True
+            Flag to normalize features or label, by default True
         names : bool, optional
             Flag to retain DataFrame, by default False
 
         Returns
         -------
         features : ndarray | panda.DataFrame
-            Normalized (if desired) features or labels
+            Normalized (if desired) features or label
         """
         if not isinstance(features, pd.DataFrame):
             msg = ("Features must be a pandas.DataFrame, but {} was supplied"
@@ -1188,18 +1189,18 @@ class RandomForestModel(MLModelBase):
 
         return features
 
-    def train_model(self, features, labels, norm_labels=True, **kwargs):
+    def train_model(self, features, label, norm_label=True, **kwargs):
         """
-        Train the model with the provided features and labels
+        Train the model with the provided features and label
 
         Parameters
         ----------
         features : dict | pandas.DataFrame
             Input features to train on
-        labels : dict | pandas.DataFrame
-            Labels to train on
-        norm_labels : bool
-            Flag to normalize labels
+        label : dict | pandas.DataFrame
+            label to train on
+        norm_label : bool
+            Flag to normalize label
         kwargs : dict
             kwargs for sklearn.ensemble.RandomForestRegressor.fit
         """
@@ -1207,12 +1208,12 @@ class RandomForestModel(MLModelBase):
         self._feature_names = list(features.columns)
         features = features.values
 
-        labels = self._parse_features(labels, normalize=norm_labels,
-                                      names=True)
-        self._label_names = list(labels.columns)
-        labels = labels.values
+        label = self._parse_features(label, normalize=norm_label,
+                                     names=True)
+        self._label_name = list(label.columns)
+        label = label.values
 
-        self._model.fit(features, labels, **kwargs)
+        self._model.fit(features, label, **kwargs)
 
     def save_model(self, path):
         """
@@ -1233,7 +1234,7 @@ class RandomForestModel(MLModelBase):
             os.makedirs(dir_path)
 
         model_params = {'feature_names': self.feature_names,
-                        'label_names': self.label_names,
+                        'label_name': self.label_name,
                         'norm_params': self.normalization_parameters,
                         'model_params': self.model.get_params()}
 
@@ -1241,20 +1242,20 @@ class RandomForestModel(MLModelBase):
             json.dump(model_params, f, indent=2, sort_keys=True)
 
     @classmethod
-    def build_and_train(cls, features, labels, norm_labels=True,
+    def build_and_train(cls, features, label, norm_label=True,
                         save_path=None, build_kwargs=None, train_kwargs=None):
         """
         Build Random Forest Model with given kwargs and then train with
-        given features, labels, and kwargs
+        given features, label, and kwargs
 
         Parameters
         ----------
         features : pandas.DataFrame
             Model features
-        labels : pandas.DataFrame
-            labels to train on
-        norm_labels : bool
-            Flag to normalize labels
+        label : pandas.DataFrame
+            label to train on
+        norm_label : bool
+            Flag to normalize label
         save_path : str
             Directory path to save model to. The RandomForest Model will be
             saved to the directory while the framework parameters will be
@@ -1277,7 +1278,7 @@ class RandomForestModel(MLModelBase):
         if train_kwargs is None:
             train_kwargs = {}
 
-        model.train_model(features, labels, norm_labels=norm_labels,
+        model.train_model(features, label, norm_label=norm_label,
                           **train_kwargs)
 
         if save_path is not None:
