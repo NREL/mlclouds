@@ -1314,8 +1314,7 @@ class RandomForestModel(MLModelBase):
         with open(path, 'r') as f:
             model_params = json.load(f)
 
-        loaded = RandomForestModel()
-        # pylint: disable=no-member
+        loaded = RandomForestRegressor()
         loaded = loaded.set_params(**model_params.pop('model_params'))
 
         model = cls(loaded, **model_params)
