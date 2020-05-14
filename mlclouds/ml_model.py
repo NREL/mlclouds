@@ -1213,7 +1213,7 @@ class RandomForestModel(MLModelBase):
         self._label_name = list(label.columns)
         label = label.values
 
-        self._model.fit(features, label, **kwargs)
+        self._model.fit(features, label.ravel(), **kwargs)
 
     def save_model(self, path):
         """
@@ -1321,3 +1321,28 @@ class RandomForestModel(MLModelBase):
         model = cls(loaded, **model_params)
 
         return model
+
+    def predict(self, features, **kwargs):
+        """
+        Use model to predict label from given features
+
+        Parameters
+        ----------
+        features : dict | pandas.DataFrame
+            features to predict from
+        kwargs : dict
+            kwargs for RandomForestRegressor.*.predict
+
+        Returns
+        -------
+        prediction : dict
+            label prediction
+        """
+        features = self._parse_features(features)
+
+        prediction = pd.DataFrame(self._model.predict(features, **kwargs),
+                                  columns=self.label_name)
+
+        prediction = self.unnormalize_prediction(prediction)
+
+        return prediction
