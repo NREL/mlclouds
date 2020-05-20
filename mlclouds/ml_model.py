@@ -202,9 +202,9 @@ class MLModelBase:
         dict
         """
         means = None
-        if self._label_name is not None:
+        if self.label_name is not None:
             means = {}
-            for l_n in self._label_name:
+            for l_n in self.label_name:
                 v = self._norm_params.get(l_n, None)
                 if v is not None:
                     means[l_n] = v['mean']
@@ -221,9 +221,9 @@ class MLModelBase:
         dict
         """
         stdevs = None
-        if self._label_name is not None:
+        if self.label_name is not None:
             stdevs = {}
-            for l_n in self._label_name:
+            for l_n in self.label_name:
                 v = self._norm_params.get(l_n, None)
                 if v is not None:
                     stdevs[l_n] = v['stdev']
@@ -342,7 +342,7 @@ class MLModelBase:
         features = self._parse_features(features)
 
         prediction = pd.DataFrame(self._model.predict(features, **kwargs),
-                                  columns=[self.label_name])
+                                  columns=self._label_name)
 
         prediction = self.unnormalize_prediction(prediction)
 
@@ -377,10 +377,21 @@ class TfModel(MLModelBase):
                        .format(len(label_name)))
                 logger.error(msg)
                 raise ValueError(msg)
-
-            self._label_name = self._label_name[0]
+        elif isinstance(self._label_name, str):
+            self._label_name = [self._label_name]
 
         self._history = None
+
+    @property
+    def label_name(self):
+        """
+        label variable name
+
+        Returns
+        -------
+        str
+        """
+        return self._label_name[0]
 
     @property
     def history(self):
@@ -733,13 +744,13 @@ class TfModel(MLModelBase):
         prediction : ndarray
             Unnormalized prediction
         """
-        norm_params = self.get_feature_norm_params(self._label_name)
+        norm_params = self.get_feature_norm_params(self.label_name)
         if norm_params is not None:
             prediction = self._unnormalize(prediction, norm_params['mean'],
                                            norm_params['stdev'])
         else:
             msg = ("Normalization Parameters unavailable for {}"
-                   .format(self._label_name))
+                   .format(self.label_name))
             logger.warning(msg)
             warn(msg)
 
@@ -816,7 +827,7 @@ class TfModel(MLModelBase):
             logger.error(msg)
             raise ValueError(msg)
         else:
-            self._label_name = list(label.keys())[0]
+            self._label_name = list(label.keys())
             label = list(label.values())[0]
 
         if self._history is not None:
@@ -1213,7 +1224,7 @@ class RandomForestModel(MLModelBase):
         self._label_name = list(label.columns)
         label = label.values
 
-        self._model.fit(features, label, **kwargs)
+        self._model.fit(features, label.ravel(), **kwargs)
 
     def save_model(self, path):
         """
