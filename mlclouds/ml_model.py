@@ -323,6 +323,37 @@ class MLModelBase:
         """
         return features
 
+    @staticmethod
+    def dict_json_convert(inp):
+        """Recursively convert numeric values in dict to work with json dump
+
+        Parameters
+        ----------
+        inp : dict
+            Dictionary to convert.
+
+        Returns
+        -------
+        out : dict
+            Copy of dict input with all nested numeric values converted to
+            base python int or float and all arrays converted to lists.
+        """
+
+        if isinstance(inp, dict):
+            out = {k: MLModelBase.dict_json_convert(v) for k, v in inp.items()}
+        elif isinstance(inp, (list, tuple)):
+            out = [MLModelBase.dict_json_convert(i) for i in inp]
+        elif np.issubdtype(type(inp), np.floating):
+            out = float(inp)
+        elif np.issubdtype(type(inp), np.integer):
+            out = int(inp)
+        elif isinstance(inp, np.ndarray):
+            out = inp.tolist()
+        else:
+            out = inp
+
+        return out
+
     def predict(self, features, **kwargs):
         """
         Use model to predict label from given features
@@ -890,6 +921,7 @@ class TfModel(MLModelBase):
                         'norm_params': self.normalization_parameters}
 
         json_path = path.rstrip('/') + '.json'
+        model_params = self.dict_json_convert(model_params)
         with open(json_path, 'w') as f:
             json.dump(model_params, f, indent=2, sort_keys=True)
 
@@ -1249,6 +1281,7 @@ class RandomForestModel(MLModelBase):
                         'norm_params': self.normalization_parameters,
                         'model_params': self.model.get_params()}
 
+        model_params = self.dict_json_convert(model_params)
         with open(path, 'w') as f:
             json.dump(model_params, f, indent=2, sort_keys=True)
 
