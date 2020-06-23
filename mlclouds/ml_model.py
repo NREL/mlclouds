@@ -489,12 +489,46 @@ class TfModel(MLModelBase):
             if np.issubdtype(data.dtype.name, np.number):
                 f_col = feature_column.numeric_column(name)
             else:
-                f_col = \
-                    feature_column.categorical_column_with_hash_bucket(name)
+                f_col = TfModel._generate_cat_column(name, data)
 
             feature_columns.append(f_col)
 
         return feature_columns
+
+    @staticmethod
+    def _generate_cat_column(name, data, vocab_threshold=50, bucket_size=100):
+        """Generate a feature column from a categorical string data set
+
+        Parameters
+        ----------
+        name : str
+            Name of categorical columns
+        data : np.ndarray | list
+            String data array
+        vocab_threshold : int
+            Number of unique entries in the data array below which this
+            will use a vocabulary list, above which a hash bucket will be used.
+        bucket_size : int
+            Hash bucket size.
+
+        Returns
+        -------
+        f_col : IndicatorColumn
+            Categorical feature column.
+        """
+
+        n_unique = len(set(data))
+
+        if n_unique < vocab_threshold:
+            f_col = feature_column.categorical_column_with_vocabulary_list(
+                name, list(set(data)))
+        else:
+            f_col = feature_column.categorical_column_with_hash_bucket(
+                name, bucket_size)
+
+        f_col = feature_column.indicator_column(f_col)
+
+        return f_col
 
     @staticmethod
     def _build_feature_columns(feature_columns):
