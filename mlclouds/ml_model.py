@@ -579,7 +579,7 @@ class TfModel(MLModelBase):
     @staticmethod
     def _compile_model(feature_columns, model_layers=None, learning_rate=0.001,
                        loss="mean_squared_error", metrics=('mae', 'mse'),
-                       **kwargs):
+                       optimizer_class=None, **kwargs):
         """
         Build tensorflow sequential model from given layers and kwargs
 
@@ -597,6 +597,10 @@ class TfModel(MLModelBase):
         metrics : list, optional
             List of metrics to be evaluated by the model during training and
             testing, by default ('mae', 'mse')
+        optimizer_class : None | tf.keras.optimizers
+            Optional explicit request of optimizer. This should be a class
+            that will be instantated in the TfModel._compile_model() method
+            The default is the RMSprop optimizer.
         kwargs : dict
             kwargs for tensorflow.keras.models.compile
 
@@ -623,7 +627,12 @@ class TfModel(MLModelBase):
         elif not isinstance(metrics, list):
             metrics = [metrics]
 
-        optimizer = tf.keras.optimizers.RMSprop(lr=learning_rate)
+        if optimizer_class is None:
+            optimizer = tf.keras.optimizers.RMSprop(
+                learning_rate=learning_rate)
+        else:
+            optimizer = optimizer_class(learning_rate=learning_rate)
+
         model.compile(optimizer=optimizer, loss=loss, metrics=metrics,
                       **kwargs)
 
@@ -632,7 +641,7 @@ class TfModel(MLModelBase):
     @staticmethod
     def build_model(features, feature_columns=None, model_layers=None,
                     learning_rate=0.001, loss="mean_squared_error",
-                    metrics=('mae', 'mse'), **kwargs):
+                    metrics=('mae', 'mse'), optimizer_class=None, **kwargs):
         """
         Build tensorflow sequential model from given layers and kwargs
 
@@ -654,6 +663,10 @@ class TfModel(MLModelBase):
         metrics : list, optional
             List of metrics to be evaluated by the model during training and
             testing, by default ('mae', 'mse')
+        optimizer_class : None | tf.keras.optimizers
+            Optional explicit request of optimizer. This should be a class
+            that will be instantated in the TfModel._compile_model() method.
+            The default is the RMSprop optimizer.
         kwargs : dict
             kwargs for tensorflow.keras.models.compile
 
@@ -679,6 +692,7 @@ class TfModel(MLModelBase):
                                        model_layers=model_layers,
                                        learning_rate=learning_rate,
                                        loss=loss, metrics=metrics,
+                                       optimizer_class=optimizer_class,
                                        **kwargs)
 
         return model
@@ -966,7 +980,7 @@ class TfModel(MLModelBase):
     @classmethod
     def build(cls, features, feature_columns=None, model_layers=None,
               learning_rate=0.001, loss="mean_squared_error",
-              metrics=('mae', 'mse'), **kwargs):
+              metrics=('mae', 'mse'), optimizer_class=None, **kwargs):
         """
         Build tensorflow sequential model from given features, layers and
         kwargs
@@ -989,6 +1003,10 @@ class TfModel(MLModelBase):
         metrics : list, optional
             List of metrics to be evaluated by the model during training and
             testing, by default ('mae', 'mse')
+        optimizer_class : None | tf.keras.optimizers
+            Optional explicit request of optimizer. This should be a class
+            that will be instantated in the TfModel._compile_model() method
+            The default is the RMSprop optimizer.
         kwargs : dict
             kwargs for tensorflow.keras.models.compile
 
@@ -1000,7 +1018,8 @@ class TfModel(MLModelBase):
         model = TfModel.build_model(features, feature_columns=feature_columns,
                                     model_layers=model_layers,
                                     learning_rate=learning_rate, loss=loss,
-                                    metrics=metrics, **kwargs)
+                                    metrics=metrics,
+                                    optimizer_class=optimizer_class, **kwargs)
 
         return cls(model)
 
@@ -1008,8 +1027,8 @@ class TfModel(MLModelBase):
     def build_and_train(cls, features, label, feature_columns=None,
                         model_layers=None, learning_rate=0.001,
                         loss="mean_squared_error", metrics=('mae', 'mse'),
-                        norm_label=True, epochs=100, validation_split=0.2,
-                        early_stop=True, save_path=None,
+                        optimizer_class=None, norm_label=True, epochs=100,
+                        validation_split=0.2, early_stop=True, save_path=None,
                         build_kwargs=None, train_kwargs=None):
         """
         Build tensorflow sequential model from given features, layers and
@@ -1035,6 +1054,10 @@ class TfModel(MLModelBase):
         metrics : list, optional
             List of metrics to be evaluated by the model during training and
             testing, by default ('mae', 'mse')
+        optimizer_class : None | tf.keras.optimizers
+            Optional explicit request of optimizer. This should be a class
+            that will be instantated in the TfModel._compile_model() method
+            The default is the RMSprop optimizer.
         norm_label : bool
             Flag to normalize label
         epochs : int, optional
@@ -1064,7 +1087,8 @@ class TfModel(MLModelBase):
         model = cls.build(features, feature_columns=feature_columns,
                           model_layers=model_layers,
                           learning_rate=learning_rate, loss=loss,
-                          metrics=metrics, **build_kwargs)
+                          metrics=metrics, optimizer_class=optimizer_class,
+                          **build_kwargs)
 
         if train_kwargs is None:
             train_kwargs = {}
