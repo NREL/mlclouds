@@ -612,7 +612,11 @@ class TfModel(MLModelBase):
             model.add(layers.Dense(units=1, input_shape=(1,)))
         else:
             for layer in model_layers:
+                dropout = layer.pop('dropout', None)
                 model.add(layers.Dense(**layer))
+
+                if dropout is not None:
+                    model.add(layers.Dropout(dropout))
 
         if isinstance(metrics, tuple):
             metrics = list(metrics)
