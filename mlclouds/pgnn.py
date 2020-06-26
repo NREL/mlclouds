@@ -99,26 +99,35 @@ class PhysicsGuidedNeuralNetwork:
             weights += layer.variables
         return weights
 
-    def calculate_loss(self, y_predicted, y_true, p):
+    def loss(self, y_predicted, y_true, p, p_kwargs):
         """Calculate the loss function by comparing model-predicted y to y_true
 
         Parameters
         ----------
-        y_predicted : np.ndarray
-            Model-predicted output data in a 2D array.
+        y_predicted : tf.Tensor
+            Model-predicted output data in a 2D tensor.
         y_true : np.ndarray
             Known output data in a 2D array.
         p : np.ndarray
             Supplemental feature data for the physics loss function in 2D array
+        p_kwargs : None | dict
+            Optional kwargs for the physical loss function self._p_fun.
 
         Returns
         -------
         loss : tf.tensor
-            Mean absolute loss.
+            Sum of the NN loss function comparing the y_predicted against
+            y_true and the physical loss function (self._p_fun) with
+            respective weights applied.
         """
+
+        if p_kwargs is None:
+            p_kwargs = {}
+
         nn_loss = tf.math.reduce_mean(tf.math.abs(y_predicted - y_true))
-        p_loss = tf.convert_to_tensor(self._p_fun(y_predicted, y_true, p),
-                                      dtype=nn_loss.dtype)
+        p_loss = tf.convert_to_tensor(
+            self._p_fun(y_predicted, y_true, p, **p_kwargs),
+            dtype=nn_loss.dtype)
 
         nn_loss = tf.math.multiply(self._loss_weights[0], nn_loss)
         p_loss = tf.math.multiply(self._loss_weights[1], p_loss)
@@ -126,22 +135,22 @@ class PhysicsGuidedNeuralNetwork:
 
         return loss
 
-    def _get_grad(self, x, y_true, p):
+    def _get_grad(self, x, y_true, p, p_kwargs):
         """Get the gradient based on a batch of x and y_true data."""
         with tf.GradientTape() as tape:
             for layer in self._layers:
                 tape.watch(layer.variables)
 
             y_predicted = self.predict(x, to_numpy=False)
-            loss = self.calculate_loss(y_predicted, y_true, p)
+            loss = self.loss(y_predicted, y_true, p, p_kwargs)
             grad = tape.gradient(loss, self.weights)
 
         return grad, loss
 
-    def _run_sgd(self, x, y_true, p):
+    def _run_sgd(self, x, y_true, p, p_kwargs):
         """Run stochastic gradient descent for one batch of (x, y_true) and
         adjust NN weights."""
-        grad, loss = self._get_grad(x, y_true, p)
+        grad, loss = self._get_grad(x, y_true, p, p_kwargs)
         self._optimizer.apply_gradients(zip(grad, self.weights))
         return grad, loss
 
@@ -261,7 +270,7 @@ class PhysicsGuidedNeuralNetwork:
         return x_batches, y_batches, p_batches
 
     def fit(self, x, y, p, n_batch=16, epochs=10, shuffle=True,
-            validation_split=0.2):
+            validation_split=0.2, p_kwargs=None):
         """Fit the neural network to data from x and y.
 
         Parameters
@@ -281,6 +290,8 @@ class PhysicsGuidedNeuralNetwork:
             from x and y.
         validation_split : float
             Fraction of x and y to use for validation.
+        p_kwargs : None | dict
+            Optional kwargs for the physical loss function self._p_fun.
         """
 
         self._check_shapes(x, y)
@@ -303,10 +314,11 @@ class PhysicsGuidedNeuralNetwork:
             for i_b, (x_batch, y_batch, p_batch) in enumerate(batch_iter):
                 logger.debug('Starting mini batch {} of {}'
                              .format(i_b + 1, n_batch))
-                grad, train_loss = self._run_sgd(x_batch, y_batch, p_batch)
+                grad, train_loss = self._run_sgd(x_batch, y_batch, p_batch,
+                                                 p_kwargs)
 
             y_val_pred = self.predict(x_val, to_numpy=False)
-            val_loss = self.calculate_loss(y_val_pred, y_val, p_val)
+            val_loss = self.loss(y_val_pred, y_val, p_val, p_kwargs)
             logger.info('Epoch {} training loss: {:.2e} '
                         'validation loss: {:.2e}'
                         .format(epoch + 1, train_loss, val_loss))
