@@ -25,8 +25,10 @@ class PhysicsGuidedNeuralNetwork:
         ----------
         p_fun : function
             Physics function to guide the neural network loss function.
-            This function must take (y_predicted, y_true, p) as arguments
-            and return a single numeric loss value.
+            This function must take (y_predicted, y_true, p, **p_kwargs)
+            as arguments with datatypes (tf.Tensor, np.ndarray, np.ndarray).
+            The function must return a tf.Tensor object with a single numeric
+            loss value (output.ndim == 0).
         loss_weights : tuple
             Loss weights for the neural network y_predicted vs. y_true
             and for the p_fun loss, respectively. For example,
@@ -125,15 +127,13 @@ class PhysicsGuidedNeuralNetwork:
             p_kwargs = {}
 
         nn_loss = tf.math.reduce_mean(tf.math.abs(y_predicted - y_true))
-        p_loss = tf.convert_to_tensor(
-            self._p_fun(y_predicted, y_true, p, **p_kwargs),
-            dtype=nn_loss.dtype)
 
-        nn_loss = tf.math.multiply(self._loss_weights[0], nn_loss)
-        p_loss = tf.math.multiply(self._loss_weights[1], p_loss)
-        loss = tf.math.add(nn_loss, p_loss)
+        p_loss = self._p_fun(y_predicted, y_true, p, **p_kwargs)
 
-        return loss
+        loss = (self._loss_weights[0] * nn_loss
+                + self._loss_weights[1] * p_loss)
+
+        return loss, nn_loss, p_loss
 
     def _get_grad(self, x, y_true, p, p_kwargs):
         """Get the gradient based on a batch of x and y_true data."""
@@ -142,7 +142,7 @@ class PhysicsGuidedNeuralNetwork:
                 tape.watch(layer.variables)
 
             y_predicted = self.predict(x, to_numpy=False)
-            loss = self.loss(y_predicted, y_true, p, p_kwargs)
+            loss = self.loss(y_predicted, y_true, p, p_kwargs)[0]
             grad = tape.gradient(loss, self.weights)
 
         return grad, loss
@@ -153,6 +153,39 @@ class PhysicsGuidedNeuralNetwork:
         grad, loss = self._get_grad(x, y_true, p, p_kwargs)
         self._optimizer.apply_gradients(zip(grad, self.weights))
         return grad, loss
+
+    def _p_fun_preflight(self, x, y_true, p, p_kwargs):
+        """Run a pre-flight check making sure the p_fun is differentiable."""
+
+        if p_kwargs is None:
+            p_kwargs = {}
+
+        with tf.GradientTape() as tape:
+            for layer in self._layers:
+                tape.watch(layer.variables)
+
+            y_predicted = self.predict(x, to_numpy=False)
+            p_loss = self._p_fun(y_predicted, y_true, p, **p_kwargs)
+            grad = tape.gradient(p_loss, self.weights)
+
+            if not tf.is_tensor(p_loss):
+                emsg = 'Loss output from p_fun() must be a tensor!'
+                logger.error(emsg)
+                raise TypeError(emsg)
+
+            if p_loss.ndim > 1:
+                emsg = ('Loss output from p_fun() should be a scalar tensor '
+                        'but received a tensor with shape {}'
+                        .format(p_loss.shape))
+                logger.error(emsg)
+                raise ValueError(emsg)
+
+            assert isinstance(grad, list)
+            if grad[0] is None:
+                emsg = ('The input p_fun was not differentiable! '
+                        'Please use only tensor math in the p_fun.')
+                logger.error(emsg)
+                raise RuntimeError(emsg)
 
     def _get_val_split(self, x, y, p, shuffle=True, validation_split=0.2):
         """Get a validation split and remove from from the training data.
@@ -237,7 +270,9 @@ class PhysicsGuidedNeuralNetwork:
         p : np.ndarray
             Supplemental feature data for the physics loss function in 2D array
         n_batch : int
-            Number of batches to split x and y into.
+            Number of times to update the NN weights per epoch. The training
+            data will be split into this many batches and the NN will train on
+            each batch, update weights, then move onto the next batch.
         shuffle : bool
             Flag to randomly subset the validation data from x and y.
 
@@ -282,7 +317,9 @@ class PhysicsGuidedNeuralNetwork:
         p : np.ndarray
             Supplemental feature data for the physics loss function in 2D array
         n_batch : int
-            Number of times to update the NN weights per epoch.
+            Number of times to update the NN weights per epoch. The training
+            data will be split into this many batches and the NN will train on
+            each batch, update weights, then move onto the next batch.
         epochs : int
             Number of times to iterate on the training data.
         shuffle : bool
@@ -305,20 +342,20 @@ class PhysicsGuidedNeuralNetwork:
         x, y, p, x_val, y_val, p_val = self._get_val_split(
             x, y, p, shuffle=shuffle, validation_split=validation_split)
 
+        self._p_fun_preflight(x_val, y_val, p_val, p_kwargs)
+
         t0 = time.time()
         for epoch in range(epochs):
             x_batches, y_batches, p_batches = self._make_batches(
                 x, y, p, n_batch=n_batch, shuffle=shuffle)
 
             batch_iter = zip(x_batches, y_batches, p_batches)
-            for i_b, (x_batch, y_batch, p_batch) in enumerate(batch_iter):
-                logger.debug('Starting mini batch {} of {}'
-                             .format(i_b + 1, n_batch))
+            for x_batch, y_batch, p_batch in batch_iter:
                 grad, train_loss = self._run_sgd(x_batch, y_batch, p_batch,
                                                  p_kwargs)
 
             y_val_pred = self.predict(x_val, to_numpy=False)
-            val_loss = self.loss(y_val_pred, y_val, p_val, p_kwargs)
+            val_loss = self.loss(y_val_pred, y_val, p_val, p_kwargs)[0]
             logger.info('Epoch {} training loss: {:.2e} '
                         'validation loss: {:.2e}'
                         .format(epoch + 1, train_loss, val_loss))
