@@ -337,7 +337,7 @@ class PhysicsGuidedNeuralNetwork:
 
         return x_batches, y_batches, p_batches
 
-    def fit(self, x, y, p, n_batch=16, epochs=10, shuffle=True,
+    def fit(self, x, y, p, n_batch=16, n_epoch=10, shuffle=True,
             validation_split=0.2, p_kwargs=None):
         """Fit the neural network to data from x and y.
 
@@ -353,7 +353,7 @@ class PhysicsGuidedNeuralNetwork:
             Number of times to update the NN weights per epoch. The training
             data will be split into this many batches and the NN will train on
             each batch, update weights, then move onto the next batch.
-        epochs : int
+        n_epoch : int
             Number of times to iterate on the training data.
         shuffle : bool
             Flag to randomly subset the validation data and batch selection
@@ -367,10 +367,14 @@ class PhysicsGuidedNeuralNetwork:
         self._check_shapes(x, y)
         self._check_shapes(x, p)
 
-        self._history = pd.DataFrame(
-            columns=['elapsed_time', 'training_loss', 'validation_loss'],
-            index=np.arange(epochs))
-        self._history.index.name = 'epoch'
+        epochs = list(range(n_epoch))
+
+        if self._history is None:
+            self._history = pd.DataFrame(
+                columns=['elapsed_time', 'training_loss', 'validation_loss'])
+            self._history.index.name = 'epoch'
+        else:
+            epochs += self._history.index.values[-1] + 1
 
         x, y, p, x_val, y_val, p_val = self._get_val_split(
             x, y, p, shuffle=shuffle, validation_split=validation_split)
@@ -378,7 +382,8 @@ class PhysicsGuidedNeuralNetwork:
         self._p_fun_preflight(x_val, y_val, p_val, p_kwargs)
 
         t0 = time.time()
-        for epoch in range(epochs):
+        for epoch in epochs:
+
             x_batches, y_batches, p_batches = self._make_batches(
                 x, y, p, n_batch=n_batch, shuffle=shuffle)
 
@@ -391,7 +396,7 @@ class PhysicsGuidedNeuralNetwork:
             val_loss = self.loss(y_val_pred, y_val, p_val, p_kwargs)[0]
             logger.info('Epoch {} training loss: {:.2e} '
                         'validation loss: {:.2e}'
-                        .format(epoch + 1, train_loss, val_loss))
+                        .format(epoch, train_loss, val_loss))
 
             self._history.at[epoch, 'elapsed_time'] = time.time() - t0
             self._history.at[epoch, 'training_loss'] = train_loss.numpy()
