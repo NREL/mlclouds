@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class PhysicsGuidedNeuralNetwork:
     """Simple Deep Neural Network with custom physical loss function."""
 
-    def __init__(self, p_fun, loss_weights=(0.5, 0.5),
+    def __init__(self, p_fun, hidden_layers, loss_weights=(0.5, 0.5),
                  input_dims=1, output_dims=1,
                  initializer=None, optimizer=None,
                  learning_rate=0.01):
@@ -29,6 +29,13 @@ class PhysicsGuidedNeuralNetwork:
             as arguments with datatypes (tf.Tensor, np.ndarray, np.ndarray).
             The function must return a tf.Tensor object with a single numeric
             loss value (output.ndim == 0).
+        hidden_layers : list
+            List of dictionaries of key word arguments for each hidden
+            layer in the NN. For example:
+            hidden_layers=[{'units': 64, 'activation': 'relu',
+                            'name': 'layer1', 'dropout': 0.01},
+                           {'units': 64, 'activation': 'relu',
+                            'name': 'layer2', 'dropout': 0.01}]
         loss_weights : tuple
             Loss weights for the neural network y_predicted vs. y_true
             and for the p_fun loss, respectively. For example,
@@ -57,10 +64,8 @@ class PhysicsGuidedNeuralNetwork:
             initializer = initializers.GlorotUniform()
 
         self._layers.append(layers.InputLayer(input_shape=[input_dims]))
-        self._layers.append(layers.Dense(64, kernel_initializer=initializer,
-                                         activation=tf.nn.relu))
-        self._layers.append(layers.Dense(64, kernel_initializer=initializer,
-                                         activation=tf.nn.relu))
+        for hidden_layer in hidden_layers:
+            self.add_layer(hidden_layer)
         self._layers.append(layers.Dense(output_dims,
                                          kernel_initializer=initializer))
 
@@ -134,6 +139,34 @@ class PhysicsGuidedNeuralNetwork:
                 + self._loss_weights[1] * p_loss)
 
         return loss, nn_loss, p_loss
+
+    def add_layer(self, layer_kwargs, insert_index=None):
+        """Add a hidden layer to the DNN.
+
+        Parameters
+        ----------
+        layer_kwargs : dict
+            Dictionary of key word arguments for list layer. For example:
+            layer_kwargs={'units': 64, 'activation': 'relu',
+                          'name': 'relu1', 'dropout': 0.01}
+        insert_index : int | None
+            Optional index to insert the new layer at. None will append
+            the layer to the end of the layer list.
+        """
+
+        dropout = layer_kwargs.pop('dropout', None)
+        layer = layers.Dense(**layer_kwargs)
+        if insert_index:
+            self._layers.insert(insert_index, layer)
+        else:
+            self._layers.append(layer)
+
+        if dropout is not None:
+            d_layer = layers.Dropout(dropout)
+            if insert_index:
+                self._layers.insert(insert_index + 1, d_layer)
+            else:
+                self._layers.append(d_layer)
 
     def _get_grad(self, x, y_true, p, p_kwargs):
         """Get the gradient based on a batch of x and y_true data."""
