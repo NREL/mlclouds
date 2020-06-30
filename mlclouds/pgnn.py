@@ -131,7 +131,7 @@ class PhysicsGuidedNeuralNetwork:
         if p_kwargs is None:
             p_kwargs = {}
 
-        nn_loss = tf.math.reduce_mean(tf.math.abs(y_predicted - y_true))
+        nn_loss = tf.reduce_mean(tf.abs(y_predicted - y_true))
 
         p_loss = self._p_fun(y_predicted, y_true, p, **p_kwargs)
 
