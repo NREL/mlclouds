@@ -21,24 +21,10 @@ import tensorflow as tf
 import numpy as np
 import collections
 
+from mlclouds.tf_utilities import tf_isin, tf_log10
+
 from nsrdb.all_sky import ICE_TYPES, WATER_TYPES, SOLAR_CONSTANT
 import nsrdb.all_sky.utilities as ut
-
-
-def tf_isin(a, b):
-    """Check whether a is in b"""
-    assert isinstance(b, (list, tuple))
-    x = [tf.equal(a, i) for i in b]
-    out = tf.reduce_any(tf.stack(x), axis=0)
-    assert out.shape == a.shape
-    return out
-
-
-def tf_log10(x):
-    """Compute log base 10 of a tensor x"""
-    num = tf.math.log(x)
-    den = tf.math.log(tf.constant(10, dtype=num.dtype))
-    return num / den
 
 
 def water_phase(tau, De, solar_zenith_angle):
@@ -188,7 +174,9 @@ def tfarms(tau, cloud_type, cloud_effective_radius, solar_zenith_angle,
     ut.check_range(Tduclr, 'Tduclr')
     ut.check_range(Ruuclr, 'Ruuclr')
     ut.check_range(Tuuclr, 'Tuuclr')
-#    ut.check_range(tau, 'tau (cld_opd_dcomp)', rang=(0, 160))
+
+    # do not allow for negative cld optical depth
+    tau *= tf.cast(tau > 0, tf.float32)
 
     F0 = SOLAR_CONSTANT / (radius * radius)
     solar_zenith_angle = np.cos(np.radians(solar_zenith_angle))
