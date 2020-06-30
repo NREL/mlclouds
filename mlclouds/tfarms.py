@@ -23,7 +23,7 @@ import collections
 
 from mlclouds.tf_utilities import tf_isin, tf_log10
 
-from nsrdb.all_sky import ICE_TYPES, WATER_TYPES, SOLAR_CONSTANT
+from nsrdb.all_sky import WATER_TYPES, SOLAR_CONSTANT
 import nsrdb.all_sky.utilities as ut
 
 
@@ -31,7 +31,6 @@ def water_phase(tau, De, solar_zenith_angle):
     """Get cloudy Tducld and Ruucld for the water phase."""
 
     # 12a from [1]
-    print('Starting water phase')
     Ptau = (2.8850 + 0.002 * (De - 60.0)) * solar_zenith_angle - 0.007347
 
     # 12b from [1]
@@ -55,9 +54,7 @@ def water_phase(tau, De, solar_zenith_angle):
     Ruucld0 = 0.107359 * tau
     Ruucld1 = 1.03 - tf.exp(-(0.5 + tf_log10(tau))
                             * (0.5 + tf_log10(tau)) / 3.105)
-    Ruucld0 *= tf.cast(tau < 1.0, tf.float32)
-    Ruucld1 *= tf.cast(tau >= 1.0, tf.float32)
-    Ruucld = Ruucld0 + Ruucld1
+    Ruucld = tf.where(tau < 1.0, Ruucld0, Ruucld1)
 
     return Tducld, Ruucld
 
@@ -68,9 +65,7 @@ def ice_phase(tau, De, solar_zenith_angle):
     # 13a from [1]
     Ptau0 = 2.8487 * solar_zenith_angle - 0.0029
     Ptau1 = (2.8355 + (100.0 - De) * 0.006) * solar_zenith_angle - 0.00612
-    Ptau0 *= tf.cast(De <= 26.0, tf.float32)
-    Ptau1 *= tf.cast(De > 26.0, tf.float32)
-    Ptau = Ptau0 + Ptau1
+    Ptau = tf.where(De <= 26.0, Ptau0, Ptau1)
 
     # 13b from [1]
     PDHI = 0.756 * solar_zenith_angle**0.0883
@@ -91,9 +86,7 @@ def ice_phase(tau, De, solar_zenith_angle):
     Ruucld0 = 0.094039 * tau
     Ruucld1 = 1.02 - tf.exp(-(0.5 + tf_log10(tau))
                             * (0.5 + tf_log10(tau)) / 3.25)
-    Ruucld0 *= tf.cast(tau < 1.0, tf.float32)
-    Ruucld1 *= tf.cast(tau >= 1.0, tf.float32)
-    Ruucld = Ruucld0 + Ruucld1
+    Ruucld = tf.where(tau < 1.0, Ruucld0, Ruucld1)
 
     return Tducld, Ruucld
 
@@ -176,7 +169,12 @@ def tfarms(tau, cloud_type, cloud_effective_radius, solar_zenith_angle,
     ut.check_range(Tuuclr, 'Tuuclr')
 
     # do not allow for negative cld optical depth
-    tau *= tf.cast(tau > 0, tf.float32)
+    tau = tf.where(tau < 0, 0.001, tau)
+    tau = tf.where(tau > 160, 160, tau)
+    cloud_effective_radius = tf.where(cloud_effective_radius < 0, 0.001,
+                                      cloud_effective_radius)
+    cloud_effective_radius = tf.where(cloud_effective_radius > 160, 160,
+                                      cloud_effective_radius)
 
     F0 = SOLAR_CONSTANT / (radius * radius)
     solar_zenith_angle = np.cos(np.radians(solar_zenith_angle))
@@ -197,18 +195,12 @@ def tfarms(tau, cloud_type, cloud_effective_radius, solar_zenith_angle,
     albedo = tf.convert_to_tensor(albedo, dtype=tf.float32)
 
     phase1 = tf_isin(cloud_type, WATER_TYPES)
-    phase2 = tf_isin(cloud_type, ICE_TYPES)
 
     Tducld_p1, Ruucld_p1 = water_phase(tau, De, solar_zenith_angle)
     Tducld_p2, Ruucld_p2 = ice_phase(tau, De, solar_zenith_angle)
 
-    Tducld_p1 *= tf.cast(phase1, tf.float32)
-    Ruucld_p1 *= tf.cast(phase1, tf.float32)
-    Tducld_p2 *= tf.cast(phase2, tf.float32)
-    Ruucld_p2 *= tf.cast(phase2, tf.float32)
-
-    Tducld = Tducld_p1 + Tducld_p2
-    Ruucld = Ruucld_p1 + Ruucld_p2
+    Tducld = tf.where(phase1, Tducld_p1, Tducld_p2)
+    Ruucld = tf.where(phase1, Ruucld_p1, Ruucld_p2)
 
     # eq 8 from [1]
     Tddcld = tf.exp(-tau / solar_zenith_angle)
