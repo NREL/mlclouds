@@ -2,6 +2,9 @@
 """
 Physics Guided Neural Network
 """
+import os
+import pickle
+import copy
 import time
 import numpy as np
 import pandas as pd
@@ -19,7 +22,7 @@ class PhysicsGuidedNeuralNetwork:
     def __init__(self, p_fun, hidden_layers, loss_weights=(0.5, 0.5),
                  input_dims=1, output_dims=1,
                  initializer=None, optimizer=None,
-                 learning_rate=0.01):
+                 learning_rate=0.01, history=None):
         """
         Parameters
         ----------
@@ -52,34 +55,40 @@ class PhysicsGuidedNeuralNetwork:
             None defaults to Adam.
         learning_rate : float
             Optimizer learning rate.
+        history : None | pd.dataframe
+            Learning history if continuing a training session.
         """
 
         self._p_fun = p_fun
+        self._hidden_layers = copy.deepcopy(hidden_layers)
         self._loss_weights = loss_weights
+        self._input_dims = input_dims
+        self._output_dims = output_dims
         self._layers = []
         self._optimizer = None
-        self._history = None
+        self._history = history
+        self._learning_rate = learning_rate
 
+        self._initializer = initializer
         if initializer is None:
-            initializer = initializers.GlorotUniform()
+            self._initializer = initializers.GlorotUniform()
 
         self._layers.append(layers.InputLayer(input_shape=[input_dims]))
         for hidden_layer in hidden_layers:
             self.add_layer(hidden_layer)
-        self._layers.append(layers.Dense(output_dims,
-                                         kernel_initializer=initializer))
+        self._layers.append(layers.Dense(
+            output_dims, kernel_initializer=self._initializer))
 
+        self._optimizer = optimizer
         if optimizer is None:
             self._optimizer = optimizers.Adam(learning_rate=learning_rate)
-        else:
-            self._optimizer = optimizer
 
     @staticmethod
     def _check_shapes(x, y):
         """Check the shape of two input arrays for usage in this NN."""
-        assert len(x.shape) == 2
-        assert len(y.shape) == 2
-        assert len(x) == len(y)
+        assert len(x.shape) == 2, 'Input dimensions must be 2D!'
+        assert len(y.shape) == 2, 'Input dimensions must be 2D!'
+        assert len(x) == len(y), 'Number of input observations dont match!'
         return True
 
     @staticmethod
@@ -428,3 +437,75 @@ class PhysicsGuidedNeuralNetwork:
             y = y.numpy()
 
         return y
+
+    def save(self, fpath):
+        """Save pgnn model to pickle file.
+
+        Parameters
+        ----------
+        fpath : str
+            File path to .pkl file to save model to.
+        """
+
+        if not fpath.endswith('.pkl'):
+            e = 'Can only save model to .pkl file!'
+            logger.error(e)
+            raise ValueError(e)
+
+        dirname = os.path.dirname(fpath)
+        if dirname and not os.path.exists(dirname):
+            os.makedirs(dirname)
+
+        weight_dict = {}
+        for i, layer in enumerate(self._layers):
+            weight_dict[i] = layer.get_weights()
+
+        model_params = {'p_fun': self._p_fun,
+                        'hidden_layers': self._hidden_layers,
+                        'loss_weights': self._loss_weights,
+                        'input_dims': self._input_dims,
+                        'output_dims': self._output_dims,
+                        'initializer': self._initializer,
+                        'optimizer': self._optimizer,
+                        'learning_rate': self._learning_rate,
+                        'weight_dict': weight_dict,
+                        'history': self._history,
+                        }
+
+        with open(fpath, 'wb') as f:
+            pickle.dump(model_params, f)
+
+    @classmethod
+    def load(cls, fpath):
+        """Load a pgnn model that has been saved to a pickle file.
+
+        Parameters
+        ----------
+        fpath : str
+            File path to .pkl file to load model from.
+        """
+
+        if not os.path.exists(fpath):
+            e = 'Could not load file, does not exist: {}'.format(fpath)
+            logger.error(e)
+            raise FileNotFoundError(e)
+
+        if not fpath.endswith('.pkl'):
+            e = 'Can only load model from .pkl file!'
+            logger.error(e)
+            raise ValueError(e)
+
+        with open(fpath, 'rb') as f:
+            model_params = pickle.load(f)
+
+        weight_dict = model_params.pop('weight_dict')
+
+        model = cls(**model_params)
+
+        for i, weights in weight_dict.items():
+            if weights:
+                dim = weights[0].shape[0]
+                model._layers[i].build((dim,))
+                model._layers[i].set_weights(weights)
+
+        return model
