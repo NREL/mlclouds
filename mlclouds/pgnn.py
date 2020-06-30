@@ -61,6 +61,8 @@ class PhysicsGuidedNeuralNetwork:
 
         self._p_fun = p_fun
         self._hidden_layers = copy.deepcopy(hidden_layers)
+        assert np.sum(loss_weights) > 0, 'Sum of loss_weights must be > 0!'
+        assert len(loss_weights) == 2, 'loss_weights can only have two values!'
         self._loss_weights = loss_weights
         self._input_dims = input_dims
         self._output_dims = output_dims
@@ -115,6 +117,25 @@ class PhysicsGuidedNeuralNetwork:
             weights += layer.variables
         return weights
 
+    def reset_history(self):
+        """Erase previous training history without resetting trained weights"""
+        self._history = None
+
+    def set_loss_weights(self, loss_weights):
+        """Set new loss weights
+
+        Parameters
+        ----------
+        loss_weights : tuple
+            Loss weights for the neural network y_predicted vs. y_true
+            and for the p_fun loss, respectively. For example,
+            loss_weights=(0.0, 1.0) would simplify the PGNN loss function
+            to just the p_fun output.
+        """
+        assert np.sum(loss_weights) > 0, 'Sum of loss_weights must be > 0!'
+        assert len(loss_weights) == 2, 'loss_weights can only have two values!'
+        self._loss_weights = loss_weights
+
     def loss(self, y_predicted, y_true, p, p_kwargs):
         """Calculate the loss function by comparing model-predicted y to y_true
 
@@ -140,12 +161,19 @@ class PhysicsGuidedNeuralNetwork:
         if p_kwargs is None:
             p_kwargs = {}
 
-        nn_loss = tf.reduce_mean(tf.abs(y_predicted - y_true))
+        nn_err = y_predicted - y_true
+        nn_err = tf.boolean_mask(nn_err, ~tf.math.is_nan(nn_err))
+        nn_err = tf.boolean_mask(nn_err, tf.math.is_finite(nn_err))
+        nn_loss = tf.reduce_mean(tf.abs(nn_err))
 
         p_loss = self._p_fun(y_predicted, y_true, p, **p_kwargs)
 
-        loss = (self._loss_weights[0] * nn_loss
-                + self._loss_weights[1] * p_loss)
+        loss = self._loss_weights[0] * nn_loss
+        if not tf.math.is_nan(p_loss) and self._loss_weights[1] > 0:
+            loss += self._loss_weights[1] * p_loss
+
+        logger.debug('NN Loss: {:.2e}, P Loss: {:.2e}, Total Loss: {:.2e}'
+                     .format(nn_loss, p_loss, loss))
 
         return loss, nn_loss, p_loss
 
@@ -228,6 +256,8 @@ class PhysicsGuidedNeuralNetwork:
                         'Please use only tensor math in the p_fun.')
                 logger.error(emsg)
                 raise RuntimeError(emsg)
+
+        logger.debug('p_fun passed preflight check.')
 
     def _get_val_split(self, x, y, p, shuffle=True, validation_split=0.2):
         """Get a validation split and remove from from the training data.
@@ -347,7 +377,7 @@ class PhysicsGuidedNeuralNetwork:
         return x_batches, y_batches, p_batches
 
     def fit(self, x, y, p, n_batch=16, n_epoch=10, shuffle=True,
-            validation_split=0.2, p_kwargs=None):
+            validation_split=0.2, p_kwargs=None, run_preflight=True):
         """Fit the neural network to data from x and y.
 
         Parameters
@@ -371,6 +401,8 @@ class PhysicsGuidedNeuralNetwork:
             Fraction of x and y to use for validation.
         p_kwargs : None | dict
             Optional kwargs for the physical loss function self._p_fun.
+        run_preflight : bool
+            Flag to run preflight checks.
         """
 
         self._check_shapes(x, y)
@@ -388,7 +420,8 @@ class PhysicsGuidedNeuralNetwork:
         x, y, p, x_val, y_val, p_val = self._get_val_split(
             x, y, p, shuffle=shuffle, validation_split=validation_split)
 
-        self._p_fun_preflight(x_val, y_val, p_val, p_kwargs)
+        if self._loss_weights[1] > 0 and run_preflight:
+            self._p_fun_preflight(x_val, y_val, p_val, p_kwargs)
 
         t0 = time.time()
         for epoch in epochs:
@@ -398,20 +431,17 @@ class PhysicsGuidedNeuralNetwork:
 
             batch_iter = zip(x_batches, y_batches, p_batches)
             for x_batch, y_batch, p_batch in batch_iter:
-                grad, train_loss = self._run_sgd(x_batch, y_batch, p_batch,
-                                                 p_kwargs)
+                tr_loss = self._run_sgd(x_batch, y_batch, p_batch, p_kwargs)[1]
 
             y_val_pred = self.predict(x_val, to_numpy=False)
             val_loss = self.loss(y_val_pred, y_val, p_val, p_kwargs)[0]
             logger.info('Epoch {} training loss: {:.2e} '
                         'validation loss: {:.2e}'
-                        .format(epoch, train_loss, val_loss))
+                        .format(epoch, tr_loss, val_loss))
 
             self._history.at[epoch, 'elapsed_time'] = time.time() - t0
-            self._history.at[epoch, 'training_loss'] = train_loss.numpy()
+            self._history.at[epoch, 'training_loss'] = tr_loss.numpy()
             self._history.at[epoch, 'validation_loss'] = val_loss.numpy()
-
-        return grad, train_loss
 
     def predict(self, x, to_numpy=True):
         """Run a prediction on input features.
