@@ -323,6 +323,37 @@ class MLModelBase:
         """
         return features
 
+    @staticmethod
+    def dict_json_convert(inp):
+        """Recursively convert numeric values in dict to work with json dump
+
+        Parameters
+        ----------
+        inp : dict
+            Dictionary to convert.
+
+        Returns
+        -------
+        out : dict
+            Copy of dict input with all nested numeric values converted to
+            base python int or float and all arrays converted to lists.
+        """
+
+        if isinstance(inp, dict):
+            out = {k: MLModelBase.dict_json_convert(v) for k, v in inp.items()}
+        elif isinstance(inp, (list, tuple)):
+            out = [MLModelBase.dict_json_convert(i) for i in inp]
+        elif np.issubdtype(type(inp), np.floating):
+            out = float(inp)
+        elif np.issubdtype(type(inp), np.integer):
+            out = int(inp)
+        elif isinstance(inp, np.ndarray):
+            out = inp.tolist()
+        else:
+            out = inp
+
+        return out
+
     def predict(self, features, **kwargs):
         """
         Use model to predict label from given features
@@ -458,12 +489,46 @@ class TfModel(MLModelBase):
             if np.issubdtype(data.dtype.name, np.number):
                 f_col = feature_column.numeric_column(name)
             else:
-                f_col = \
-                    feature_column.categorical_column_with_hash_bucket(name)
+                f_col = TfModel._generate_cat_column(name, data)
 
             feature_columns.append(f_col)
 
         return feature_columns
+
+    @staticmethod
+    def _generate_cat_column(name, data, vocab_threshold=50, bucket_size=100):
+        """Generate a feature column from a categorical string data set
+
+        Parameters
+        ----------
+        name : str
+            Name of categorical columns
+        data : np.ndarray | list
+            String data array
+        vocab_threshold : int
+            Number of unique entries in the data array below which this
+            will use a vocabulary list, above which a hash bucket will be used.
+        bucket_size : int
+            Hash bucket size.
+
+        Returns
+        -------
+        f_col : IndicatorColumn
+            Categorical feature column.
+        """
+
+        n_unique = len(set(data))
+
+        if n_unique < vocab_threshold:
+            f_col = feature_column.categorical_column_with_vocabulary_list(
+                name, list(set(data)))
+        else:
+            f_col = feature_column.categorical_column_with_hash_bucket(
+                name, bucket_size)
+
+        f_col = feature_column.indicator_column(f_col)
+
+        return f_col
 
     @staticmethod
     def _build_feature_columns(feature_columns):
@@ -514,7 +579,7 @@ class TfModel(MLModelBase):
     @staticmethod
     def _compile_model(feature_columns, model_layers=None, learning_rate=0.001,
                        loss="mean_squared_error", metrics=('mae', 'mse'),
-                       **kwargs):
+                       optimizer_class=None, **kwargs):
         """
         Build tensorflow sequential model from given layers and kwargs
 
@@ -532,6 +597,10 @@ class TfModel(MLModelBase):
         metrics : list, optional
             List of metrics to be evaluated by the model during training and
             testing, by default ('mae', 'mse')
+        optimizer_class : None | tf.keras.optimizers
+            Optional explicit request of optimizer. This should be a class
+            that will be instantated in the TfModel._compile_model() method
+            The default is the RMSprop optimizer.
         kwargs : dict
             kwargs for tensorflow.keras.models.compile
 
@@ -547,14 +616,23 @@ class TfModel(MLModelBase):
             model.add(layers.Dense(units=1, input_shape=(1,)))
         else:
             for layer in model_layers:
+                dropout = layer.pop('dropout', None)
                 model.add(layers.Dense(**layer))
+
+                if dropout is not None:
+                    model.add(layers.Dropout(dropout))
 
         if isinstance(metrics, tuple):
             metrics = list(metrics)
         elif not isinstance(metrics, list):
             metrics = [metrics]
 
-        optimizer = tf.keras.optimizers.RMSprop(lr=learning_rate)
+        if optimizer_class is None:
+            optimizer = tf.keras.optimizers.RMSprop(
+                learning_rate=learning_rate)
+        else:
+            optimizer = optimizer_class(learning_rate=learning_rate)
+
         model.compile(optimizer=optimizer, loss=loss, metrics=metrics,
                       **kwargs)
 
@@ -563,7 +641,7 @@ class TfModel(MLModelBase):
     @staticmethod
     def build_model(features, feature_columns=None, model_layers=None,
                     learning_rate=0.001, loss="mean_squared_error",
-                    metrics=('mae', 'mse'), **kwargs):
+                    metrics=('mae', 'mse'), optimizer_class=None, **kwargs):
         """
         Build tensorflow sequential model from given layers and kwargs
 
@@ -585,6 +663,10 @@ class TfModel(MLModelBase):
         metrics : list, optional
             List of metrics to be evaluated by the model during training and
             testing, by default ('mae', 'mse')
+        optimizer_class : None | tf.keras.optimizers
+            Optional explicit request of optimizer. This should be a class
+            that will be instantated in the TfModel._compile_model() method.
+            The default is the RMSprop optimizer.
         kwargs : dict
             kwargs for tensorflow.keras.models.compile
 
@@ -610,6 +692,7 @@ class TfModel(MLModelBase):
                                        model_layers=model_layers,
                                        learning_rate=learning_rate,
                                        loss=loss, metrics=metrics,
+                                       optimizer_class=optimizer_class,
                                        **kwargs)
 
         return model
@@ -890,13 +973,14 @@ class TfModel(MLModelBase):
                         'norm_params': self.normalization_parameters}
 
         json_path = path.rstrip('/') + '.json'
+        model_params = self.dict_json_convert(model_params)
         with open(json_path, 'w') as f:
             json.dump(model_params, f, indent=2, sort_keys=True)
 
     @classmethod
     def build(cls, features, feature_columns=None, model_layers=None,
               learning_rate=0.001, loss="mean_squared_error",
-              metrics=('mae', 'mse'), **kwargs):
+              metrics=('mae', 'mse'), optimizer_class=None, **kwargs):
         """
         Build tensorflow sequential model from given features, layers and
         kwargs
@@ -919,6 +1003,10 @@ class TfModel(MLModelBase):
         metrics : list, optional
             List of metrics to be evaluated by the model during training and
             testing, by default ('mae', 'mse')
+        optimizer_class : None | tf.keras.optimizers
+            Optional explicit request of optimizer. This should be a class
+            that will be instantated in the TfModel._compile_model() method
+            The default is the RMSprop optimizer.
         kwargs : dict
             kwargs for tensorflow.keras.models.compile
 
@@ -930,7 +1018,8 @@ class TfModel(MLModelBase):
         model = TfModel.build_model(features, feature_columns=feature_columns,
                                     model_layers=model_layers,
                                     learning_rate=learning_rate, loss=loss,
-                                    metrics=metrics, **kwargs)
+                                    metrics=metrics,
+                                    optimizer_class=optimizer_class, **kwargs)
 
         return cls(model)
 
@@ -938,8 +1027,8 @@ class TfModel(MLModelBase):
     def build_and_train(cls, features, label, feature_columns=None,
                         model_layers=None, learning_rate=0.001,
                         loss="mean_squared_error", metrics=('mae', 'mse'),
-                        norm_label=True, epochs=100, validation_split=0.2,
-                        early_stop=True, save_path=None,
+                        optimizer_class=None, norm_label=True, epochs=100,
+                        validation_split=0.2, early_stop=True, save_path=None,
                         build_kwargs=None, train_kwargs=None):
         """
         Build tensorflow sequential model from given features, layers and
@@ -965,6 +1054,10 @@ class TfModel(MLModelBase):
         metrics : list, optional
             List of metrics to be evaluated by the model during training and
             testing, by default ('mae', 'mse')
+        optimizer_class : None | tf.keras.optimizers
+            Optional explicit request of optimizer. This should be a class
+            that will be instantated in the TfModel._compile_model() method
+            The default is the RMSprop optimizer.
         norm_label : bool
             Flag to normalize label
         epochs : int, optional
@@ -994,7 +1087,8 @@ class TfModel(MLModelBase):
         model = cls.build(features, feature_columns=feature_columns,
                           model_layers=model_layers,
                           learning_rate=learning_rate, loss=loss,
-                          metrics=metrics, **build_kwargs)
+                          metrics=metrics, optimizer_class=optimizer_class,
+                          **build_kwargs)
 
         if train_kwargs is None:
             train_kwargs = {}
@@ -1249,6 +1343,7 @@ class RandomForestModel(MLModelBase):
                         'norm_params': self.normalization_parameters,
                         'model_params': self.model.get_params()}
 
+        model_params = self.dict_json_convert(model_params)
         with open(path, 'w') as f:
             json.dump(model_params, f, indent=2, sort_keys=True)
 
