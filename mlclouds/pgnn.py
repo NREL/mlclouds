@@ -259,7 +259,8 @@ class PhysicsGuidedNeuralNetwork:
 
         logger.debug('p_fun passed preflight check.')
 
-    def _get_val_split(self, x, y, p, shuffle=True, validation_split=0.2):
+    @staticmethod
+    def _get_val_split(x, y, p, shuffle=True, validation_split=0.2):
         """Get a validation split and remove from from the training data.
 
         Parameters
@@ -318,10 +319,10 @@ class PhysicsGuidedNeuralNetwork:
         x_val, y_val, p_val = x[i, :], y[i, :], p[i, :]
         x, y, p = x[j, :], y[j, :], p[j, :]
 
-        self._check_shapes(x_val, y_val)
-        self._check_shapes(x_val, p_val)
-        self._check_shapes(x, y)
-        self._check_shapes(x, p)
+        PhysicsGuidedNeuralNetwork._check_shapes(x_val, y_val)
+        PhysicsGuidedNeuralNetwork._check_shapes(x_val, p_val)
+        PhysicsGuidedNeuralNetwork._check_shapes(x, y)
+        PhysicsGuidedNeuralNetwork._check_shapes(x, p)
 
         logger.debug('Validation data has length {} and training data has '
                      'length {} (split of {})'
@@ -403,6 +404,11 @@ class PhysicsGuidedNeuralNetwork:
             Optional kwargs for the physical loss function self._p_fun.
         run_preflight : bool
             Flag to run preflight checks.
+
+        Returns
+        -------
+        diagnostics : dict
+            Namespace of training parameters that can be used for diagnostics.
         """
 
         self._check_shapes(x, y)
@@ -442,6 +448,13 @@ class PhysicsGuidedNeuralNetwork:
             self._history.at[epoch, 'elapsed_time'] = time.time() - t0
             self._history.at[epoch, 'training_loss'] = tr_loss.numpy()
             self._history.at[epoch, 'validation_loss'] = val_loss.numpy()
+
+        diagnostics = {'x': x, 'y': y, 'p': p,
+                       'x_val': x_val, 'y_val': y_val, 'p_val': p_val,
+                       'history': self.history,
+                       }
+
+        return diagnostics
 
     def predict(self, x, to_numpy=True):
         """Run a prediction on input features.
