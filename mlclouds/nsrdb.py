@@ -42,12 +42,12 @@ class NSRDBFeatures(NSRDB):
 
             f_data = pd.DataFrame(f_data, index=self.time_index,
                                   columns=sites)
-            columns = {'level_0': 'gid', 'level_1': 'Datetime', 0: f}
+            columns = {'level_0': 'gid', 'level_1': 'time_index', 0: f}
             f_data = f_data.unstack().reset_index().rename(columns=columns)
             if features_df is None:
                 features_df = f_data
             else:
                 features_df = pd.merge(features_df, f_data,
-                                       on=['gid', 'Datetime'])
+                                       on=['gid', 'time_index'])
 
         return features_df
