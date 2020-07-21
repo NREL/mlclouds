@@ -89,12 +89,13 @@ def p_fun_all_sky(y_predicted, y_true, p, labels=None):
 
 
 CONFIG = {
-    'fp_data': '/projects/mlclouds/data_surfrad_9/{year}_adj/'
+    'fp_data': '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/{year}_adj/'
                'mlclouds_surfrad_{year}_adj.h5',
-    'fp_surf': '/projects/mlclouds/ground_measurement/surfrad/'
+    'fp_surf': '/lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/'
                '{code}_{year}.h5',
     'model_dir': './models',
-    'fp': '/projects/mlclouds/ground_measurement/surfrad_meta.csv',
+    'fp': '/lustre/eaglefs/projects/mlclouds/ground_measurement/'
+          'surfrad_meta.csv',
 
     'features': ['solar_zenith_angle', 'cloud_type',
                  'refl_0_65um_nom', 'refl_3_75um_nom',
@@ -114,9 +115,11 @@ CONFIG = {
 
     'y_labels': ['cld_opd_dcomp', 'cld_reff_dcomp'],
 
-    # Fields to drop from training data
+    # TODO - There is some overlap and confusion between the next to parameters
+    # Fields to drop from training data before preprocessing
     'drop_list': ['gid', 'time_index', 'cloud_type'],
 
+    # Fields to exclude from training data (x)
     'ignore': ('gid', 'time_index', 'cloud_type', 'cld_opd_dcomp',
                'cld_reff_dcomp',
                ),
@@ -140,30 +143,42 @@ CONFIG = {
     'n_epoch': 100,
 
     # Validation vars
-    'fp_baseline': '/projects/mlclouds/'
+    'fp_baseline': '/lustre/eaglefs/projects/mlclouds/'
                    'data_surfrad_9/2018/final/srf18_*_2018.h5',
-    'fp_baseline_adj': '/projects/mlclouds/'
+    'fp_baseline_adj': '/lustre/eaglefs/projects/mlclouds/'
                        'data_surfrad_9/2018_adj/final/srf18a_*_2018.h5',
 }
 
 
-class AutoXVal:
-    def __init__(self):
-        pass
-
-    @classmethod
-    def run(cls):
-        pass
-
-
 class XVal:
     """
-    Train a phygnn using certain sites than validate against an excluded
+    Train a phygnn using selected sites then validate against an excluded
     site.
     """
 
     def __init__(self, train_sites=[0, 1, 2, 3, 5, 6], val_site=4,
-                 years=(2018,), config=CONFIG, load_model=False):
+                 years=(2018,), config=CONFIG, save_model=False,
+                 load_model=False):
+        """
+        Parameters
+        ----------
+        train_sites: list
+            Sites to use for training
+        val_site: int
+            Site to use for validation
+        years: tuple
+            Years of data to use
+        config: dict
+            Dict of configuration options. See CONFIG for example.
+        save_model: bool
+            Save trained model to disc as pickle file
+        load_model: bool
+            Skip training and load model from pickle file
+        """
+        # TODO - years is only partially implemented
+        logger.info('Training on {}, validating against {}, for {}'
+                    ''.format(train_sites, val_site, years))
+        assert val_site not in train_sites
         self.train_sites = train_sites
         self.val_site = val_site
         self.config = config
@@ -187,6 +202,9 @@ class XVal:
             self.p = train_data.p
             self.p_kwargs = train_data.p_kwargs
             self.train()
+
+            if save_model:
+                self.model.save(self.model_file)
         else:
             logger.debug('Loading model from {}'.format(self.model_file))
             self.model = PGNN.load(self.model_file)
@@ -201,7 +219,7 @@ class XVal:
         self.calc_stats()
 
     def train(self):
-        logger.debug('Training')
+        logger.info('Training')
         PGNN.seed(self.config['phygnn_seed'])
         model = PGNN(p_fun=self.config['p_fun'],
                      hidden_layers=self.config['hidden_layers'],
@@ -219,6 +237,7 @@ class XVal:
         self.out = out
 
     def validate(self):
+        logger.info('Validating data')
         t0 = time.time()
         predicted_raw = self.model.predict(self.df_x_val.values)
         logger.debug('Prediction took {:.2f} seconds'.format(time.time() - t0))
@@ -252,8 +271,19 @@ class XVal:
         logger.debug('The PGNN predicted {} additional clear timesteps'
                      '({:.2f}%)'.format(mask.sum(),
                                         100 * mask.sum() / len(mask)))
+        return
+
+        # TODO - Incorporate the below code
+        mask = (self.df_feature_val['solar_zenith_angle'] < 89) &\
+               (self.df_feature_val['cld_opd_dcomp'] > 0.0) &\
+               (self.df_feature_val['cloud_type'] <= 1)
+        self.df_feature_val.loc[mask, 'cloud_type'] = 8
+        self.df_all_sky_val.loc[mask, 'cloud_type'] = 8
+        print('The PGNN predicted {} additional cloudy timesteps ({:.2f}%)'
+              ''.format(mask.sum(), 100 * mask.sum() / len(mask)))
 
     def calc_stats(self):
+        logger.info('Calculating statistics')
         all_sky_outs = {}
         stats = pd.DataFrame(columns=['Model', 'Site', 'Variable',
                                       'Condition'])
@@ -406,13 +436,101 @@ class XVal:
         return args
 
 
+class AutoXVal:
+    def __init__(self, sites=[0, 1, 2, 3, 4, 5, 6], val_sites=None,
+                 years=(2018,), config=CONFIG, shuffle_train=False,
+                 seed=None, xval=XVal,
+                 catch_nan=False, min_train=1):
+        """
+        Run cross validation by both varying the number of sites used for
+        training, and the site used for validation.
+
+        Parameters
+        ----------
+        sites: list
+            Sites to use for training and validation
+        val_sites: None, int, or list
+            Site(s) to use for validation, use all if None
+        years: tuple
+            Years of data to use
+        config: dict
+            Dict of XVal configuration options. See CONFIG for example.
+        shuffle_train: bool
+            Randomize training site list before iterating over # of training
+            sites.
+        seed: None or int
+            Seed for numpy.random if int
+        XVal: Class
+            Cross validation class. Used for testing. TODO - remove?
+        catch_nan: bool
+            If true, catch loss=nan exceptions and continue analysis
+        min_train: int
+            Minimum # of sites to use for training
+        """
+        # TODO - years is only partially implemented
+        if seed is not None:
+            np.random.seed(seed)
+
+        if val_sites is None:
+            val_sites = sites
+        elif isinstance(val_sites, int):
+            val_sites = [val_sites]
+
+        stats = None
+
+        for val_site in val_sites:
+            all_train_sites = [x for x in sites if x != val_site]
+            if shuffle_train:
+                np.random.shuffle(all_train_sites)
+
+            logger.info('Training sites = {} for auto x validation'
+                        ''.format(all_train_sites))
+
+            for i in range(min_train-1, len(all_train_sites)):
+                train_sites = all_train_sites[0:i+1]
+
+                try:
+                    xv = xval(train_sites=train_sites, val_site=val_site,
+                              config=config, years=years)
+                except ArithmeticError as e:
+                    if catch_nan:
+                        logger.warning('Loss=nan: {}'.format(e))
+                        continue
+                    else:
+                        raise e
+
+                ts = '_' + ''.join([str(x) for x in train_sites])
+                xv.stats['val_site'] = val_site
+                # TODO - train_sites is defaulting to int, force to str
+                xv.stats['train_sites'] = ts
+                xv.stats['num_ts'] = len(ts) - 1
+
+                if stats is None:
+                    stats = xv.stats
+                else:
+                    stats = pd.concat([stats, xv.stats])
+
+            self.stats = stats.reset_index()
+
+            train_name = ''.join([str(x) for x in all_train_sites])
+            self.stats.to_csv('axv_stats_{}_{}.csv'.format(train_name,
+                                                           val_site))
+
+    @classmethod
+    def run(cls):
+        pass
+
+
 class ValidatitionData:
     """ Load and prep validation data """
     def __init__(self, years, train_sites, config):
         self.years = years
+        # TODO - remove train_sites, it's unused
         self.train_sites = train_sites
         self.config = config
+        logger.info('Loading validation data')
         self.load_data()
+        logger.info('Prepping validation data')
         self.prep_data()
 
     def load_data(self):
@@ -472,7 +590,9 @@ class TrainData:
         self.years = years
         self.train_sites = train_sites
         self.config = config
+        logger.info('Loading training data')
         self.load_data()
+        logger.info('Prepping training data')
         self.prep_data()
 
     def load_data(self):
