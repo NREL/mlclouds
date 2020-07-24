@@ -115,8 +115,8 @@ CONFIG = {
 
     'y_labels': ['cld_opd_dcomp', 'cld_reff_dcomp'],
 
-    # TODO - There is some overlap and confusion between the next to parameters
-    # Fields to drop from training data before preprocessing
+    # TODO - There is some overlap and confusion between the next two
+    # parameters Fields to drop from training data before preprocessing
     'drop_list': ['gid', 'time_index', 'cloud_type'],
 
     # Fields to exclude from training data (x)
@@ -144,9 +144,9 @@ CONFIG = {
 
     # Validation vars
     'fp_baseline': '/lustre/eaglefs/projects/mlclouds/'
-                   'data_surfrad_9/2018/final/srf18_*_2018.h5',
+                   'data_surfrad_9/{year}/final/srf{yy}_*_{year}.h5',
     'fp_baseline_adj': '/lustre/eaglefs/projects/mlclouds/'
-                       'data_surfrad_9/2018_adj/final/srf18a_*_2018.h5',
+                       'data_surfrad_9/{year}_adj/final/srf{yy}a_*_{year}.h5',
 }
 
 
@@ -171,7 +171,8 @@ class XVal:
             Years of data to use
         config: dict
             Dict of configuration options. See CONFIG for example.
-        val_data: ValidationData instance
+        val_data: None | ValidationData instance
+            Use preloaded validation data or load if None
         save_model: bool
             Save trained model to disc as pickle file
         load_model: bool
@@ -181,7 +182,6 @@ class XVal:
         logger.info('Training on {}, validating against {}, for {}'
                     ''.format(train_sites, val_site, years))
         assert val_site not in train_sites
-        assert val_data is not None
 
         self.train_sites = train_sites
         self.val_site = val_site
@@ -214,6 +214,9 @@ class XVal:
             self.model = PGNN.load(self.model_file)
 
         # Validate model
+        if val_data is None:
+            val_data = ValidationData(years, config)
+
         self.df_x_val = val_data.df_x_val
         self.df_all_sky_val = val_data.df_all_sky_val
         self.df_feature_val = val_data.df_feature_val
@@ -239,7 +242,7 @@ class XVal:
         self.model = model
         self.out = out
 
-    def validate(self):
+    def validate(self, update_clear=False, update_cloudy=False):
         logger.info('Validating model')
         t0 = time.time()
         predicted_raw = self.model.predict(self.df_x_val.values)
@@ -265,25 +268,26 @@ class XVal:
         self.df_all_sky_val.loc[self.mask, 'cld_opd_dcomp'] = opd
         self.df_all_sky_val.loc[self.mask, 'cld_reff_dcomp'] = reff
 
-        mask = ((self.df_feature_val['solar_zenith_angle'] < 89)
-                        & (self.df_feature_val['cld_opd_dcomp'] <= 0.0)
-                        & self.df_feature_val['cloud_type'].isin(ICE_TYPES +
-                                                                 WATER_TYPES))
-        self.df_feature_val.loc[mask, 'cloud_type'] = 0
-        self.df_all_sky_val.loc[mask, 'cloud_type'] = 0
-        logger.debug('The PGNN predicted {} additional clear timesteps'
-                     '({:.2f}%)'.format(mask.sum(),
-                                        100 * mask.sum() / len(mask)))
-        return
+        if update_clear:
+            mask = ((self.df_feature_val['solar_zenith_angle'] < 89)
+                    & (self.df_feature_val['cld_opd_dcomp'] <= 0.0)
+                    & self.df_feature_val['cloud_type'].isin(ICE_TYPES +
+                                                             WATER_TYPES))
+            self.df_feature_val.loc[mask, 'cloud_type'] = 0
+            self.df_all_sky_val.loc[mask, 'cloud_type'] = 0
+            logger.debug('The PGNN predicted {} additional clear timesteps'
+                         '({:.2f}%)'.format(mask.sum(),
+                                            100 * mask.sum() / len(mask)))
+        if update_cloudy:
+            mask = ((self.df_feature_val['solar_zenith_angle'] < 89)
+                    & (self.df_feature_val['cld_opd_dcomp'] > 0.0)
+                    & (self.df_feature_val['cloud_type'] <= 1))
+            self.df_feature_val.loc[mask, 'cloud_type'] = 8
+            self.df_all_sky_val.loc[mask, 'cloud_type'] = 8
+            print('The PGNN predicted {} additional cloudy timesteps ({:.2f}%)'
+                  ''.format(mask.sum(), 100 * mask.sum() / len(mask)))
 
-        # TODO - Incorporate the below code
-        mask = (self.df_feature_val['solar_zenith_angle'] < 89) &\
-               (self.df_feature_val['cld_opd_dcomp'] > 0.0) &\
-               (self.df_feature_val['cloud_type'] <= 1)
-        self.df_feature_val.loc[mask, 'cloud_type'] = 8
-        self.df_all_sky_val.loc[mask, 'cloud_type'] = 8
-        print('The PGNN predicted {} additional cloudy timesteps ({:.2f}%)'
-              ''.format(mask.sum(), 100 * mask.sum() / len(mask)))
+        return
 
     def calc_stats(self):
         logger.info('Calculating statistics')
@@ -298,34 +302,43 @@ class XVal:
         # all_sky_gids = [743]
 
         for gid in all_sky_gids:
-            # TODO - handle multiple years
-            year = self.years[0]
-
             code = self.surf_meta.loc[gid, 'surfrad_id']
-            logger.debug('Computing stats for gid: {} {}'.format(gid, code))
+            logger.debug('Computing stats for gid: {} {}'
+                            .format(gid, code))
 
-            df_baseline = self._get_baseline_df(self.config['fp_baseline'], gid)
-            df_baseline_adj = self._get_baseline_df(self.config['fp_baseline_adj'], gid)
-            df_surf = self._get_surfrad_df(self.config['fp_surf'], code, year)
+            logger.info('Loading data for stats')
+            df_baseline, df_baseline_adj, df_surf = self._get_stats_data(
+                self.years, gid, code)
+            logger.info('Loading data for stats complete')
+
             args = self._get_all_sky_args(gid, self.config['all_sky_vars'],
-                                          self.df_all_sky_val)
+                                            self.df_all_sky_val)
 
             out = all_sky(**args)
             all_sky_out = pd.DataFrame({k: v.flatten() for k,
                                         v in out.items()},
-                                       index=args['time_index'])
+                                        index=args['time_index'])
             all_sky_outs[code] = all_sky_out
 
             gid_mask = (self.df_all_sky_val.gid == gid)
             val_daylight_mask = (self.df_all_sky_val.loc[gid_mask,
-                                 'solar_zenith_angle'] < 89).values
-            val_cloudy_mask = val_daylight_mask & (self.df_all_sky_val.loc[gid_mask, 'cloud_type'].isin(ICE_TYPES + WATER_TYPES)).values
-            val_clear_mask = val_daylight_mask & (self.df_all_sky_val.loc[gid_mask, 'cloud_type'] <= 1).values
-            val_bad_cloud_mask = val_cloudy_mask & (self.df_all_sky_val.loc[gid_mask, 'flag'] == 'bad_cloud').values
+                                    'solar_zenith_angle'] < 89).values
+            val_cloudy_mask = (val_daylight_mask
+                                & (self.df_all_sky_val
+                                    .loc[gid_mask, 'cloud_type']
+                                    .isin(ICE_TYPES + WATER_TYPES)).values)
+            val_clear_mask = (val_daylight_mask
+                                & (self.df_all_sky_val
+                                    .loc[gid_mask, 'cloud_type'] <= 1).values)
+            val_bad_cloud_mask = (val_cloudy_mask
+                                    & (self.df_all_sky_val
+                                        .loc[gid_mask, 'flag'] == 'bad_cloud')
+                                    .values)
 
-            m_iter = zip([val_daylight_mask, val_cloudy_mask, val_clear_mask,
-                          val_bad_cloud_mask],
-                         ['All-Sky', 'Cloudy', 'Clear', 'Missing Cloud Data'])
+            m_iter = zip([val_daylight_mask, val_cloudy_mask,
+                            val_clear_mask, val_bad_cloud_mask],
+                            ['All-Sky', 'Cloudy', 'Clear',
+                            'Missing Cloud Data'])
 
             for mask, condition in m_iter:
                 for var in ['dni', 'ghi']:
@@ -398,11 +411,36 @@ class XVal:
         pkl_name = 'pgnn_{}_{}.pkl'.format(train_name, self.val_site)
         return os.path.join(self.config['model_dir'], pkl_name)
 
+    def _get_stats_data(self, years, gid, code):
+        """ Grab baseline, baseline_adjusted, and surfrad for stats """
+        df_base = None
+        df_base_adj = None
+        df_surf = None
+
+        for year in years:
+            tmp_base = self._get_baseline_df(self.config['fp_baseline'],
+                                             gid, year)
+            tmp_base_adj = self._get_baseline_df(self.config[
+                'fp_baseline_adj'], gid, year)
+            tmp_surf = self._get_surfrad_df(self.config['fp_surf'],
+                                            code, year)
+            if df_base is None:
+                df_base = tmp_base
+                df_base_adj = tmp_base_adj
+                df_surf = tmp_surf
+            else:
+                df_base = df_base.append(tmp_base, ignore_index=True)
+                df_base_adj = df_base_adj.append(tmp_base_adj,
+                                                 ignore_index=True)
+                df_surf = df_surf.append(tmp_surf, ignore_index=True)
+
+        return df_base, df_base_adj, df_surf
+
     @staticmethod
-    def _get_baseline_df(fp_baseline, gid):
-        logger.debug('Getting gid '
-                     '{} from {}'.format(gid, os.path.basename(fp_baseline)))
-        with MultiFileResource(fp_baseline) as res:
+    def _get_baseline_df(fp_baseline, gid, year):
+        fname = fp_baseline.format(year=year, yy=year%100)
+        logger.debug('Getting gid {} from {}'.format(gid, fname))
+        with MultiFileResource(fname) as res:
             df = pd.DataFrame({'ghi': res['ghi', :, gid],
                                'dni': res['dni', :, gid],
                                'cloud_type': res['cloud_type', :, gid],
@@ -410,8 +448,7 @@ class XVal:
                                'solar_zenith_angle': res['solar_zenith_angle',
                                                          :, gid],
                                }, index=res.time_index)
-
-            return df
+        return df
 
     @staticmethod
     def _get_surfrad_df(fp_surf, code, year, window=15):
@@ -548,17 +585,22 @@ class ValidationData:
         for year in self.years:
             logger.debug('Loading data for {}, {}, {}'
                          ''.format(year, all_gids, self.config['features']))
-            with NSRDBFeatures(self.config['fp_data'].format(year=year)) as res:
+            with NSRDBFeatures(self.config[
+                    'fp_data'].format(year=year)) as res:
                 temp_raw = res.extract_features(all_gids,
                                                 self.config['features'])
                 temp_all_sky = res.extract_features(all_gids,
-                                                    self.config['all_sky_vars'])
+                                                    self.config[
+                                                        'all_sky_vars'])
                 if df_raw is None:
                     df_raw = temp_raw
                     df_all_sky = temp_all_sky
                 else:
                     df_raw = df_raw.append(temp_raw)
                     df_all_sky = df_all_sky.append(temp_all_sky)
+
+        df_raw.reset_index(drop=True, inplace=True)
+        df_all_sky.reset_index(drop=True, inplace=True)
 
         self.df_feature_val = clean_cloud_df(df_raw, filter_daylight=False,
                                              filter_clear=False,
@@ -571,7 +613,8 @@ class ValidationData:
         logger.debug('Prepping validation data')
 
         day_mask = (self.df_feature_val['solar_zenith_angle'] < 89)
-        cloud_mask = day_mask & self.df_feature_val['cloud_type'].isin(ICE_TYPES + WATER_TYPES)
+        cloud_mask = (day_mask & self.df_feature_val['cloud_type']
+                      .isin(ICE_TYPES + WATER_TYPES))
 
         # TODO - handle the masks better
         self.mask = cloud_mask  # let phygnn predict only cloudsse
@@ -605,21 +648,28 @@ class TrainData:
         df_raw = None
         df_all_sky = None
 
+        # ------ Grab NSRDB data for weather properties
         for year in self.years:
             logger.debug('Loading data for {}, {}, {}'
                          ''.format(year, self.train_sites,
                                    self.config['features']))
-            with NSRDBFeatures(self.config['fp_data'].format(year=year)) as res:
+            with NSRDBFeatures(self.config[
+                    'fp_data'].format(year=year)) as res:
                 temp_raw = res.extract_features(self.train_sites,
                                                 self.config['features'])
                 temp_all_sky = res.extract_features(self.train_sites,
-                                                    self.config['all_sky_vars'])
+                                                    self.config[
+                                                        'all_sky_vars'])
                 if df_raw is None:
                     df_raw = temp_raw
                     df_all_sky = temp_all_sky
                 else:
-                    df_raw = df_raw.append(temp_raw)
-                    df_all_sky = df_all_sky.append(temp_all_sky)
+                    df_raw = df_raw.append(temp_raw, ignore_index=True)
+                    df_all_sky = df_all_sky.append(temp_all_sky,
+                                                   ignore_index=True)
+
+        logger.debug('Shape df_raw={}, df_all_sky={}'.format(df_raw.shape,
+                                                             df_all_sky.shape))
 
         logger.debug('Converting to 2D for all_sky')
         n = len(df_all_sky)
@@ -630,10 +680,11 @@ class TrainData:
         surface_albedo = df_all_sky.surface_albedo.values.reshape((n, 1))
         ssa = df_all_sky.ssa.values.reshape((n, 1))
         asymmetry = df_all_sky.asymmetry.values.reshape((n, 1))
-        solar_zenith_angle = df_all_sky.solar_zenith_angle.values.reshape((n,
-                                                                           1))
+        solar_zenith_angle = (df_all_sky.solar_zenith_angle
+                              .values.reshape((n, 1)))
         ozone = df_all_sky.ozone.values.reshape((n, 1))
-        total_precipitable_water = df_all_sky.total_precipitable_water.values.reshape((n, 1))
+        total_precipitable_water = (df_all_sky.total_precipitable_water
+                                    .values.reshape((n, 1)))
         doy = time_index.dayofyear.values
 
         radius = ti_to_radius(time_index, n_cols=1)
@@ -654,9 +705,8 @@ class TrainData:
         df_all_sky['Tddclr'] = rest_data.Tddclr
         df_all_sky['Tduclr'] = rest_data.Tduclr
 
-        # Grab surface data
+        # ------Grab surface data
         df_surf = None
-
         for year in self.years:
             logger.debug('Grabbing surface data for {} and {}'
                          ''.format(year, self.train_sites))
@@ -670,7 +720,8 @@ class TrainData:
                 if df_surf is None:
                     df_surf = temp
                 else:
-                    df_surf = df_surf.append(temp)
+                    df_surf = df_surf.append(temp, ignore_index=True)
+        logger.debug('Shape: df_surf={}'.format(df_surf.shape))
 
         assert all(df_all_sky.gid.values == df_surf.gid.values)
         assert all(df_all_sky.time_index.values == df_surf.time_index.values)
@@ -684,8 +735,11 @@ class TrainData:
         self.p_kwargs = {'labels': df_all_sky.columns.values.tolist()}
 
     def prep_data(self, filter_clear=False):
-        logger.debug('Prepping data')
+        logger.debug('Cleaning df_raw')
+        logger.debug('Shape: df_raw={}'.format(self.df_raw.shape))
         self.df_train = clean_cloud_df(self.df_raw, filter_clear=filter_clear)
+        logger.debug('Shape: df_train={}'.format(self.df_train.shape))
+        logger.debug('Cleaning df_all_sky')
         self.df_all_sky = clean_cloud_df(self.df_all_sky,
                                          filter_clear=filter_clear)
         # Inspecting features would go here
@@ -694,9 +748,10 @@ class TrainData:
         for name in self.config['drop_list']:
             if name in self.df_train:
                 self.df_train = self.df_train.drop(name, axis=1)
-
+        logger.debug('*Shape: df_train={}'.format(self.df_train.shape))
         proc = PreProcess(self.df_train)
         self.df_train = proc.process_one_hot()
+        logger.debug('**Shape: df_train={}'.format(self.df_train.shape))
         features = self.df_train.columns.values.tolist()
 
         features = [f for f in features if f not in self.config['ignore']]
@@ -705,6 +760,9 @@ class TrainData:
         self.x = self.df_train[features].values
         self.p = self.df_all_sky.values
 
+        logger.debug('Shapes: x={}, y={}, p={}'.format(self.x.shape,
+                                                       self.y.shape,
+                                                       self.p.shape))
         assert self.y.shape[0] == self.x.shape[0] == self.p.shape[0]
 
 
@@ -716,7 +774,8 @@ def clean_cloud_df(cloud_df_raw, filter_daylight=True, filter_clear=True,
 
     day_missing_ctype = day & (cloud_df['cloud_type'] < 0)
     cloud_df.loc[(cloud_df['cloud_type'] < 0), 'cloud_type'] = np.nan
-    cloud_df['cloud_type'] = cloud_df['cloud_type'].interpolate('nearest').ffill().bfill()
+    cloud_df['cloud_type'] = cloud_df['cloud_type']\
+        .interpolate('nearest').ffill().bfill()
 
     cloudy = cloud_df['cloud_type'].isin(ICE_TYPES + WATER_TYPES)
     day_clouds = day & cloudy
