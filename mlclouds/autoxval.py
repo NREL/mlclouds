@@ -1,3 +1,9 @@
+"""
+Automatic cross validation of PhyGNN models predicting opd and reff
+
+Mike Bannister 7/2020
+Based on code by Grant Buster
+"""
 import pandas as pd
 import numpy as np
 import os
@@ -229,6 +235,7 @@ class XVal:
         self.calc_stats()
 
     def train(self):
+        """ Train PhyGNN model """
         # TODO - update to control xfer learning via config dict
         logger.info('Training')
         PGNN.seed(self.config['phygnn_seed'])
@@ -255,6 +262,7 @@ class XVal:
         self.out = out
 
     def validate(self, update_clear=False, update_cloudy=False):
+        """ Validate PhyGNN model predictions """
         logger.info('Validating model')
         t0 = time.time()
 
@@ -285,8 +293,8 @@ class XVal:
         if update_clear:
             mask = ((self.df_feature_val['solar_zenith_angle'] < 89)
                     & (self.df_feature_val['cld_opd_dcomp'] <= 0.0)
-                    & self.df_feature_val['cloud_type'].isin(ICE_TYPES +
-                                                             WATER_TYPES))
+                    & self.df_feature_val['cloud_type'].isin(ICE_TYPES
+                                                             + WATER_TYPES))
             self.df_feature_val.loc[mask, 'cloud_type'] = 0
             self.df_all_sky_val.loc[mask, 'cloud_type'] = 0
             logger.debug('The PGNN predicted {} additional clear timesteps'
@@ -304,6 +312,7 @@ class XVal:
         return
 
     def calc_stats(self):
+        """ Calculate accuracy of PhyGNN model predictions """
         logger.info('Calculating statistics')
         all_sky_outs = {}
         stats = pd.DataFrame(columns=['Model', 'Site', 'Variable',
@@ -326,13 +335,11 @@ class XVal:
 
             args = self._get_all_sky_args(gid, self.config['all_sky_vars'],
                                           self.df_all_sky_val)
+
             out = all_sky(**args)
             all_sky_out = pd.DataFrame({k: v.flatten() for k,
                                        v in out.items()},
                                        index=args['time_index'])
-            # TODO - just added this line, is it rigth?
-            all_sky_out.index = df_baseline.index
-
             all_sky_outs[code] = all_sky_out
 
             gid_mask = (self.df_all_sky_val.gid == gid)
@@ -404,12 +411,14 @@ class XVal:
         self.stats = stats
 
     def save_stats(self):
+        """ Save statistics to file """
         train_name = ''.join([str(x) for x in self.train_sites])
         f_name = 'val_stats_{}_{}.csv'.format(train_name, self.val_site)
         f_name = os.path.join(self.config['model_dir'], f_name)
         self.stats.to_csv(f_name, index=False)
 
     def plot(self):
+        """ Show statistics bar charts """
         gid = self.val_site
         code = self.surf_meta.loc[gid, 'surfrad_id']
         logger.debug('Plotting for {} {}'.format(self.val_site, code))
@@ -422,6 +431,7 @@ class XVal:
 
     @property
     def model_file(self):
+        """ Model file name including training and validation sites """
         train_name = ''.join([str(x) for x in self.train_sites])
         pkl_name = 'pgnn_{}_{}.pkl'.format(train_name, self.val_site)
         return os.path.join(self.config['model_dir'], pkl_name)
@@ -444,10 +454,9 @@ class XVal:
                 df_base_adj = tmp_base_adj
                 df_surf = tmp_surf
             else:
-                df_base = df_base.append(tmp_base, ignore_index=True)
-                df_base_adj = df_base_adj.append(tmp_base_adj,
-                                                 ignore_index=True)
-                df_surf = df_surf.append(tmp_surf, ignore_index=True)
+                df_base = df_base.append(tmp_base)
+                df_base_adj = df_base_adj.append(tmp_base_adj)
+                df_surf = df_surf.append(tmp_surf)
 
         return df_base, df_base_adj, df_surf
 
@@ -492,14 +501,15 @@ class XVal:
 
 
 class AutoXVal:
+    """
+    Run cross validation by both varying the number of sites used for
+    training, and the site used for validation.
+    """
     def __init__(self, sites=[0, 1, 2, 3, 4, 5, 6], val_sites=None,
                  years=(2018,), config=CONFIG, shuffle_train=False,
                  seed=None, xval=XVal,
                  catch_nan=False, min_train=1):
         """
-        Run cross validation by both varying the number of sites used for
-        training, and the site used for validation.
-
         Parameters
         ----------
         sites: list
@@ -548,8 +558,8 @@ class AutoXVal:
             logger.info('AXV: for val {}, training on {}'
                         ''.format(val_site, all_train_sites))
 
-            for i in range(min_train-1, len(all_train_sites)):
-                train_sites = all_train_sites[0:i+1]
+            for i in range(min_train - 1, len(all_train_sites)):
+                train_sites = all_train_sites[0:i + 1]
 
                 try:
                     xv = xval(train_sites=train_sites, val_site=val_site,
@@ -589,6 +599,7 @@ class ValidationData:
         self.prep_data()
 
     def load_data(self):
+        """ Load validation data """
         logger.debug('Loading validation data')
         surf_meta = pd.read_csv(self.config['fp'], index_col=0)
         surf_meta.index.name = 'gid'
@@ -626,6 +637,7 @@ class ValidationData:
                                              add_feature_flag=True, sza_lim=89)
 
     def prep_data(self):
+        """ Prepare validation data """
         logger.debug('Prepping validation data')
 
         day_mask = (self.df_feature_val['solar_zenith_angle'] < 89)
@@ -657,6 +669,7 @@ class TrainData:
         self.prep_data()
 
     def load_data(self):
+        """ Load training data """
         surf_meta = pd.read_csv(self.config['fp'], index_col=0)
         surf_meta.index.name = 'gid'
         self.surf_meta = surf_meta[['surfrad_id']]
@@ -751,6 +764,7 @@ class TrainData:
         self.p_kwargs = {'labels': df_all_sky.columns.values.tolist()}
 
     def prep_data(self, filter_clear=False):
+        """ Clean and prepare training data """
         logger.debug('Cleaning df_raw')
         logger.debug('Shape: df_raw={}'.format(self.df_raw.shape))
         self.df_train = clean_cloud_df(self.df_raw, filter_clear=filter_clear)
@@ -784,6 +798,7 @@ class TrainData:
 
 def clean_cloud_df(cloud_df_raw, filter_daylight=True, filter_clear=True,
                    add_feature_flag=True, sza_lim=89):
+    """ Clean up cloud data """
     t0 = time.time()
     cloud_df = cloud_df_raw.copy()
     day = (cloud_df['solar_zenith_angle'] < sza_lim)
