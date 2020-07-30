@@ -113,6 +113,7 @@ CONFIG = {
                      'total_precipitable_water',
                      ],
 
+    # TODO - the 'y's being used are hardwired in the validation code
     'y_labels': ['cld_opd_dcomp', 'cld_reff_dcomp'],
 
     # TODO - There is some overlap and confusion between the next two
@@ -136,10 +137,12 @@ CONFIG = {
     # phygnn params
     'phygnn_seed': 0,
     'p_fun': p_fun_all_sky,
-    'loss_weights': (1, 1),
     'metric': 'relative_mae',
     'learning_rate': 0.01,
     'n_batch': 4,
+    # TODO - Allow loss weights and epoches to be changed separately for nn
+    # and phygnn
+    'loss_weights': (1, 1),
     'n_epoch': 100,
 
     # Validation vars
@@ -178,8 +181,7 @@ class XVal:
         load_model: bool
             Skip training and load model from pickle file
         """
-        # TODO - years is only partially implemented
-        logger.info('Training on {}, validating against {}, for {}'
+        logger.info('XV: Training on {}, validating against {}, for {}'
                     ''.format(train_sites, val_site, years))
         assert val_site not in train_sites
 
@@ -219,24 +221,34 @@ class XVal:
 
         self.df_x_val = val_data.df_x_val
         self.df_all_sky_val = val_data.df_all_sky_val
+        # TODO - df_feature_val appears to only be used for mask generation,
+        # is that right?
         self.df_feature_val = val_data.df_feature_val
         self.mask = val_data.mask
         self.validate()
         self.calc_stats()
 
     def train(self):
+        # TODO - update to control xfer learning via config dict
         logger.info('Training')
         PGNN.seed(self.config['phygnn_seed'])
         model = PGNN(p_fun=self.config['p_fun'],
                      hidden_layers=self.config['hidden_layers'],
-                     loss_weights=self.config['loss_weights'],
+                     # loss_weights=self.config['loss_weights'],
+                     loss_weights=(1, 0),
                      metric=self.config['metric'],
                      input_dims=self.x.shape[1],
                      output_dims=self.y.shape[1],
                      learning_rate=self.config['learning_rate'])
-
+        logger.info('Training part A - pure data')
         out = model.fit(self.x, self.y, self.p, n_batch=self.config['n_batch'],
                         n_epoch=self.config['n_epoch'], p_kwargs=self.p_kwargs)
+
+        model.set_loss_weights((1, 1))
+        logger.info('Training part B - data and phygnn')
+        out = model.fit(self.x, self.y, self.p, n_batch=self.config['n_batch'],
+                        n_epoch=self.config['n_epoch'], p_kwargs=self.p_kwargs)
+
         model.save(self.model_file)
 
         self.model = model
@@ -245,6 +257,8 @@ class XVal:
     def validate(self, update_clear=False, update_cloudy=False):
         logger.info('Validating model')
         t0 = time.time()
+
+        # Predict opd and reff using model
         predicted_raw = self.model.predict(self.df_x_val.values)
         logger.debug('Prediction took {:.2f} seconds'.format(time.time() - t0))
         opd_raw = predicted_raw[:, 0]
@@ -299,12 +313,11 @@ class XVal:
         all_sky_gids = [k for k, v in
                         self.surf_meta.to_dict()['surfrad_id'].items()
                         if v not in ['srrl', 'sgp']]
-        # all_sky_gids = [743]
 
         for gid in all_sky_gids:
             code = self.surf_meta.loc[gid, 'surfrad_id']
             logger.debug('Computing stats for gid: {} {}'
-                            .format(gid, code))
+                         .format(gid, code))
 
             logger.info('Loading data for stats')
             df_baseline, df_baseline_adj, df_surf = self._get_stats_data(
@@ -312,33 +325,35 @@ class XVal:
             logger.info('Loading data for stats complete')
 
             args = self._get_all_sky_args(gid, self.config['all_sky_vars'],
-                                            self.df_all_sky_val)
-
+                                          self.df_all_sky_val)
             out = all_sky(**args)
             all_sky_out = pd.DataFrame({k: v.flatten() for k,
-                                        v in out.items()},
-                                        index=args['time_index'])
+                                       v in out.items()},
+                                       index=args['time_index'])
+            # TODO - just added this line, is it rigth?
+            all_sky_out.index = df_baseline.index
+
             all_sky_outs[code] = all_sky_out
 
             gid_mask = (self.df_all_sky_val.gid == gid)
             val_daylight_mask = (self.df_all_sky_val.loc[gid_mask,
-                                    'solar_zenith_angle'] < 89).values
+                                 'solar_zenith_angle'] < 89).values
             val_cloudy_mask = (val_daylight_mask
-                                & (self.df_all_sky_val
-                                    .loc[gid_mask, 'cloud_type']
-                                    .isin(ICE_TYPES + WATER_TYPES)).values)
+                               & (self.df_all_sky_val
+                                  .loc[gid_mask, 'cloud_type']
+                                  .isin(ICE_TYPES + WATER_TYPES)).values)
             val_clear_mask = (val_daylight_mask
-                                & (self.df_all_sky_val
-                                    .loc[gid_mask, 'cloud_type'] <= 1).values)
+                              & (self.df_all_sky_val
+                                 .loc[gid_mask, 'cloud_type'] <= 1).values)
             val_bad_cloud_mask = (val_cloudy_mask
-                                    & (self.df_all_sky_val
-                                        .loc[gid_mask, 'flag'] == 'bad_cloud')
-                                    .values)
+                                  & (self.df_all_sky_val
+                                     .loc[gid_mask, 'flag'] == 'bad_cloud')
+                                  .values)
 
             m_iter = zip([val_daylight_mask, val_cloudy_mask,
-                            val_clear_mask, val_bad_cloud_mask],
-                            ['All-Sky', 'Cloudy', 'Clear',
-                            'Missing Cloud Data'])
+                          val_clear_mask, val_bad_cloud_mask],
+                         ['All-Sky', 'Cloudy', 'Clear',
+                          'Missing Cloud Data'])
 
             for mask, condition in m_iter:
                 for var in ['dni', 'ghi']:
@@ -438,7 +453,7 @@ class XVal:
 
     @staticmethod
     def _get_baseline_df(fp_baseline, gid, year):
-        fname = fp_baseline.format(year=year, yy=year%100)
+        fname = fp_baseline.format(year=year, yy=year % 100)
         logger.debug('Getting gid {} from {}'.format(gid, fname))
         with MultiFileResource(fname) as res:
             df = pd.DataFrame({'ghi': res['ghi', :, gid],
@@ -507,7 +522,6 @@ class AutoXVal:
         min_train: int
             Minimum # of sites to use for training
         """
-        # TODO - years is only partially implemented
         if seed is not None:
             np.random.seed(seed)
 
@@ -515,6 +529,13 @@ class AutoXVal:
             val_sites = sites
         elif isinstance(val_sites, int):
             val_sites = [val_sites]
+        elif isinstance(val_sites, str):
+            logger.info('Casting val_site {} from str to int'
+                        ''.format(val_sites))
+            val_sites = [int(val_sites)]
+
+        logger.info('AXV: training sites are {}, val sites are {}'
+                    ''.format(sites, val_sites))
 
         stats = None
         val_data = ValidationData(years, config)
@@ -524,8 +545,8 @@ class AutoXVal:
             if shuffle_train:
                 np.random.shuffle(all_train_sites)
 
-            logger.info('Training sites = {} for auto x validation'
-                        ''.format(all_train_sites))
+            logger.info('AXV: for val {}, training on {}'
+                        ''.format(val_site, all_train_sites))
 
             for i in range(min_train-1, len(all_train_sites)):
                 train_sites = all_train_sites[0:i+1]
@@ -535,14 +556,15 @@ class AutoXVal:
                               config=config, years=years, val_data=val_data)
                 except ArithmeticError as e:
                     if catch_nan:
-                        logger.warning('Loss=nan: {}'.format(e))
+                        logger.warning('Loss=nan, val on {}, train on {}'
+                                       ''.format(val_site, train_sites))
                         continue
                     else:
                         raise e
 
+                # The _ prevents the 0 from being trimmed off
                 ts = '_' + ''.join([str(x) for x in train_sites])
                 xv.stats['val_site'] = val_site
-                # TODO - train_sites is defaulting to int, force to str
                 xv.stats['train_sites'] = ts
                 xv.stats['num_ts'] = len(ts) - 1
 
@@ -557,19 +579,13 @@ class AutoXVal:
             self.stats.to_csv('axv_stats_{}_{}.csv'.format(train_name,
                                                            val_site))
 
-    @classmethod
-    def run(cls):
-        pass
-
 
 class ValidationData:
     """ Load and prep validation data """
     def __init__(self, years, config):
         self.years = years
         self.config = config
-        logger.info('Loading validation data')
         self.load_data()
-        logger.info('Prepping validation data')
         self.prep_data()
 
     def load_data(self):
