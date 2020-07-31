@@ -507,8 +507,8 @@ class AutoXVal:
     """
     def __init__(self, sites=[0, 1, 2, 3, 4, 5, 6], val_sites=None,
                  years=(2018,), config=CONFIG, shuffle_train=False,
-                 seed=None, xval=XVal,
-                 catch_nan=False, min_train=1):
+                 seed=None, xval=XVal, catch_nan=False, min_train=1,
+                 write_stats=True):
         """
         Parameters
         ----------
@@ -531,6 +531,8 @@ class AutoXVal:
             If true, catch loss=nan exceptions and continue analysis
         min_train: int
             Minimum # of sites to use for training
+        write_stats: bool
+            Write statistics to disc if True
         """
         if seed is not None:
             np.random.seed(seed)
@@ -585,9 +587,10 @@ class AutoXVal:
 
             self.stats = stats.reset_index()
 
+        if write_stats:
             train_name = ''.join([str(x) for x in all_train_sites])
-            self.stats.to_csv('axv_stats_{}_{}.csv'.format(train_name,
-                                                           val_site))
+            self.stats.to_csv('axv_stats_{}_{}.csv'
+                              ''.format(train_name, val_sites))
 
 
 class ValidationData:
