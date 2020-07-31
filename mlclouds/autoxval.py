@@ -146,10 +146,15 @@ CONFIG = {
     'metric': 'relative_mae',
     'learning_rate': 0.01,
     'n_batch': 4,
-    # TODO - Allow loss weights and epoches to be changed separately for nn
-    # and phygnn
-    'loss_weights': (1, 1),
-    'n_epoch': 100,
+
+    # Two training stages are used, with independent number of epochs and
+    # loss weights. The loss weight tuple is (pure nn loss, physics loss). By
+    # default the first stage of training ignores the physics loss and the
+    # second stage weights the two losses evenly.
+    'epochs_a': 100,
+    'epochs_b': 100,
+    'loss_weights_a': (1, 0),
+    'loss_weights_b': (1, 1),
 
     # Validation vars
     'fp_baseline': '/lustre/eaglefs/projects/mlclouds/'
@@ -237,24 +242,28 @@ class XVal:
     def train(self):
         """ Train PhyGNN model """
         # TODO - update to control xfer learning via config dict
-        logger.info('Training')
+        logger.debug('Building PhyGNN model')
         PGNN.seed(self.config['phygnn_seed'])
         model = PGNN(p_fun=self.config['p_fun'],
                      hidden_layers=self.config['hidden_layers'],
-                     # loss_weights=self.config['loss_weights'],
-                     loss_weights=(1, 0),
+                     loss_weights=self.config['loss_weights_a'],
                      metric=self.config['metric'],
                      input_dims=self.x.shape[1],
                      output_dims=self.y.shape[1],
                      learning_rate=self.config['learning_rate'])
-        logger.info('Training part A - pure data')
-        out = model.fit(self.x, self.y, self.p, n_batch=self.config['n_batch'],
-                        n_epoch=self.config['n_epoch'], p_kwargs=self.p_kwargs)
 
-        model.set_loss_weights((1, 1))
-        logger.info('Training part B - data and phygnn')
+        logger.info('Training part A - pure data. Loss is {}'
+                    ''.format(self.config['loss_weights_a']))
         out = model.fit(self.x, self.y, self.p, n_batch=self.config['n_batch'],
-                        n_epoch=self.config['n_epoch'], p_kwargs=self.p_kwargs)
+                        n_epoch=self.config['epochs_a'],
+                        p_kwargs=self.p_kwargs)
+
+        logger.info('Training part B - data and phygnn. Loss is {}'
+                    ''.format(self.config['loss_weights_b']))
+        model.set_loss_weights(self.config['loss_weights_b'])
+        out = model.fit(self.x, self.y, self.p, n_batch=self.config['n_batch'],
+                        n_epoch=self.config['epochs_b'],
+                        p_kwargs=self.p_kwargs)
 
         model.save(self.model_file)
 
@@ -542,8 +551,6 @@ class AutoXVal:
         elif isinstance(val_sites, int):
             val_sites = [val_sites]
         elif isinstance(val_sites, str):
-            logger.info('Casting val_site {} from str to int'
-                        ''.format(val_sites))
             val_sites = [int(val_sites)]
 
         logger.info('AXV: training sites are {}, val sites are {}'

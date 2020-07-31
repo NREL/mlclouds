@@ -22,5 +22,5 @@ config['learning_rate'] = 0.011
 print('Cross validating against ', sys.argv[1])
 
 axv = AutoXVal(sites=[0, 1, 2, 3, 4, 5, 6], years=[2018, 2019],
-               val_sites=str(sys.argv[1]),
+               val_sites=int(sys.argv[1]),
                config=config, catch_nan=True)
