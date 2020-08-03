@@ -33,16 +33,21 @@ def clean_cloud_df(cloud_df_raw, filter_daylight=True, filter_clear=True,
     cloud_df.loc[(cloud_df['cld_opd_dcomp'] <= 0), 'cld_opd_dcomp'] = np.nan
     cloud_df.loc[(cloud_df['cld_reff_dcomp'] <= 0), 'cld_reff_dcomp'] = np.nan
 
-    logger.debug('{:.2f}% of timesteps are daylight'
-                 .format(100 * day.sum() / len(day)))
-    logger.debug('{:.2f}% of daylight timesteps are cloudy'
-                 .format(100 * day_clouds.sum() / day.sum()))
-    logger.debug('{:.2f}% of daylight timesteps are missing cloud type'
-                 .format(100 * day_missing_ctype.sum() / day.sum()))
-    logger.debug('{:.2f}% of cloudy daylight timesteps are missing cloud opd'
-                 .format(100 * day_missing_opd.sum() / day_clouds.sum()))
-    logger.debug('{:.2f}% of cloudy daylight timesteps are missing cloud reff'
-                 .format(100 * day_missing_reff.sum() / day_clouds.sum()))
+    logger.info('{:.2f}% of timesteps are daylight'
+                .format(100 * day.sum() / len(day)))
+    logger.info('{:.2f}% of daylight timesteps are cloudy'
+                .format(100 * day_clouds.sum() / day.sum()))
+    logger.info('{:.2f}% of daylight timesteps are missing cloud type'
+                .format(100 * day_missing_ctype.sum() / day.sum()))
+    logger.info('{:.2f}% of cloudy daylight timesteps are missing cloud opd'
+                .format(100 * day_missing_opd.sum() / day_clouds.sum()))
+    logger.info('{:.2f}% of cloudy daylight timesteps are missing cloud reff'
+                .format(100 * day_missing_reff.sum() / day_clouds.sum()))
+
+    logger.debug('Column NaN values:')
+    for c in cloud_df.columns:
+        pnan = 100 * pd.isna(cloud_df[c]).sum() / len(cloud_df)
+        logger.debug('\t"{}" has {:.2f}% NaN values'.format(c, pnan))
 
     cloud_df = cloud_df.interpolate('nearest').ffill().bfill()
     cloud_df.loc[~cloudy, 'cld_opd_dcomp'] = 0.0
@@ -71,12 +76,12 @@ def clean_cloud_df(cloud_df_raw, filter_daylight=True, filter_clear=True,
         mask = mask & cloudy
 
     if filter_daylight or filter_clear:
-        logger.debug('Data reduced from '
-                     '{} rows to {} after filters ({:.2f}% of original)'
-                     .format(len(cloud_df), mask.sum(),
-                             100 * mask.sum() / len(cloud_df)))
+        logger.info('Data reduced from '
+                    '{} rows to {} after filters ({:.2f}% of original)'
+                    .format(len(cloud_df), mask.sum(),
+                            100 * mask.sum() / len(cloud_df)))
         cloud_df = cloud_df[mask]
 
-    logger.debug('Cleaning took {:.1f} seconds'.format(time.time() - t0))
+    logger.info('Cleaning took {:.1f} seconds'.format(time.time() - t0))
 
     return cloud_df
