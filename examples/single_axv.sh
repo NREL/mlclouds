@@ -5,4 +5,4 @@
 #SBATCH --time=240
 #SBATCH --qos=high
 
-python single $1
+python single_axv.py $1

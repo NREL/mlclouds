@@ -599,6 +599,29 @@ class AutoXVal:
             self.stats.to_csv('axv_stats_{}_{}.csv'
                               ''.format(train_name, val_sites))
 
+    @classmethod
+    def k_fold(cls, sites=[0, 1, 2, 3, 4, 5, 6], val_sites=None,
+               years=(2018,), config=CONFIG, seed=None, xval=XVal,
+               catch_nan=False, write_stats=True):
+        """ Perform k-fold validation, only train on n-1 sites """
+        min_train = len(sites) - 1
+        axv = cls(sites=sites, val_sites=val_sites, years=years,
+                  config=config, seed=seed, xval=xval, catch_nan=catch_nan,
+                  min_train=min_train, write_stats=write_stats)
+        return axv
+
+    @classmethod
+    def kxn_fold(cls, sites=[0, 1, 2, 3, 4, 5, 6], val_sites=None,
+                 years=(2018,), config=CONFIG, shuffle_train=False,
+                 seed=None, xval=XVal, catch_nan=False, min_train=1,
+                 write_stats=True):
+        """ Perform cross validation against subsets of training sites """
+        axv = cls(sites=sites, val_sites=val_sites, years=years,
+                  config=config, shuffle_train=shuffle_train,
+                  seed=seed, xval=xval, catch_nan=catch_nan,
+                  min_train=min_train, write_stats=write_stats)
+        return axv
+
 
 class ValidationData:
     """ Load and prep validation data """
