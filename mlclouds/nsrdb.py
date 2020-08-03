@@ -30,8 +30,10 @@ class NSRDBFeatures(NSRDB):
         features_df : pandas.DataFrame
             Features DataFrame
         """
-        if not isinstance(features, list):
+        if isinstance(features, str):
             features = [features]
+        elif isinstance(features, tuple):
+            features = list(features)
 
         features_df = None
         for f in features:
