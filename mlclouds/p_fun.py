@@ -17,7 +17,9 @@ from mlclouds.tdhi import t_calc_dhi
 logger = logging.getLogger(__name__)
 
 
-def p_fun_all_sky(y_predicted, y_true, p, labels=None):
+def p_fun_all_sky(y_predicted, y_true, p, labels=None,
+                  loss_terms=('mae_ghi', 'mae_dni', 'mae_dhi',
+                              'mbe_ghi', 'mbe_dni', 'mbe_dhi')):
     """ Physics loss function """
     n = len(y_true)
     tau = tf.expand_dims(y_predicted[:, 0], axis=1)
@@ -79,19 +81,26 @@ def p_fun_all_sky(y_predicted, y_true, p, labels=None):
     err_dhi = tf.boolean_mask(err_dhi, ~tf.math.is_nan(err_dhi))
     err_dhi = tf.boolean_mask(err_dhi, tf.math.is_finite(err_dhi))
 
-    mae_ghi = tf.reduce_mean(tf.abs(err_ghi)) / tf.reduce_mean(ghi_ground)
-    mae_dni = tf.reduce_mean(tf.abs(err_dni)) / tf.reduce_mean(dni_ground)
-    mae_dhi = tf.reduce_mean(tf.abs(err_dhi)) / tf.reduce_mean(dhi_ground)
-    mbe_ghi = tf.abs(tf.reduce_mean(err_ghi)) / tf.reduce_mean(ghi_ground)
-    mbe_dni = tf.abs(tf.reduce_mean(err_dni)) / tf.reduce_mean(dni_ground)
-    mbe_dhi = tf.abs(tf.reduce_mean(err_dhi)) / tf.reduce_mean(dhi_ground)
+    terms = {}
+    terms['mae_ghi'] = (tf.reduce_mean(tf.abs(err_ghi))
+                        / tf.reduce_mean(ghi_ground))
+    terms['mae_dni'] = (tf.reduce_mean(tf.abs(err_dni))
+                        / tf.reduce_mean(dni_ground))
+    terms['mae_dhi'] = (tf.reduce_mean(tf.abs(err_dhi))
+                        / tf.reduce_mean(dhi_ground))
+    terms['mbe_ghi'] = (tf.abs(tf.reduce_mean(err_ghi))
+                        / tf.reduce_mean(ghi_ground))
+    terms['mbe_dni'] = (tf.abs(tf.reduce_mean(err_dni))
+                        / tf.reduce_mean(dni_ground))
+    terms['mbe_dhi'] = (tf.abs(tf.reduce_mean(err_dhi))
+                        / tf.reduce_mean(dhi_ground))
 
     logger.debug('GHI MAE: {:.3f}% GHI MBE: {:.3f}%'
-                 .format(100 * mae_ghi, 100 * mbe_ghi))
+                 .format(100 * terms['mae_ghi'], 100 * terms['mbe_ghi']))
     logger.debug('DNI MAE: {:.3f}% DNI MBE: {:.3f}%'
-                 .format(100 * mae_dni, 100 * mbe_dni))
+                 .format(100 * terms['mae_dni'], 100 * terms['mbe_dni']))
     logger.debug('DHI MAE: {:.3f}% DHI MBE: {:.3f}%'
-                 .format(100 * mae_dhi, 100 * mbe_dhi))
+                 .format(100 * terms['mae_dhi'], 100 * terms['mbe_dhi']))
 
-    p_loss = mae_ghi + mae_dhi + mae_dni + mbe_ghi + mbe_dhi + mbe_dni
+    p_loss = sum([terms[x] for x in loss_terms])
     return p_loss
