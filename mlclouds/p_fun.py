@@ -94,13 +94,22 @@ def p_fun_all_sky(y_predicted, y_true, p, labels=None,
                         / tf.reduce_mean(dni_ground))
     terms['mbe_dhi'] = (tf.abs(tf.reduce_mean(err_dhi))
                         / tf.reduce_mean(dhi_ground))
+    terms['rmse_ghi'] = (tf.sqrt(tf.reduce_mean(tf.square(err_ghi)))
+                         / tf.reduce_mean(ghi_ground))
+    terms['rmse_dni'] = (tf.sqrt(tf.reduce_mean(tf.square(err_dni)))
+                         / tf.reduce_mean(dni_ground))
+    terms['rmse_dhi'] = (tf.sqrt(tf.reduce_sum(tf.square(err_dhi)))
+                         / tf.reduce_mean(dhi_ground))
 
-    logger.debug('GHI MAE: {:.3f}% GHI MBE: {:.3f}%'
-                 .format(100 * terms['mae_ghi'], 100 * terms['mbe_ghi']))
-    logger.debug('DNI MAE: {:.3f}% DNI MBE: {:.3f}%'
-                 .format(100 * terms['mae_dni'], 100 * terms['mbe_dni']))
-    logger.debug('DHI MAE: {:.3f}% DHI MBE: {:.3f}%'
-                 .format(100 * terms['mae_dhi'], 100 * terms['mbe_dhi']))
+    logger.debug('GHI MAE: {:.3f}% GHI MBE: {:.3f}% GHI RMSE: {:.3f}%'
+                 .format(100 * terms['mae_ghi'], 100 * terms['mbe_ghi'],
+                         100 * terms['rmse_ghi']))
+    logger.debug('DNI MAE: {:.3f}% DNI MBE: {:.3f}% DNI RMSE: {:.3f}%'
+                 .format(100 * terms['mae_dni'], 100 * terms['mbe_dni'],
+                         100 * terms['rmse_dni']))
+    logger.debug('DHI MAE: {:.3f}% DHI MBE: {:.3f}%, DHI RMSE: {:.3f}%'
+                 .format(100 * terms['mae_dhi'], 100 * terms['mbe_dhi'],
+                         100 * terms['rmse_dhi']))
 
     p_loss = sum([terms[x] for x in loss_terms])
     return p_loss
