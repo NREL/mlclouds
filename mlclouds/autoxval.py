@@ -30,6 +30,20 @@ from phygnn.pre_processing import PreProcess
 logger = logging.getLogger(__name__)
 
 
+ALL_SKY_VARS = ('alpha',
+                'aod',
+                'asymmetry',
+                'cloud_type',
+                'cld_opd_dcomp',
+                'cld_reff_dcomp',
+                'ozone',
+                'solar_zenith_angle',
+                'ssa',
+                'surface_albedo',
+                'surface_pressure',
+                'total_precipitable_water')
+
+
 CONFIG = {
     'fp_data': '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/{year}_adj/'
                'mlclouds_surfrad_{year}_adj.h5',
@@ -47,13 +61,6 @@ CONFIG = {
                  'total_precipitable_water', 'surface_albedo',
                  'cld_opd_dcomp', 'cld_reff_dcomp',
                  ],
-
-    'all_sky_vars': ['alpha', 'aod', 'asymmetry', 'cloud_type',
-                     'cld_opd_dcomp',
-                     'cld_reff_dcomp', 'ozone', 'solar_zenith_angle', 'ssa',
-                     'surface_albedo', 'surface_pressure',
-                     'total_precipitable_water',
-                     ],
 
     # TODO - the 'y's being used are hardwired in the validation code
     'y_labels': ['cld_opd_dcomp', 'cld_reff_dcomp'],
@@ -78,7 +85,6 @@ CONFIG = {
 
     # phygnn params
     'phygnn_seed': 0,
-    'p_fun': p_fun_all_sky,
     'metric': 'relative_mae',
     'learning_rate': 0.01,
     'n_batch': 4,
@@ -180,7 +186,7 @@ class XVal:
         # TODO - update to control xfer learning via config dict
         logger.debug('Building PhyGNN model')
         PGNN.seed(self.config['phygnn_seed'])
-        model = PGNN(p_fun=self.config['p_fun'],
+        model = PGNN(p_fun=self.config.get('p_fun', p_fun_all_sky),
                      hidden_layers=self.config['hidden_layers'],
                      loss_weights=self.config['loss_weights_a'],
                      metric=self.config['metric'],
@@ -278,8 +284,9 @@ class XVal:
                 self.years, gid, code)
             logger.info('Loading data for stats complete')
 
-            args = self._get_all_sky_args(gid, self.config['all_sky_vars'],
-                                          self.df_all_sky_val)
+            args = self._get_all_sky_args(
+                gid, self.config.get('all_sky_vars', ALL_SKY_VARS),
+                self.df_all_sky_val)
 
             out = all_sky(**args)
             all_sky_out = pd.DataFrame({k: v.flatten() for k,
@@ -433,6 +440,9 @@ class XVal:
     def _get_all_sky_args(gid, all_sky_vars, df_all_sky):
         args = {}
 
+        if all_sky_vars is None:
+            all_sky_vars = ALL_SKY_VARS
+
         for var in all_sky_vars:
             gid_mask = (df_all_sky.gid == gid)
             arr = df_all_sky.loc[gid_mask, var].values
@@ -585,9 +595,8 @@ class ValidationData:
                     'fp_data'].format(year=year)) as res:
                 temp_raw = res.extract_features(all_gids,
                                                 self.config['features'])
-                temp_all_sky = res.extract_features(all_gids,
-                                                    self.config[
-                                                        'all_sky_vars'])
+                temp_all_sky = res.extract_features(
+                    all_gids, self.config.get('all_sky_vars', ALL_SKY_VARS))
                 if df_raw is None:
                     df_raw = temp_raw
                     df_all_sky = temp_all_sky
@@ -655,9 +664,9 @@ class TrainData:
                     'fp_data'].format(year=year)) as res:
                 temp_raw = res.extract_features(self.train_sites,
                                                 self.config['features'])
-                temp_all_sky = res.extract_features(self.train_sites,
-                                                    self.config[
-                                                        'all_sky_vars'])
+                temp_all_sky = res.extract_features(
+                    self.train_sites,
+                    self.config.get('all_sky_vars', ALL_SKY_VARS))
                 if df_raw is None:
                     df_raw = temp_raw
                     df_all_sky = temp_all_sky
