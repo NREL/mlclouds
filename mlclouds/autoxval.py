@@ -279,10 +279,11 @@ class XVal:
             logger.debug('Computing stats for gid: {} {}'
                          .format(gid, code))
 
-            logger.info('Loading data for stats')
+            logger.info('Loading data for stats for "{}"'.format(code))
             df_baseline, df_baseline_adj, df_surf = self._get_stats_data(
                 self.years, gid, code)
-            logger.info('Loading data for stats complete')
+            logger.info('Loading data for stats complete for "{}"'
+                        .format(code))
 
             args = self._get_all_sky_args(
                 gid, self.config.get('all_sky_vars', ALL_SKY_VARS),
@@ -309,10 +310,10 @@ class XVal:
                                      .loc[gid_mask, 'flag'] == 'bad_cloud')
                                   .values)
 
-            m_iter = zip([val_daylight_mask, val_cloudy_mask,
-                          val_clear_mask, val_bad_cloud_mask],
-                         ['All-Sky', 'Cloudy', 'Clear',
-                          'Missing Cloud Data'])
+            m_iter = [[val_daylight_mask, 'All-Sky'],
+                      [val_cloudy_mask, 'Cloudy'],
+                      [val_clear_mask, 'Clear'],
+                      [val_bad_cloud_mask, 'Missing Cloud Data']]
 
             for mask, condition in m_iter:
                 for var in ['dni', 'ghi']:
@@ -361,6 +362,7 @@ class XVal:
                     stats.at[i, 'RMSE (%)'] = rmse_ml
                     i += 1
         self.stats = stats
+        logger.info('Finished computing stats.')
 
     def save_stats(self):
         """ Save statistics to file """
@@ -542,8 +544,9 @@ class AutoXVal:
 
         if write_stats:
             train_name = ''.join([str(x) for x in all_train_sites])
-            self.stats.to_csv('axv_stats_{}_{}.csv'
-                              ''.format(train_name, val_sites))
+            fpath = 'axv_stats_{}_{}.csv'.format(train_name, val_sites)
+            self.stats.to_csv(fpath)
+            logger.info('Saved stats to: {}'.format(fpath))
 
     @classmethod
     def k_fold(cls, sites=[0, 1, 2, 3, 4, 5, 6], val_sites=None,
@@ -740,6 +743,7 @@ class TrainData:
         self.df_raw = df_raw
         self.df_all_sky = df_all_sky.interpolate('nearest').bfill().ffill()
         self.p_kwargs = {'labels': df_all_sky.columns.values.tolist()}
+        self.p_kwargs.update(self.config.get('p_kwargs', {}))
 
     def prep_data(self, filter_clear=False):
         """ Clean and prepare training data """
