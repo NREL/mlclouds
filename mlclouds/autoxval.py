@@ -11,8 +11,6 @@ import time
 import logging
 import plotly.express as px
 
-import tensorflow as tf
-
 from rex.resource import MultiFileResource
 
 from nsrdb.file_handlers.surfrad import Surfrad
@@ -23,75 +21,13 @@ from nsrdb.all_sky.utilities import ti_to_radius, calc_beta
 from nsrdb.utilities.statistics import mae_perc, mbe_perc, rmse_perc
 
 from mlclouds.nsrdb import NSRDBFeatures
-from mlclouds.tdisc import tdisc
-from mlclouds.tfarms import tfarms
+from mlclouds.p_fun import p_fun_all_sky
+from mlclouds.data_cleaners import clean_cloud_df
 
 from phygnn import PhysicsGuidedNeuralNetwork as PGNN
 from phygnn.pre_processing import PreProcess
 
 logger = logging.getLogger(__name__)
-
-
-def p_fun_all_sky(y_predicted, y_true, p, labels=None):
-    """ Physics loss function """
-    n = len(y_true)
-    tau = tf.expand_dims(y_predicted[:, 0], axis=1)
-    cld_reff = tf.expand_dims(y_predicted[:, 1], axis=1)
-
-    tau = tf.where(tau < 0, 0.0001, tau)
-    tau = tf.where(tau > 160, 160, tau)
-    cld_reff = tf.where(cld_reff < 0, 0.0001, cld_reff)
-    cld_reff = tf.where(cld_reff > 160, 160, cld_reff)
-
-    cloud_type = p[:, labels.index('cloud_type')
-                   ].astype(np.float32).reshape((n, 1))
-    solar_zenith_angle = p[:, labels.index('solar_zenith_angle')
-                           ].astype(np.float32).reshape((n, 1))
-    doy = p[:, labels.index('doy')].astype(np.float32).reshape((n, 1))
-    radius = p[:, labels.index('radius')].astype(np.float32).reshape((n, 1))
-    Tuuclr = p[:, labels.index('Tuuclr')].astype(np.float32).reshape((n, 1))
-    Ruuclr = p[:, labels.index('Ruuclr')].astype(np.float32).reshape((n, 1))
-    Tddclr = p[:, labels.index('Tddclr')].astype(np.float32).reshape((n, 1))
-    Tduclr = p[:, labels.index('Tduclr')].astype(np.float32).reshape((n, 1))
-    albedo = p[:, labels.index('surface_albedo')
-               ].astype(np.float32).reshape((n, 1))
-    pressure = p[:, labels.index('surface_pressure')
-                 ].astype(np.float32).reshape((n, 1))
-
-    cs_dni = p[:, labels.index('clearsky_dni')].astype(np.float32).reshape((n,
-                                                                            1))
-    cs_ghi = p[:, labels.index('clearsky_ghi')].astype(np.float32).reshape((n,
-                                                                            1))
-    dni_ground = p[:, labels.index('dni')].astype(np.float32).reshape((n, 1))
-    ghi_ground = p[:, labels.index('ghi')].astype(np.float32).reshape((n, 1))
-    cs_dni = tf.convert_to_tensor(cs_dni, dtype=tf.float32)
-    cs_ghi = tf.convert_to_tensor(cs_ghi, dtype=tf.float32)
-    dni_ground = tf.convert_to_tensor(dni_ground, dtype=tf.float32)
-    ghi_ground = tf.convert_to_tensor(ghi_ground, dtype=tf.float32)
-
-    ghi_predicted = tfarms(tau, cloud_type, cld_reff, solar_zenith_angle,
-                           radius, Tuuclr, Ruuclr, Tddclr, Tduclr, albedo)
-    dni_predicted = tdisc(ghi_predicted, solar_zenith_angle, doy,
-                          pressure=pressure)
-
-    dni_predicted = tf.where(tau == 0.0001, cs_dni, dni_predicted)
-    ghi_predicted = tf.where(tau == 0.0001, cs_ghi, ghi_predicted)
-
-    err_ghi = ghi_predicted - ghi_ground
-    err_ghi = tf.boolean_mask(err_ghi, ~tf.math.is_nan(err_ghi))
-    err_ghi = tf.boolean_mask(err_ghi, tf.math.is_finite(err_ghi))
-
-    err_dni = dni_predicted - dni_ground
-    err_dni = tf.boolean_mask(err_dni, ~tf.math.is_nan(err_dni))
-    err_dni = tf.boolean_mask(err_dni, tf.math.is_finite(err_dni))
-
-    mae_ghi = tf.reduce_mean(tf.abs(err_ghi)) / tf.reduce_mean(ghi_ground)
-    mae_dni = tf.reduce_mean(tf.abs(err_dni)) / tf.reduce_mean(dni_ground)
-    mbe_ghi = tf.abs(tf.reduce_mean(err_ghi)) / tf.reduce_mean(ghi_ground)
-    mbe_dni = tf.abs(tf.reduce_mean(err_dni)) / tf.reduce_mean(dni_ground)
-
-    p_loss = mae_ghi + mae_dni + mbe_ghi + mbe_dni
-    return p_loss
 
 
 CONFIG = {
@@ -827,71 +763,3 @@ class TrainData:
                                                        self.y.shape,
                                                        self.p.shape))
         assert self.y.shape[0] == self.x.shape[0] == self.p.shape[0]
-
-
-def clean_cloud_df(cloud_df_raw, filter_daylight=True, filter_clear=True,
-                   add_feature_flag=True, sza_lim=89):
-    """ Clean up cloud data """
-    t0 = time.time()
-    cloud_df = cloud_df_raw.copy()
-    day = (cloud_df['solar_zenith_angle'] < sza_lim)
-
-    day_missing_ctype = day & (cloud_df['cloud_type'] < 0)
-    cloud_df.loc[(cloud_df['cloud_type'] < 0), 'cloud_type'] = np.nan
-    cloud_df['cloud_type'] = cloud_df['cloud_type']\
-        .interpolate('nearest').ffill().bfill()
-
-    cloudy = cloud_df['cloud_type'].isin(ICE_TYPES + WATER_TYPES)
-    day_clouds = day & cloudy
-    day_missing_opd = day_clouds & (cloud_df['cld_opd_dcomp'] <= 0)
-    day_missing_reff = day_clouds & (cloud_df['cld_reff_dcomp'] <= 0)
-    cloud_df.loc[(cloud_df['cld_opd_dcomp'] <= 0), 'cld_opd_dcomp'] = np.nan
-    cloud_df.loc[(cloud_df['cld_reff_dcomp'] <= 0), 'cld_reff_dcomp'] = np.nan
-
-    logger.debug('{:.2f}% of timesteps are daylight'
-                 .format(100 * day.sum() / len(day)))
-    logger.debug('{:.2f}% of daylight timesteps are cloudy'
-                 .format(100 * day_clouds.sum() / day.sum()))
-    logger.debug('{:.2f}% of daylight timesteps are missing cloud type'
-                 .format(100 * day_missing_ctype.sum() / day.sum()))
-    logger.debug('{:.2f}% of cloudy daylight timesteps are missing cloud opd'
-                 .format(100 * day_missing_opd.sum() / day_clouds.sum()))
-    logger.debug('{:.2f}% of cloudy daylight timesteps are missing cloud reff'
-                 .format(100 * day_missing_reff.sum() / day_clouds.sum()))
-
-    cloud_df = cloud_df.interpolate('nearest').ffill().bfill()
-    cloud_df.loc[~cloudy, 'cld_opd_dcomp'] = 0.0
-    cloud_df.loc[~cloudy, 'cld_reff_dcomp'] = 0.0
-
-    assert ~any(cloud_df['cloud_type'] < 0)
-    assert ~any(pd.isna(cloud_df))
-    assert ~any(cloudy & (cloud_df['cld_opd_dcomp'] <= 0))
-
-    if add_feature_flag:
-        ice_clouds = cloud_df['cloud_type'].isin(ICE_TYPES)
-        water_clouds = cloud_df['cloud_type'].isin(WATER_TYPES)
-        cloud_df['flag'] = 'night'
-        cloud_df.loc[day, 'flag'] = 'clear'
-        cloud_df.loc[ice_clouds, 'flag'] = 'ice_cloud'
-        cloud_df.loc[water_clouds, 'flag'] = 'water_cloud'
-        cloud_df.loc[day_missing_ctype, 'flag'] = 'bad_cloud'
-        cloud_df.loc[day_missing_opd, 'flag'] = 'bad_cloud'
-        cloud_df.loc[day_missing_reff, 'flag'] = 'bad_cloud'
-
-    mask = True
-    if filter_daylight:
-        mask = mask & day
-
-    if filter_clear:
-        mask = mask & cloudy
-
-    if filter_daylight or filter_clear:
-        logger.debug('Data reduced from '
-                     '{} rows to {} after filters ({:.2f}% of original)'
-                     .format(len(cloud_df), mask.sum(),
-                             100 * mask.sum() / len(cloud_df)))
-        cloud_df = cloud_df[mask]
-
-    logger.debug('Cleaning took {:.1f} seconds'.format(time.time() - t0))
-
-    return cloud_df

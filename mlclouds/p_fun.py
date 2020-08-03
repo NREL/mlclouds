@@ -1,0 +1,78 @@
+"""
+Automatic cross validation of PhyGNN models predicting opd and reff
+
+Mike Bannister 7/2020
+Based on code by Grant Buster
+"""
+import numpy as np
+import logging
+
+import tensorflow as tf
+
+from mlclouds.tdisc import tdisc
+from mlclouds.tfarms import tfarms
+
+
+logger = logging.getLogger(__name__)
+
+
+def p_fun_all_sky(y_predicted, y_true, p, labels=None):
+    """ Physics loss function """
+    n = len(y_true)
+    tau = tf.expand_dims(y_predicted[:, 0], axis=1)
+    cld_reff = tf.expand_dims(y_predicted[:, 1], axis=1)
+
+    tau = tf.where(tau < 0, 0.0001, tau)
+    tau = tf.where(tau > 160, 160, tau)
+    cld_reff = tf.where(cld_reff < 0, 0.0001, cld_reff)
+    cld_reff = tf.where(cld_reff > 160, 160, cld_reff)
+
+    cloud_type = p[:, labels.index('cloud_type')
+                   ].astype(np.float32).reshape((n, 1))
+    solar_zenith_angle = p[:, labels.index('solar_zenith_angle')
+                           ].astype(np.float32).reshape((n, 1))
+    doy = p[:, labels.index('doy')].astype(np.float32).reshape((n, 1))
+    radius = p[:, labels.index('radius')].astype(np.float32).reshape((n, 1))
+    Tuuclr = p[:, labels.index('Tuuclr')].astype(np.float32).reshape((n, 1))
+    Ruuclr = p[:, labels.index('Ruuclr')].astype(np.float32).reshape((n, 1))
+    Tddclr = p[:, labels.index('Tddclr')].astype(np.float32).reshape((n, 1))
+    Tduclr = p[:, labels.index('Tduclr')].astype(np.float32).reshape((n, 1))
+    albedo = p[:, labels.index('surface_albedo')
+               ].astype(np.float32).reshape((n, 1))
+    pressure = p[:, labels.index('surface_pressure')
+                 ].astype(np.float32).reshape((n, 1))
+
+    cs_dni = p[:, labels.index('clearsky_dni')].astype(np.float32).reshape((n,
+                                                                            1))
+    cs_ghi = p[:, labels.index('clearsky_ghi')].astype(np.float32).reshape((n,
+                                                                            1))
+    dni_ground = p[:, labels.index('dni')].astype(np.float32).reshape((n, 1))
+    ghi_ground = p[:, labels.index('ghi')].astype(np.float32).reshape((n, 1))
+    cs_dni = tf.convert_to_tensor(cs_dni, dtype=tf.float32)
+    cs_ghi = tf.convert_to_tensor(cs_ghi, dtype=tf.float32)
+    dni_ground = tf.convert_to_tensor(dni_ground, dtype=tf.float32)
+    ghi_ground = tf.convert_to_tensor(ghi_ground, dtype=tf.float32)
+
+    ghi_predicted = tfarms(tau, cloud_type, cld_reff, solar_zenith_angle,
+                           radius, Tuuclr, Ruuclr, Tddclr, Tduclr, albedo)
+    dni_predicted = tdisc(ghi_predicted, solar_zenith_angle, doy,
+                          pressure=pressure)
+
+    dni_predicted = tf.where(tau == 0.0001, cs_dni, dni_predicted)
+    ghi_predicted = tf.where(tau == 0.0001, cs_ghi, ghi_predicted)
+
+    err_ghi = ghi_predicted - ghi_ground
+    err_ghi = tf.boolean_mask(err_ghi, ~tf.math.is_nan(err_ghi))
+    err_ghi = tf.boolean_mask(err_ghi, tf.math.is_finite(err_ghi))
+
+    err_dni = dni_predicted - dni_ground
+    err_dni = tf.boolean_mask(err_dni, ~tf.math.is_nan(err_dni))
+    err_dni = tf.boolean_mask(err_dni, tf.math.is_finite(err_dni))
+
+    mae_ghi = tf.reduce_mean(tf.abs(err_ghi)) / tf.reduce_mean(ghi_ground)
+    mae_dni = tf.reduce_mean(tf.abs(err_dni)) / tf.reduce_mean(dni_ground)
+    mbe_ghi = tf.abs(tf.reduce_mean(err_ghi)) / tf.reduce_mean(ghi_ground)
+    mbe_dni = tf.abs(tf.reduce_mean(err_dni)) / tf.reduce_mean(dni_ground)
+
+    p_loss = mae_ghi + mae_dni + mbe_ghi + mbe_dni
+    return p_loss
