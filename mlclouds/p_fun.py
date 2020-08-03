@@ -11,6 +11,7 @@ import tensorflow as tf
 
 from mlclouds.tdisc import tdisc
 from mlclouds.tfarms import tfarms
+from mlclouds.tdhi import t_calc_dhi
 
 
 logger = logging.getLogger(__name__)
@@ -42,14 +43,17 @@ def p_fun_all_sky(y_predicted, y_true, p, labels=None):
     pressure = p[:, labels.index('surface_pressure')
                  ].astype(np.float32).reshape((n, 1))
 
-    cs_dni = p[:, labels.index('clearsky_dni')].astype(np.float32).reshape((n,
-                                                                            1))
-    cs_ghi = p[:, labels.index('clearsky_ghi')].astype(np.float32).reshape((n,
-                                                                            1))
-    dni_ground = p[:, labels.index('dni')].astype(np.float32).reshape((n, 1))
-    ghi_ground = p[:, labels.index('ghi')].astype(np.float32).reshape((n, 1))
+    cs_dni = p[:, labels.index('clearsky_dni')]
+    cs_ghi = p[:, labels.index('clearsky_ghi')]
+    cs_dni = cs_dni.astype(np.float32).reshape((n, 1))
+    cs_ghi = cs_ghi.astype(np.float32).reshape((n, 1))
     cs_dni = tf.convert_to_tensor(cs_dni, dtype=tf.float32)
     cs_ghi = tf.convert_to_tensor(cs_ghi, dtype=tf.float32)
+
+    dhi_ground = p[:, labels.index('dhi')].astype(np.float32).reshape((n, 1))
+    dni_ground = p[:, labels.index('dni')].astype(np.float32).reshape((n, 1))
+    ghi_ground = p[:, labels.index('ghi')].astype(np.float32).reshape((n, 1))
+    dhi_ground = tf.convert_to_tensor(dhi_ground, dtype=tf.float32)
     dni_ground = tf.convert_to_tensor(dni_ground, dtype=tf.float32)
     ghi_ground = tf.convert_to_tensor(ghi_ground, dtype=tf.float32)
 
@@ -60,6 +64,8 @@ def p_fun_all_sky(y_predicted, y_true, p, labels=None):
 
     dni_predicted = tf.where(tau == 0.0001, cs_dni, dni_predicted)
     ghi_predicted = tf.where(tau == 0.0001, cs_ghi, ghi_predicted)
+    dhi_predicted, dni_predicted = t_calc_dhi(dni_predicted, ghi_predicted,
+                                              solar_zenith_angle)
 
     err_ghi = ghi_predicted - ghi_ground
     err_ghi = tf.boolean_mask(err_ghi, ~tf.math.is_nan(err_ghi))
@@ -69,10 +75,23 @@ def p_fun_all_sky(y_predicted, y_true, p, labels=None):
     err_dni = tf.boolean_mask(err_dni, ~tf.math.is_nan(err_dni))
     err_dni = tf.boolean_mask(err_dni, tf.math.is_finite(err_dni))
 
+    err_dhi = dhi_predicted - dhi_ground
+    err_dhi = tf.boolean_mask(err_dhi, ~tf.math.is_nan(err_dhi))
+    err_dhi = tf.boolean_mask(err_dhi, tf.math.is_finite(err_dhi))
+
     mae_ghi = tf.reduce_mean(tf.abs(err_ghi)) / tf.reduce_mean(ghi_ground)
     mae_dni = tf.reduce_mean(tf.abs(err_dni)) / tf.reduce_mean(dni_ground)
+    mae_dhi = tf.reduce_mean(tf.abs(err_dhi)) / tf.reduce_mean(dhi_ground)
     mbe_ghi = tf.abs(tf.reduce_mean(err_ghi)) / tf.reduce_mean(ghi_ground)
     mbe_dni = tf.abs(tf.reduce_mean(err_dni)) / tf.reduce_mean(dni_ground)
+    mbe_dhi = tf.abs(tf.reduce_mean(err_dhi)) / tf.reduce_mean(dhi_ground)
 
-    p_loss = mae_ghi + mae_dni + mbe_ghi + mbe_dni
+    logger.debug('GHI MAE: {:.3f}% GHI MBE: {:.3f}%'
+                 .format(100 * mae_ghi, 100 * mbe_ghi))
+    logger.debug('DNI MAE: {:.3f}% DNI MBE: {:.3f}%'
+                 .format(100 * mae_dni, 100 * mbe_dni))
+    logger.debug('DHI MAE: {:.3f}% DHI MBE: {:.3f}%'
+                 .format(100 * mae_dhi, 100 * mbe_dhi))
+
+    p_loss = mae_ghi + mae_dhi + mae_dni + mbe_ghi + mbe_dhi + mbe_dni
     return p_loss
