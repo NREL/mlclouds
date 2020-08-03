@@ -543,8 +543,13 @@ class AutoXVal:
             self.stats = stats.reset_index()
 
         if write_stats:
+            sub_dir = config.get('stats_dir', './stats')
+            if not os.path.exists(sub_dir):
+                os.makedirs(sub_dir)
+
             train_name = ''.join([str(x) for x in all_train_sites])
-            fpath = 'axv_stats_{}_{}.csv'.format(train_name, val_sites)
+            fpath = os.path.join(sub_dir, 'axv_stats_{}_{}.csv'
+                                 .format(train_name, val_sites))
             self.stats.to_csv(fpath)
             logger.info('Saved stats to: {}'.format(fpath))
 
