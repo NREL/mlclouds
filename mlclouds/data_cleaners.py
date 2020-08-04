@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def clean_cloud_df(cloud_df_raw, filter_daylight=True, filter_clear=True,
-                   add_feature_flag=True, sza_lim=89):
+                   add_feature_flag=True, sza_lim=89, nan_option='interp'):
     """ Clean up cloud data """
     t0 = time.time()
     cloud_df = cloud_df_raw.copy()
@@ -49,9 +49,17 @@ def clean_cloud_df(cloud_df_raw, filter_daylight=True, filter_clear=True,
         pnan = 100 * pd.isna(cloud_df[c]).sum() / len(cloud_df)
         logger.debug('\t"{}" has {:.2f}% NaN values'.format(c, pnan))
 
-    cloud_df = cloud_df.interpolate('nearest').ffill().bfill()
-    cloud_df.loc[~cloudy, 'cld_opd_dcomp'] = 0.0
-    cloud_df.loc[~cloudy, 'cld_reff_dcomp'] = 0.0
+    if 'interp' in nan_option.lower():
+        cloud_df = cloud_df.interpolate('nearest').ffill().bfill()
+        cloud_df.loc[~cloudy, 'cld_opd_dcomp'] = 0.0
+        cloud_df.loc[~cloudy, 'cld_reff_dcomp'] = 0.0
+    elif 'drop' in nan_option.lower():
+        l0 = len(cloud_df)
+        cloud_df = cloud_df.dropna(axis=0, how='any')
+        day = (cloud_df['solar_zenith_angle'] < sza_lim)
+        cloudy = cloud_df['cloud_type'].isin(ICE_TYPES + WATER_TYPES)
+        logger.debug('Dropped {} rows with NaN values.'
+                     .format(l0 - len(cloud_df)))
 
     assert ~any(cloud_df['cloud_type'] < 0)
     assert ~any(pd.isna(cloud_df))
@@ -82,6 +90,8 @@ def clean_cloud_df(cloud_df_raw, filter_daylight=True, filter_clear=True,
                             100 * mask.sum() / len(cloud_df)))
         cloud_df = cloud_df[mask]
 
+    logger.debug('Feature flag column has these values: {}'
+                 .format(cloud_df.flag.unique()))
     logger.info('Cleaning took {:.1f} seconds'.format(time.time() - t0))
 
     return cloud_df

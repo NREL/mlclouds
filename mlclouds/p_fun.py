@@ -17,10 +17,16 @@ from mlclouds.tdhi import t_calc_dhi
 logger = logging.getLogger(__name__)
 
 
+def p_fun_dummy(y_predicted, y_true, p, labels=None, loss_terms=None):
+    """Dummy loss function to disable pfun"""
+    # pylint: disable-msg=W0613
+    return tf.constant(0.0, dtype=tf.float32)
+
+
 def p_fun_all_sky(y_predicted, y_true, p, labels=None,
                   loss_terms=('mae_ghi', 'mae_dni', 'mae_dhi',
                               'mbe_ghi', 'mbe_dni', 'mbe_dhi')):
-    """ Physics loss function """
+    """Physics loss function """
     n = len(y_true)
     tau = tf.expand_dims(y_predicted[:, 0], axis=1)
     cld_reff = tf.expand_dims(y_predicted[:, 1], axis=1)
