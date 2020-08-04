@@ -109,8 +109,8 @@ class XVal:
 
     def __init__(self, train_sites=[0, 1, 2, 3, 5, 6], val_site=4,
                  years=(2018,), config=CONFIG, val_data=None,
-                 save_model=False,
-                 load_model=False):
+                 save_model=False, load_model=False,
+                 save_timeseries=True):
         """
         Parameters
         ----------
@@ -136,6 +136,7 @@ class XVal:
         self.train_sites = train_sites
         self.val_site = val_site
         self.config = config
+        self.save_timeseries = save_timeseries
 
         if isinstance(years, int):
             years = (years,)
@@ -173,8 +174,8 @@ class XVal:
         # is that right?
         self.df_feature_val = val_data.df_feature_val
         self.mask = val_data.mask
-        self.validate()
-        self.calc_stats()
+        self.run_predictions()
+        self.run_validation()
 
     def train(self):
         """ Train PhyGNN model """
@@ -211,8 +212,9 @@ class XVal:
         self.model = model
         self.out = out
 
-    def validate(self, update_clear=False, update_cloudy=False):
-        """ Validate PhyGNN model predictions """
+    def run_predictions(self, update_clear=False, update_cloudy=False):
+        """Run PhyGNN model predictions and insert opd and reff into
+        all-sky DataFrame."""
         logger.info('Validating model')
         t0 = time.time()
 
@@ -264,8 +266,8 @@ class XVal:
 
         return
 
-    def calc_stats(self):
-        """ Calculate accuracy of PhyGNN model predictions """
+    def run_validation(self):
+        """Calculate accuracy of PhyGNN model predictions """
         logger.info('Calculating statistics')
         all_sky_outs = {}
         stats = pd.DataFrame(columns=['Model', 'Site', 'Variable',
@@ -317,6 +319,14 @@ class XVal:
                       [val_cloudy_mask, 'Cloudy'],
                       [val_clear_mask, 'Clear'],
                       [val_bad_cloud_mask, 'Missing Cloud Data']]
+
+            if self.save_timeseries and gid == self.val_site:
+                for var in ['dni', 'ghi']:
+                    self._timeseries_to_csv(gid, var, args['time_index'],
+                                            df_baseline[var],
+                                            df_baseline_adj[var],
+                                            all_sky_out[var],
+                                            df_surf[var])
 
             for mask, condition in m_iter:
                 for var in ['dni', 'ghi']:
@@ -393,6 +403,16 @@ class XVal:
         train_name = ''.join([str(x) for x in self.train_sites])
         pkl_name = 'pgnn_{}_{}.pkl'.format(train_name, self.val_site)
         return os.path.join(self.config['model_dir'], pkl_name)
+
+    def _timeseries_to_csv(self, gid, var, index, baseline, adjusted,
+                           mlclouds, surf):
+        """Save irradiance timseries data to disk for later analysis"""
+        df = pd.DataFrame({'Baseline': baseline,
+                           'Adjusted': adjusted,
+                           'PhyGNN': mlclouds,
+                           'Surfrad': surf}, index=index)
+        tdir = self.config.get('timeseries_dir', 'timeseries/')
+        df.to_csv(os.path.join(tdir, 'timeseries_{}_{}.csv'.format(var, gid)))
 
     def _get_stats_data(self, years, gid, code):
         """ Grab baseline, baseline_adjusted, and surfrad for stats """
