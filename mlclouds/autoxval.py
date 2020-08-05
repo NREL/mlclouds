@@ -11,20 +11,18 @@ import time
 import logging
 import plotly.express as px
 
-import tensorflow as tf
-
 from rex.resource import MultiFileResource
 
 from nsrdb.file_handlers.surfrad import Surfrad
 from nsrdb.all_sky.all_sky import all_sky
-from nsrdb.all_sky import ICE_TYPES, WATER_TYPES
+from nsrdb.all_sky import ICE_TYPES, WATER_TYPES, CLEAR_TYPES
 from nsrdb.all_sky.rest2 import rest2, rest2_tuuclr
 from nsrdb.all_sky.utilities import ti_to_radius, calc_beta
 from nsrdb.utilities.statistics import mae_perc, mbe_perc, rmse_perc
 
 from mlclouds.nsrdb import NSRDBFeatures
-from mlclouds.tdisc import tdisc
-from mlclouds.tfarms import tfarms
+from mlclouds.p_fun import p_fun_all_sky, p_fun_dummy
+from mlclouds.data_cleaners import clean_cloud_df
 
 from phygnn import PhysicsGuidedNeuralNetwork as PGNN
 from phygnn.pre_processing import PreProcess
@@ -32,66 +30,22 @@ from phygnn.pre_processing import PreProcess
 logger = logging.getLogger(__name__)
 
 
-def p_fun_all_sky(y_predicted, y_true, p, labels=None):
-    """ Physics loss function """
-    n = len(y_true)
-    tau = tf.expand_dims(y_predicted[:, 0], axis=1)
-    cld_reff = tf.expand_dims(y_predicted[:, 1], axis=1)
+ALL_SKY_VARS = ('alpha',
+                'aod',
+                'asymmetry',
+                'cloud_type',
+                'cld_opd_dcomp',
+                'cld_reff_dcomp',
+                'ozone',
+                'solar_zenith_angle',
+                'ssa',
+                'surface_albedo',
+                'surface_pressure',
+                'total_precipitable_water')
 
-    tau = tf.where(tau < 0, 0.0001, tau)
-    tau = tf.where(tau > 160, 160, tau)
-    cld_reff = tf.where(cld_reff < 0, 0.0001, cld_reff)
-    cld_reff = tf.where(cld_reff > 160, 160, cld_reff)
 
-    cloud_type = p[:, labels.index('cloud_type')
-                   ].astype(np.float32).reshape((n, 1))
-    solar_zenith_angle = p[:, labels.index('solar_zenith_angle')
-                           ].astype(np.float32).reshape((n, 1))
-    doy = p[:, labels.index('doy')].astype(np.float32).reshape((n, 1))
-    radius = p[:, labels.index('radius')].astype(np.float32).reshape((n, 1))
-    Tuuclr = p[:, labels.index('Tuuclr')].astype(np.float32).reshape((n, 1))
-    Ruuclr = p[:, labels.index('Ruuclr')].astype(np.float32).reshape((n, 1))
-    Tddclr = p[:, labels.index('Tddclr')].astype(np.float32).reshape((n, 1))
-    Tduclr = p[:, labels.index('Tduclr')].astype(np.float32).reshape((n, 1))
-    albedo = p[:, labels.index('surface_albedo')
-               ].astype(np.float32).reshape((n, 1))
-    pressure = p[:, labels.index('surface_pressure')
-                 ].astype(np.float32).reshape((n, 1))
-
-    cs_dni = p[:, labels.index('clearsky_dni')].astype(np.float32).reshape((n,
-                                                                            1))
-    cs_ghi = p[:, labels.index('clearsky_ghi')].astype(np.float32).reshape((n,
-                                                                            1))
-    dni_ground = p[:, labels.index('dni')].astype(np.float32).reshape((n, 1))
-    ghi_ground = p[:, labels.index('ghi')].astype(np.float32).reshape((n, 1))
-    cs_dni = tf.convert_to_tensor(cs_dni, dtype=tf.float32)
-    cs_ghi = tf.convert_to_tensor(cs_ghi, dtype=tf.float32)
-    dni_ground = tf.convert_to_tensor(dni_ground, dtype=tf.float32)
-    ghi_ground = tf.convert_to_tensor(ghi_ground, dtype=tf.float32)
-
-    ghi_predicted = tfarms(tau, cloud_type, cld_reff, solar_zenith_angle,
-                           radius, Tuuclr, Ruuclr, Tddclr, Tduclr, albedo)
-    dni_predicted = tdisc(ghi_predicted, solar_zenith_angle, doy,
-                          pressure=pressure)
-
-    dni_predicted = tf.where(tau == 0.0001, cs_dni, dni_predicted)
-    ghi_predicted = tf.where(tau == 0.0001, cs_ghi, ghi_predicted)
-
-    err_ghi = ghi_predicted - ghi_ground
-    err_ghi = tf.boolean_mask(err_ghi, ~tf.math.is_nan(err_ghi))
-    err_ghi = tf.boolean_mask(err_ghi, tf.math.is_finite(err_ghi))
-
-    err_dni = dni_predicted - dni_ground
-    err_dni = tf.boolean_mask(err_dni, ~tf.math.is_nan(err_dni))
-    err_dni = tf.boolean_mask(err_dni, tf.math.is_finite(err_dni))
-
-    mae_ghi = tf.reduce_mean(tf.abs(err_ghi)) / tf.reduce_mean(ghi_ground)
-    mae_dni = tf.reduce_mean(tf.abs(err_dni)) / tf.reduce_mean(dni_ground)
-    mbe_ghi = tf.abs(tf.reduce_mean(err_ghi)) / tf.reduce_mean(ghi_ground)
-    mbe_dni = tf.abs(tf.reduce_mean(err_dni)) / tf.reduce_mean(dni_ground)
-
-    p_loss = mae_ghi + mae_dni + mbe_ghi + mbe_dni
-    return p_loss
+P_FUNS = {'p_fun_all_sky': p_fun_all_sky,
+          'p_fun_dummy': p_fun_dummy}
 
 
 CONFIG = {
@@ -100,8 +54,8 @@ CONFIG = {
     'fp_surf': '/lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/'
                '{code}_{year}.h5',
     'model_dir': './models',
-    'fp': '/lustre/eaglefs/projects/mlclouds/ground_measurement/'
-          'surfrad_meta.csv',
+    'fp_surfrad_meta': '/lustre/eaglefs/projects/mlclouds/ground_measurement/'
+                       'surfrad_meta.csv',
 
     'features': ['solar_zenith_angle', 'cloud_type',
                  'refl_0_65um_nom', 'refl_3_75um_nom',
@@ -112,24 +66,8 @@ CONFIG = {
                  'cld_opd_dcomp', 'cld_reff_dcomp',
                  ],
 
-    'all_sky_vars': ['alpha', 'aod', 'asymmetry', 'cloud_type',
-                     'cld_opd_dcomp',
-                     'cld_reff_dcomp', 'ozone', 'solar_zenith_angle', 'ssa',
-                     'surface_albedo', 'surface_pressure',
-                     'total_precipitable_water',
-                     ],
-
     # TODO - the 'y's being used are hardwired in the validation code
     'y_labels': ['cld_opd_dcomp', 'cld_reff_dcomp'],
-
-    # TODO - There is some overlap and confusion between the next two
-    # parameters Fields to drop from training data before preprocessing
-    'drop_list': ['gid', 'time_index', 'cloud_type'],
-
-    # Fields to exclude from training data (x)
-    'ignore': ('gid', 'time_index', 'cloud_type', 'cld_opd_dcomp',
-               'cld_reff_dcomp',
-               ),
 
     # Neural network geometry
     'hidden_layers': [{'units': 64, 'activation': 'relu', 'name': 'relu1',
@@ -142,7 +80,6 @@ CONFIG = {
 
     # phygnn params
     'phygnn_seed': 0,
-    'p_fun': p_fun_all_sky,
     'metric': 'relative_mae',
     'learning_rate': 0.01,
     'n_batch': 4,
@@ -172,8 +109,8 @@ class XVal:
 
     def __init__(self, train_sites=[0, 1, 2, 3, 5, 6], val_site=4,
                  years=(2018,), config=CONFIG, val_data=None,
-                 save_model=False,
-                 load_model=False):
+                 save_model=False, load_model=False,
+                 save_timeseries=True):
         """
         Parameters
         ----------
@@ -199,6 +136,7 @@ class XVal:
         self.train_sites = train_sites
         self.val_site = val_site
         self.config = config
+        self.save_timeseries = save_timeseries
 
         if isinstance(years, int):
             years = (years,)
@@ -207,7 +145,7 @@ class XVal:
         if not os.path.exists(self.config['model_dir']):
             os.makedirs(self.config['model_dir'])
 
-        surf_meta = pd.read_csv(self.config['fp'], index_col=0)
+        surf_meta = pd.read_csv(self.config['fp_surfrad_meta'], index_col=0)
         surf_meta.index.name = 'gid'
         self.surf_meta = surf_meta[['surfrad_id']]
 
@@ -236,15 +174,19 @@ class XVal:
         # is that right?
         self.df_feature_val = val_data.df_feature_val
         self.mask = val_data.mask
-        self.validate()
-        self.calc_stats()
+        self.run_predictions()
+        self.run_validation()
 
     def train(self):
         """ Train PhyGNN model """
         # TODO - update to control xfer learning via config dict
         logger.debug('Building PhyGNN model')
         PGNN.seed(self.config['phygnn_seed'])
-        model = PGNN(p_fun=self.config['p_fun'],
+
+        p_fun = P_FUNS[self.config.get('p_fun', 'p_fun_all_sky')]
+        logger.info('Using p_fun: {}'.format(p_fun))
+
+        model = PGNN(p_fun=p_fun,
                      hidden_layers=self.config['hidden_layers'],
                      loss_weights=self.config['loss_weights_a'],
                      metric=self.config['metric'],
@@ -270,8 +212,9 @@ class XVal:
         self.model = model
         self.out = out
 
-    def validate(self, update_clear=False, update_cloudy=False):
-        """ Validate PhyGNN model predictions """
+    def run_predictions(self, update_clear=False, update_cloudy=False):
+        """Run PhyGNN model predictions and insert opd and reff into
+        all-sky DataFrame."""
         logger.info('Validating model')
         t0 = time.time()
 
@@ -285,9 +228,6 @@ class XVal:
         reff = np.minimum(reff_raw, 160)
         opd = np.maximum(opd, 0.0)
         reff = np.maximum(reff, 0.0)
-
-        # opd_orig = self.df_all_sky_val['cld_opd_dcomp'].copy()
-        # reff_orig = self.df_all_sky_val['cld_reff_dcomp'].copy()
 
         self.df_feature_val['cld_opd_dcomp'] = 0
         self.df_feature_val['cld_reff_dcomp'] = 0
@@ -312,16 +252,22 @@ class XVal:
         if update_cloudy:
             mask = ((self.df_feature_val['solar_zenith_angle'] < 89)
                     & (self.df_feature_val['cld_opd_dcomp'] > 0.0)
-                    & (self.df_feature_val['cloud_type'] <= 1))
+                    & (self.df_feature_val['cloud_type'].isin(CLEAR_TYPES)))
             self.df_feature_val.loc[mask, 'cloud_type'] = 8
             self.df_all_sky_val.loc[mask, 'cloud_type'] = 8
             print('The PGNN predicted {} additional cloudy timesteps ({:.2f}%)'
                   ''.format(mask.sum(), 100 * mask.sum() / len(mask)))
 
+        clear_mask = self.df_feature_val['cloud_type'].isin(CLEAR_TYPES)
+        self.df_feature_val.loc[clear_mask, 'cld_opd_dcomp'] = 0
+        self.df_feature_val.loc[clear_mask, 'cld_reff_dcomp'] = 0
+        self.df_all_sky_val.loc[clear_mask, 'cld_opd_dcomp'] = 0
+        self.df_all_sky_val.loc[clear_mask, 'cld_reff_dcomp'] = 0
+
         return
 
-    def calc_stats(self):
-        """ Calculate accuracy of PhyGNN model predictions """
+    def run_validation(self):
+        """Calculate accuracy of PhyGNN model predictions """
         logger.info('Calculating statistics')
         all_sky_outs = {}
         stats = pd.DataFrame(columns=['Model', 'Site', 'Variable',
@@ -337,17 +283,19 @@ class XVal:
             logger.debug('Computing stats for gid: {} {}'
                          .format(gid, code))
 
-            logger.info('Loading data for stats')
+            logger.info('Loading data for stats for "{}"'.format(code))
             df_baseline, df_baseline_adj, df_surf = self._get_stats_data(
                 self.years, gid, code)
-            logger.info('Loading data for stats complete')
+            logger.info('Loading data for stats complete for "{}"'
+                        .format(code))
 
-            args = self._get_all_sky_args(gid, self.config['all_sky_vars'],
-                                          self.df_all_sky_val)
+            args = self._get_all_sky_args(
+                gid, self.config.get('all_sky_vars', ALL_SKY_VARS),
+                self.df_all_sky_val)
 
             out = all_sky(**args)
             all_sky_out = pd.DataFrame({k: v.flatten() for k,
-                                       v in out.items()},
+                                        v in out.items()},
                                        index=args['time_index'])
             all_sky_outs[code] = all_sky_out
 
@@ -360,16 +308,25 @@ class XVal:
                                   .isin(ICE_TYPES + WATER_TYPES)).values)
             val_clear_mask = (val_daylight_mask
                               & (self.df_all_sky_val
-                                 .loc[gid_mask, 'cloud_type'] <= 1).values)
+                                 .loc[gid_mask, 'cloud_type']
+                                 .isin(CLEAR_TYPES)).values)
             val_bad_cloud_mask = (val_cloudy_mask
                                   & (self.df_all_sky_val
                                      .loc[gid_mask, 'flag'] == 'bad_cloud')
                                   .values)
 
-            m_iter = zip([val_daylight_mask, val_cloudy_mask,
-                          val_clear_mask, val_bad_cloud_mask],
-                         ['All-Sky', 'Cloudy', 'Clear',
-                          'Missing Cloud Data'])
+            m_iter = [[val_daylight_mask, 'All-Sky'],
+                      [val_cloudy_mask, 'Cloudy'],
+                      [val_clear_mask, 'Clear'],
+                      [val_bad_cloud_mask, 'Missing Cloud Data']]
+
+            if self.save_timeseries and gid == self.val_site:
+                for var in ['dni', 'ghi']:
+                    self._timeseries_to_csv(gid, var, args['time_index'],
+                                            df_baseline[var],
+                                            df_baseline_adj[var],
+                                            all_sky_out[var],
+                                            df_surf[var])
 
             for mask, condition in m_iter:
                 for var in ['dni', 'ghi']:
@@ -417,7 +374,9 @@ class XVal:
                     stats.at[i, 'MBE (%)'] = mbe_ml
                     stats.at[i, 'RMSE (%)'] = rmse_ml
                     i += 1
+
         self.stats = stats
+        logger.info('Finished computing stats.')
 
     def save_stats(self):
         """ Save statistics to file """
@@ -445,6 +404,16 @@ class XVal:
         pkl_name = 'pgnn_{}_{}.pkl'.format(train_name, self.val_site)
         return os.path.join(self.config['model_dir'], pkl_name)
 
+    def _timeseries_to_csv(self, gid, var, index, baseline, adjusted,
+                           mlclouds, surf):
+        """Save irradiance timseries data to disk for later analysis"""
+        df = pd.DataFrame({'Baseline': baseline,
+                           'Adjusted': adjusted,
+                           'PhyGNN': mlclouds,
+                           'Surfrad': surf}, index=index)
+        tdir = self.config.get('timeseries_dir', 'timeseries/')
+        df.to_csv(os.path.join(tdir, 'timeseries_{}_{}.csv'.format(var, gid)))
+
     def _get_stats_data(self, years, gid, code):
         """ Grab baseline, baseline_adjusted, and surfrad for stats """
         df_base = None
@@ -457,7 +426,7 @@ class XVal:
             tmp_base_adj = self._get_baseline_df(self.config[
                 'fp_baseline_adj'], gid, year)
             tmp_surf = self._get_surfrad_df(self.config['fp_surf'],
-                                            code, year)
+                                            code, year, self.config)
             if df_base is None:
                 df_base = tmp_base
                 df_base_adj = tmp_base_adj
@@ -484,18 +453,22 @@ class XVal:
         return df
 
     @staticmethod
-    def _get_surfrad_df(fp_surf, code, year, window=15):
+    def _get_surfrad_df(fp_surf, code, year, config, window_default=15):
         """ @param code: three digit surfrad site code """
         logger.debug('Getting surfrad data from {}'
                      ''.format(os.path.basename(fp_surf.format(code=code,
                                                                year=year))))
+        w = config.get('surfrad_window_minutes', window_default)
         with Surfrad(fp_surf.format(code=code, year=year)) as surf:
-            df_surf = surf.get_df(dt_out='5min', window_minutes=window)
+            df_surf = surf.get_df(dt_out='5min', window_minutes=w)
         return df_surf
 
     @staticmethod
     def _get_all_sky_args(gid, all_sky_vars, df_all_sky):
         args = {}
+
+        if all_sky_vars is None:
+            all_sky_vars = ALL_SKY_VARS
 
         for var in all_sky_vars:
             gid_mask = (df_all_sky.gid == gid)
@@ -595,9 +568,15 @@ class AutoXVal:
             self.stats = stats.reset_index()
 
         if write_stats:
+            sub_dir = config.get('stats_dir', './stats')
+            if not os.path.exists(sub_dir):
+                os.makedirs(sub_dir)
+
             train_name = ''.join([str(x) for x in all_train_sites])
-            self.stats.to_csv('axv_stats_{}_{}.csv'
-                              ''.format(train_name, val_sites))
+            fpath = os.path.join(sub_dir, 'axv_stats_{}_{}.csv'
+                                 .format(train_name, val_sites))
+            self.stats.to_csv(fpath)
+            logger.info('Saved stats to: {}'.format(fpath))
 
     @classmethod
     def k_fold(cls, sites=[0, 1, 2, 3, 4, 5, 6], val_sites=None,
@@ -634,7 +613,7 @@ class ValidationData:
     def load_data(self):
         """ Load validation data """
         logger.debug('Loading validation data')
-        surf_meta = pd.read_csv(self.config['fp'], index_col=0)
+        surf_meta = pd.read_csv(self.config['fp_surfrad_meta'], index_col=0)
         surf_meta.index.name = 'gid'
         self.surf_meta = surf_meta[['surfrad_id']]
 
@@ -643,15 +622,16 @@ class ValidationData:
 
         all_gids = self.surf_meta.index.unique().values.tolist()
         for year in self.years:
+            fp_data = self.config['fp_data'].format(year=year)
             logger.debug('Loading data for {}, {}, {}'
                          ''.format(year, all_gids, self.config['features']))
-            with NSRDBFeatures(self.config[
-                    'fp_data'].format(year=year)) as res:
+            logger.debug('Loading feature data for validation from file: {}'
+                         .format(fp_data))
+            with NSRDBFeatures(fp_data) as res:
                 temp_raw = res.extract_features(all_gids,
                                                 self.config['features'])
-                temp_all_sky = res.extract_features(all_gids,
-                                                    self.config[
-                                                        'all_sky_vars'])
+                temp_all_sky = res.extract_features(
+                    all_gids, self.config.get('all_sky_vars', ALL_SKY_VARS))
                 if df_raw is None:
                     df_raw = temp_raw
                     df_all_sky = temp_all_sky
@@ -680,14 +660,15 @@ class ValidationData:
         # TODO - handle the masks better
         self.mask = cloud_mask  # let phygnn predict only cloudsse
         self.mask = day_mask  # let phygnn predict clearsky
+
+        drop_list = ('gid', 'time_index', 'cloud_type')
+        not_features = drop_list + tuple(self.config['y_labels'])
+
         features = [c for c in self.df_feature_val.columns if
-                    c not in self.config['ignore']]
+                    c not in not_features]
         proc = PreProcess(self.df_feature_val.loc[self.mask, features])
         self.df_x_val = proc.process_one_hot()
-
-        # TODO: is this needed?
-        features = [c for c in self.df_x_val.columns if c not in
-                    self.config['ignore']]
+        logger.debug('Validation features: {}'.format(features))
 
 
 class TrainData:
@@ -703,7 +684,7 @@ class TrainData:
 
     def load_data(self):
         """ Load training data """
-        surf_meta = pd.read_csv(self.config['fp'], index_col=0)
+        surf_meta = pd.read_csv(self.config['fp_surfrad_meta'], index_col=0)
         surf_meta.index.name = 'gid'
         self.surf_meta = surf_meta[['surfrad_id']]
 
@@ -712,16 +693,19 @@ class TrainData:
 
         # ------ Grab NSRDB data for weather properties
         for year in self.years:
+            fp_data = self.config['fp_data'].format(year=year)
+
             logger.debug('Loading data for {}, {}, {}'
-                         ''.format(year, self.train_sites,
-                                   self.config['features']))
-            with NSRDBFeatures(self.config[
-                    'fp_data'].format(year=year)) as res:
+                         .format(year, self.train_sites,
+                                 self.config['features']))
+            logger.debug('Loading training data from file: {}'.format(fp_data))
+            with NSRDBFeatures(fp_data) as res:
                 temp_raw = res.extract_features(self.train_sites,
                                                 self.config['features'])
-                temp_all_sky = res.extract_features(self.train_sites,
-                                                    self.config[
-                                                        'all_sky_vars'])
+                temp_all_sky = res.extract_features(
+                    self.train_sites,
+                    self.config.get('all_sky_vars', ALL_SKY_VARS))
+
                 if df_raw is None:
                     df_raw = temp_raw
                     df_all_sky = temp_all_sky
@@ -733,7 +717,8 @@ class TrainData:
         logger.debug('Shape df_raw={}, df_all_sky={}'.format(df_raw.shape,
                                                              df_all_sky.shape))
 
-        logger.debug('Converting to 2D for all_sky')
+        logger.debug('Extracting 2D arrays to run rest2 for '
+                     'clearsky PhyGNN inputs.')
         n = len(df_all_sky)
         time_index = pd.DatetimeIndex(df_all_sky.time_index.astype(str))
         aod = df_all_sky.aod.values.reshape((n, 1))
@@ -749,6 +734,7 @@ class TrainData:
                                     .values.reshape((n, 1)))
         doy = time_index.dayofyear.values
 
+        logger.debug('Running rest2 for clearsky PhyGNN inputs.')
         radius = ti_to_radius(time_index, n_cols=1)
         beta = calc_beta(aod, alpha)
         rest_data = rest2(surface_pressure, surface_albedo, ssa, asymmetry,
@@ -766,17 +752,19 @@ class TrainData:
         df_all_sky['Ruuclr'] = rest_data.Ruuclr
         df_all_sky['Tddclr'] = rest_data.Tddclr
         df_all_sky['Tduclr'] = rest_data.Tduclr
+        logger.debug('Completed rest2 run for clearsky PhyGNN inputs.')
 
         # ------Grab surface data
         df_surf = None
         for year in self.years:
             logger.debug('Grabbing surface data for {} and {}'
-                         ''.format(year, self.train_sites))
+                         .format(year, self.train_sites))
             for gid in self.train_sites:
                 code = surf_meta.loc[gid, 'surfrad_id']
                 with Surfrad(self.config['fp_surf'].format(year=year,
                                                            code=code)) as surf:
-                    temp = surf.get_df(dt_out='5min', window_minutes=15)
+                    w = self.config.get('surfrad_window_minutes', 15)
+                    temp = surf.get_df(dt_out='5min', window_minutes=w)
                 temp['gid'] = gid
                 temp['time_index'] = temp.index.values
                 if df_surf is None:
@@ -791,33 +779,47 @@ class TrainData:
         df_surf = df_surf.reset_index(drop=True)
         df_surf = df_surf.drop(['gid', 'time_index'], axis=1)
         df_all_sky = df_all_sky.join(df_surf)
+        logger.debug('Finished adding surfrad data to PhyGNN all-sky inputs.')
 
         self.df_raw = df_raw
         self.df_all_sky = df_all_sky.interpolate('nearest').bfill().ffill()
         self.p_kwargs = {'labels': df_all_sky.columns.values.tolist()}
+        self.p_kwargs.update(self.config.get('p_kwargs', {}))
 
-    def prep_data(self, filter_clear=False):
+    def prep_data(self):
         """ Clean and prepare training data """
-        logger.debug('Cleaning df_raw')
+        kwargs = {'filter_daylight': True,
+                  'filter_clear': False,
+                  'add_feature_flag': True,
+                  'sza_lim': 89,
+                  'nan_option': 'interp'}
+        kwargs.update(self.config.get('clean_training_data_kwargs', {}))
+        logger.debug('Training data clean kwargs: {}'.format(kwargs))
+
+        logger.debug('Cleaning df_raw training data.')
         logger.debug('Shape: df_raw={}'.format(self.df_raw.shape))
-        self.df_train = clean_cloud_df(self.df_raw, filter_clear=filter_clear)
+        self.df_train = clean_cloud_df(self.df_raw, **kwargs)
+
         logger.debug('Shape: df_train={}'.format(self.df_train.shape))
-        logger.debug('Cleaning df_all_sky')
-        self.df_all_sky = clean_cloud_df(self.df_all_sky,
-                                         filter_clear=filter_clear)
+        logger.debug('Cleaning df_all_sky training data (for pfun).')
+        self.df_all_sky = clean_cloud_df(self.df_all_sky, **kwargs)
+
         # Inspecting features would go here
 
         # Final cleaning and one-hot encoding
-        for name in self.config['drop_list']:
+        drop_list = ('gid', 'time_index', 'cloud_type')
+        for name in drop_list:
             if name in self.df_train:
                 self.df_train = self.df_train.drop(name, axis=1)
+        logger.debug('Adding one-hot vectors to training data.')
         logger.debug('*Shape: df_train={}'.format(self.df_train.shape))
         proc = PreProcess(self.df_train)
         self.df_train = proc.process_one_hot()
         logger.debug('**Shape: df_train={}'.format(self.df_train.shape))
         features = self.df_train.columns.values.tolist()
 
-        features = [f for f in features if f not in self.config['ignore']]
+        not_features = drop_list + tuple(self.config['y_labels'])
+        features = [f for f in features if f not in not_features]
 
         self.y = self.df_train[self.config['y_labels']].values
         self.x = self.df_train[features].values
@@ -826,72 +828,5 @@ class TrainData:
         logger.debug('Shapes: x={}, y={}, p={}'.format(self.x.shape,
                                                        self.y.shape,
                                                        self.p.shape))
+        logger.debug('Training features: {}'.format(features))
         assert self.y.shape[0] == self.x.shape[0] == self.p.shape[0]
-
-
-def clean_cloud_df(cloud_df_raw, filter_daylight=True, filter_clear=True,
-                   add_feature_flag=True, sza_lim=89):
-    """ Clean up cloud data """
-    t0 = time.time()
-    cloud_df = cloud_df_raw.copy()
-    day = (cloud_df['solar_zenith_angle'] < sza_lim)
-
-    day_missing_ctype = day & (cloud_df['cloud_type'] < 0)
-    cloud_df.loc[(cloud_df['cloud_type'] < 0), 'cloud_type'] = np.nan
-    cloud_df['cloud_type'] = cloud_df['cloud_type']\
-        .interpolate('nearest').ffill().bfill()
-
-    cloudy = cloud_df['cloud_type'].isin(ICE_TYPES + WATER_TYPES)
-    day_clouds = day & cloudy
-    day_missing_opd = day_clouds & (cloud_df['cld_opd_dcomp'] <= 0)
-    day_missing_reff = day_clouds & (cloud_df['cld_reff_dcomp'] <= 0)
-    cloud_df.loc[(cloud_df['cld_opd_dcomp'] <= 0), 'cld_opd_dcomp'] = np.nan
-    cloud_df.loc[(cloud_df['cld_reff_dcomp'] <= 0), 'cld_reff_dcomp'] = np.nan
-
-    logger.debug('{:.2f}% of timesteps are daylight'
-                 .format(100 * day.sum() / len(day)))
-    logger.debug('{:.2f}% of daylight timesteps are cloudy'
-                 .format(100 * day_clouds.sum() / day.sum()))
-    logger.debug('{:.2f}% of daylight timesteps are missing cloud type'
-                 .format(100 * day_missing_ctype.sum() / day.sum()))
-    logger.debug('{:.2f}% of cloudy daylight timesteps are missing cloud opd'
-                 .format(100 * day_missing_opd.sum() / day_clouds.sum()))
-    logger.debug('{:.2f}% of cloudy daylight timesteps are missing cloud reff'
-                 .format(100 * day_missing_reff.sum() / day_clouds.sum()))
-
-    cloud_df = cloud_df.interpolate('nearest').ffill().bfill()
-    cloud_df.loc[~cloudy, 'cld_opd_dcomp'] = 0.0
-    cloud_df.loc[~cloudy, 'cld_reff_dcomp'] = 0.0
-
-    assert ~any(cloud_df['cloud_type'] < 0)
-    assert ~any(pd.isna(cloud_df))
-    assert ~any(cloudy & (cloud_df['cld_opd_dcomp'] <= 0))
-
-    if add_feature_flag:
-        ice_clouds = cloud_df['cloud_type'].isin(ICE_TYPES)
-        water_clouds = cloud_df['cloud_type'].isin(WATER_TYPES)
-        cloud_df['flag'] = 'night'
-        cloud_df.loc[day, 'flag'] = 'clear'
-        cloud_df.loc[ice_clouds, 'flag'] = 'ice_cloud'
-        cloud_df.loc[water_clouds, 'flag'] = 'water_cloud'
-        cloud_df.loc[day_missing_ctype, 'flag'] = 'bad_cloud'
-        cloud_df.loc[day_missing_opd, 'flag'] = 'bad_cloud'
-        cloud_df.loc[day_missing_reff, 'flag'] = 'bad_cloud'
-
-    mask = True
-    if filter_daylight:
-        mask = mask & day
-
-    if filter_clear:
-        mask = mask & cloudy
-
-    if filter_daylight or filter_clear:
-        logger.debug('Data reduced from '
-                     '{} rows to {} after filters ({:.2f}% of original)'
-                     .format(len(cloud_df), mask.sum(),
-                             100 * mask.sum() / len(cloud_df)))
-        cloud_df = cloud_df[mask]
-
-    logger.debug('Cleaning took {:.1f} seconds'.format(time.time() - t0))
-
-    return cloud_df
