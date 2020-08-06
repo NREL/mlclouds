@@ -66,6 +66,11 @@ CONFIG = {
                  'cld_opd_dcomp', 'cld_reff_dcomp',
                  ],
 
+    # Categories for one hot encoding. Keys are column names, values are lists
+    # of category values
+    'one_hot_categories': {'flag': ['clear', 'ice_cloud',
+                                    'water_cloud', 'bad_cloud']},
+
     # TODO - the 'y's being used are hardwired in the validation code
     'y_labels': ['cld_opd_dcomp', 'cld_reff_dcomp'],
 
@@ -110,7 +115,7 @@ class XVal:
     def __init__(self, train_sites=[0, 1, 2, 3, 5, 6], val_site=4,
                  years=(2018,), config=CONFIG, val_data=None,
                  save_model=False, load_model=False,
-                 save_timeseries=True):
+                 save_timeseries=True, model_fname=None):
         """
         Parameters
         ----------
@@ -128,6 +133,10 @@ class XVal:
             Save trained model to disc as pickle file
         load_model: bool
             Skip training and load model from pickle file
+        save_timeseries: bool
+            Save time series data to disk
+        model_fname: str | None
+            Name to use for model pickle file, or auto generate if None
         """
         logger.info('XV: Training on {}, validating against {}, for {}'
                     ''.format(train_sites, val_site, years))
@@ -137,6 +146,7 @@ class XVal:
         self.val_site = val_site
         self.config = config
         self.save_timeseries = save_timeseries
+        self._model_fname = model_fname
 
         if isinstance(years, int):
             years = (years,)
@@ -400,8 +410,11 @@ class XVal:
     @property
     def model_file(self):
         """ Model file name including training and validation sites """
-        train_name = ''.join([str(x) for x in self.train_sites])
-        pkl_name = 'pgnn_{}_{}.pkl'.format(train_name, self.val_site)
+        if self._model_fname is None:
+            train_name = ''.join([str(x) for x in self.train_sites])
+            pkl_name = 'pgnn_{}_{}.pkl'.format(train_name, self.val_site)
+        else:
+            pkl_name = self._model_fname
         return os.path.join(self.config['model_dir'], pkl_name)
 
     def _timeseries_to_csv(self, gid, var, index, baseline, adjusted,
@@ -412,6 +425,8 @@ class XVal:
                            'PhyGNN': mlclouds,
                            'Surfrad': surf}, index=index)
         tdir = self.config.get('timeseries_dir', 'timeseries/')
+        if not os.path.exists(tdir):
+            os.makedirs(tdir)
         df.to_csv(os.path.join(tdir, 'timeseries_{}_{}.csv'.format(var, gid)))
 
     def _get_stats_data(self, years, gid, code):
@@ -666,7 +681,8 @@ class ValidationData:
 
         features = [c for c in self.df_feature_val.columns if
                     c not in not_features]
-        proc = PreProcess(self.df_feature_val.loc[self.mask, features])
+        proc = PreProcess(self.df_feature_val.loc[self.mask, features],
+                          categories=self.config['one_hot_categories'])
         self.df_x_val = proc.process_one_hot()
         logger.debug('Validation features: {}'.format(features))
 
@@ -813,7 +829,8 @@ class TrainData:
                 self.df_train = self.df_train.drop(name, axis=1)
         logger.debug('Adding one-hot vectors to training data.')
         logger.debug('*Shape: df_train={}'.format(self.df_train.shape))
-        proc = PreProcess(self.df_train)
+        proc = PreProcess(self.df_train,
+                          categories=self.config['one_hot_categories'])
         self.df_train = proc.process_one_hot()
         logger.debug('**Shape: df_train={}'.format(self.df_train.shape))
         features = self.df_train.columns.values.tolist()

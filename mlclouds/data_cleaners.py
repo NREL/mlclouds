@@ -50,6 +50,7 @@ def clean_cloud_df(cloud_df_raw, filter_daylight=True, filter_clear=True,
         logger.debug('\t"{}" has {:.2f}% NaN values'.format(c, pnan))
 
     if 'interp' in nan_option.lower():
+        logger.debug('Interpolating opd and reff')
         cloud_df = cloud_df.interpolate('nearest').ffill().bfill()
         cloud_df.loc[~cloudy, 'cld_opd_dcomp'] = 0.0
         cloud_df.loc[~cloudy, 'cld_reff_dcomp'] = 0.0
@@ -66,6 +67,7 @@ def clean_cloud_df(cloud_df_raw, filter_daylight=True, filter_clear=True,
     assert ~any(cloudy & (cloud_df['cld_opd_dcomp'] <= 0))
 
     if add_feature_flag:
+        logger.debug('Adding feature flag')
         ice_clouds = cloud_df['cloud_type'].isin(ICE_TYPES)
         water_clouds = cloud_df['cloud_type'].isin(WATER_TYPES)
         cloud_df['flag'] = 'night'
