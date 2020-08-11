@@ -137,3 +137,8 @@ dmypy.json
 
 # vscode
 *.vscode
+
+# Various example output files
+examples/*.csv
+examples/output/*
+examples/models/*
