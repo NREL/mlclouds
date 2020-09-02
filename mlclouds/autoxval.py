@@ -4,6 +4,7 @@ Automatic cross validation of PhyGNN models predicting opd and reff
 Mike Bannister 7/2020
 Based on code by Grant Buster
 """
+import copy
 import pandas as pd
 import numpy as np
 import os
@@ -24,8 +25,8 @@ from mlclouds.nsrdb import NSRDBFeatures
 from mlclouds.p_fun import p_fun_all_sky, p_fun_dummy
 from mlclouds.data_cleaners import clean_cloud_df
 
-from phygnn import PhysicsGuidedNeuralNetwork as PGNN
-from phygnn.pre_processing import PreProcess
+from phygnn import PhysicsGuidedNeuralNetwork as Phygnn
+from phygnn.utilities import PreProcess
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +64,6 @@ CONFIG = {
                  'cloud_fraction', 'air_temperature',
                  'dew_point', 'relative_humidity',
                  'total_precipitable_water', 'surface_albedo',
-                 'cld_opd_dcomp', 'cld_reff_dcomp',
                  ],
 
     # Categories for one hot encoding. Keys are column names, values are lists
@@ -165,18 +165,24 @@ class XVal:
             self.x = train_data.x
             self.y = train_data.y
             self.p = train_data.p
-            self.p_kwargs = train_data.p_kwargs
             self.train()
 
             if save_model:
                 self.model.save(self.model_file)
         else:
             logger.debug('Loading model from {}'.format(self.model_file))
-            self.model = PGNN.load(self.model_file)
+            self.model = Phygnn.load(self.model_file)
 
         # Validate model
         if val_data is None:
             val_data = ValidationData(years, config)
+
+        val_data.un_norm_data()
+        val_data.norm_data(train_data.means, train_data.stdevs)
+
+        self.p_kwargs = {'labels':
+                         train_data.df_all_sky.columns.values.tolist()}
+        self.p_kwargs.update(self.config.get('p_kwargs', {}))
 
         self.df_x_val = val_data.df_x_val
         self.df_all_sky_val = val_data.df_all_sky_val
@@ -191,18 +197,18 @@ class XVal:
         """ Train PhyGNN model """
         # TODO - update to control xfer learning via config dict
         logger.debug('Building PhyGNN model')
-        PGNN.seed(self.config['phygnn_seed'])
+        Phygnn.seed(self.config['phygnn_seed'])
 
         p_fun = P_FUNS[self.config.get('p_fun', 'p_fun_all_sky')]
         logger.info('Using p_fun: {}'.format(p_fun))
 
-        model = PGNN(p_fun=p_fun,
-                     hidden_layers=self.config['hidden_layers'],
-                     loss_weights=self.config['loss_weights_a'],
-                     metric=self.config['metric'],
-                     input_dims=self.x.shape[1],
-                     output_dims=self.y.shape[1],
-                     learning_rate=self.config['learning_rate'])
+        model = Phygnn(p_fun=p_fun,
+                       hidden_layers=self.config['hidden_layers'],
+                       loss_weights=self.config['loss_weights_a'],
+                       metric=self.config['metric'],
+                       input_dims=self.x.shape[1],
+                       output_dims=self.y.shape[1],
+                       learning_rate=self.config['learning_rate'])
 
         logger.info('Training part A - pure data. Loss is {}'
                     ''.format(self.config['loss_weights_a']))
@@ -229,7 +235,7 @@ class XVal:
         t0 = time.time()
 
         # Predict opd and reff using model
-        predicted_raw = self.model.predict(self.df_x_val.values)
+        predicted_raw = self.model.predict(self.df_x_val)
         logger.debug('Prediction took {:.2f} seconds'.format(time.time() - t0))
         opd_raw = predicted_raw[:, 0]
         reff_raw = predicted_raw[:, 1]
@@ -256,7 +262,7 @@ class XVal:
                                                              + WATER_TYPES))
             self.df_feature_val.loc[mask, 'cloud_type'] = 0
             self.df_all_sky_val.loc[mask, 'cloud_type'] = 0
-            logger.debug('The PGNN predicted {} additional clear timesteps'
+            logger.debug('The Phygnn predicted {} additional clear timesteps'
                          '({:.2f}%)'.format(mask.sum(),
                                             100 * mask.sum() / len(mask)))
         if update_cloudy:
@@ -265,8 +271,8 @@ class XVal:
                     & (self.df_feature_val['cloud_type'].isin(CLEAR_TYPES)))
             self.df_feature_val.loc[mask, 'cloud_type'] = 8
             self.df_all_sky_val.loc[mask, 'cloud_type'] = 8
-            print('The PGNN predicted {} additional cloudy timesteps ({:.2f}%)'
-                  ''.format(mask.sum(), 100 * mask.sum() / len(mask)))
+            print('The Phygnn predicted {} additional cloudy timesteps '
+                  '({:.2f}%)'.format(mask.sum(), 100 * mask.sum() / len(mask)))
 
         clear_mask = self.df_feature_val['cloud_type'].isin(CLEAR_TYPES)
         self.df_feature_val.loc[clear_mask, 'cld_opd_dcomp'] = 0
@@ -619,7 +625,10 @@ class AutoXVal:
 
 class ValidationData:
     """ Load and prep validation data """
+
     def __init__(self, years, config):
+        self.means = 0
+        self.stdevs = 1
         self.years = years
         self.config = config
         self.load_data()
@@ -634,17 +643,18 @@ class ValidationData:
 
         df_raw = None
         df_all_sky = None
+        var_names = copy.deepcopy(self.config['features'])
+        var_names += self.config['y_labels']
 
         all_gids = self.surf_meta.index.unique().values.tolist()
         for year in self.years:
             fp_data = self.config['fp_data'].format(year=year)
             logger.debug('Loading data for {}, {}, {}'
-                         ''.format(year, all_gids, self.config['features']))
+                         .format(year, all_gids, var_names))
             logger.debug('Loading feature data for validation from file: {}'
                          .format(fp_data))
             with NSRDBFeatures(fp_data) as res:
-                temp_raw = res.extract_features(all_gids,
-                                                self.config['features'])
+                temp_raw = res.extract_features(all_gids, var_names)
                 temp_all_sky = res.extract_features(
                     all_gids, self.config.get('all_sky_vars', ALL_SKY_VARS))
                 if df_raw is None:
@@ -681,15 +691,48 @@ class ValidationData:
 
         features = [c for c in self.df_feature_val.columns if
                     c not in not_features]
-        proc = PreProcess(self.df_feature_val.loc[self.mask, features],
-                          categories=self.config['one_hot_categories'])
-        self.df_x_val = proc.process_one_hot()
+        self.df_x_val = PreProcess.one_hot(
+            self.df_feature_val.loc[self.mask, features],
+            categories=self.config['one_hot_categories'])
         logger.debug('Validation features: {}'.format(features))
+
+    def norm_data(self, means, stdevs):
+        """Normalize the feature inputs for the validation dataset."""
+        self.means = means
+        self.stdevs = stdevs
+        one_hot_labels = [a for b in self.config['one_hot_categories'].values()
+                          for a in b]
+        norm_cols = [c for c in self.df_x_val.columns
+                     if c not in one_hot_labels
+                     and c not in self.config['y_labels']]
+        self.df_x_val[norm_cols], m, s = PreProcess.normalize(
+            self.df_x_val[norm_cols], mean=means, stdev=stdevs)
+        temp_means = {c: m[i] for i, c in enumerate(norm_cols)}
+        temp_stdevs = {c: s[i] for i, c in enumerate(norm_cols)}
+        logger.debug('Norm means: {}'.format(temp_means))
+        logger.debug('Norm stdevs: {}'.format(temp_stdevs))
+
+    def un_norm_data(self, means=None, stdevs=None):
+        """Un-normalize the feature inputs for the validation dataset."""
+        if means is None:
+            means = self.means
+        if stdevs is None:
+            stdevs = self.stdevs
+        one_hot_labels = [a for b in self.config['one_hot_categories'].values()
+                          for a in b]
+        norm_cols = [c for c in self.df_x_val.columns
+                     if c not in one_hot_labels
+                     and c not in self.config['y_labels']]
+        logger.debug('Un-normalizing validation feature inputs.')
+        self.df_x_val[norm_cols] = PreProcess.unnormalize(
+            self.df_x_val[norm_cols], means, stdevs)
 
 
 class TrainData:
     """ Load and prep training data """
     def __init__(self, years, train_sites, config):
+        self.means = None
+        self.stdevs = None
         self.years = years
         self.train_sites = train_sites
         self.config = config
@@ -706,18 +749,17 @@ class TrainData:
 
         df_raw = None
         df_all_sky = None
+        var_names = copy.deepcopy(self.config['features'])
+        var_names += self.config['y_labels']
 
         # ------ Grab NSRDB data for weather properties
         for year in self.years:
             fp_data = self.config['fp_data'].format(year=year)
-
             logger.debug('Loading data for {}, {}, {}'
-                         .format(year, self.train_sites,
-                                 self.config['features']))
+                         .format(year, self.train_sites, var_names))
             logger.debug('Loading training data from file: {}'.format(fp_data))
             with NSRDBFeatures(fp_data) as res:
-                temp_raw = res.extract_features(self.train_sites,
-                                                self.config['features'])
+                temp_raw = res.extract_features(self.train_sites, var_names)
                 temp_all_sky = res.extract_features(
                     self.train_sites,
                     self.config.get('all_sky_vars', ALL_SKY_VARS))
@@ -799,8 +841,6 @@ class TrainData:
 
         self.df_raw = df_raw
         self.df_all_sky = df_all_sky.interpolate('nearest').bfill().ffill()
-        self.p_kwargs = {'labels': df_all_sky.columns.values.tolist()}
-        self.p_kwargs.update(self.config.get('p_kwargs', {}))
 
     def prep_data(self):
         """ Clean and prepare training data """
@@ -829,18 +869,32 @@ class TrainData:
                 self.df_train = self.df_train.drop(name, axis=1)
         logger.debug('Adding one-hot vectors to training data.')
         logger.debug('*Shape: df_train={}'.format(self.df_train.shape))
-        proc = PreProcess(self.df_train,
-                          categories=self.config['one_hot_categories'])
-        self.df_train = proc.process_one_hot()
+
+        self.df_train = PreProcess.one_hot(
+            self.df_train, categories=self.config['one_hot_categories'])
+        one_hot_labels = [a for b in self.config['one_hot_categories'].values()
+                          for a in b]
+        norm_cols = [c for c in self.df_train.columns
+                     if c not in one_hot_labels
+                     and c not in self.config['y_labels']]
+        self.df_train[norm_cols], means, stdevs = PreProcess.normalize(
+            self.df_train[norm_cols])
+        self.means = means
+        self.stdevs = stdevs
+        temp_means = {c: means[i] for i, c in enumerate(norm_cols)}
+        temp_stdevs = {c: stdevs[i] for i, c in enumerate(norm_cols)}
+        logger.debug('Norm means: {}'.format(temp_means))
+        logger.debug('Norm stdevs: {}'.format(temp_stdevs))
+
         logger.debug('**Shape: df_train={}'.format(self.df_train.shape))
         features = self.df_train.columns.values.tolist()
 
         not_features = drop_list + tuple(self.config['y_labels'])
         features = [f for f in features if f not in not_features]
 
-        self.y = self.df_train[self.config['y_labels']].values
-        self.x = self.df_train[features].values
-        self.p = self.df_all_sky.values
+        self.y = self.df_train[self.config['y_labels']]
+        self.x = self.df_train[features]
+        self.p = self.df_all_sky
 
         logger.debug('Shapes: x={}, y={}, p={}'.format(self.x.shape,
                                                        self.y.shape,

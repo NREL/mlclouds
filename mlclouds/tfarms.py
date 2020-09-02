@@ -22,7 +22,7 @@ import numpy as np
 import collections
 from nsrdb.all_sky import WATER_TYPES, SOLAR_CONSTANT
 import nsrdb.all_sky.utilities as ut
-from phygnn.tf_utilities import tf_isin, tf_log10
+from phygnn.utilities import tf_isin, tf_log10
 
 
 def water_phase(tau, De, solar_zenith_angle):
