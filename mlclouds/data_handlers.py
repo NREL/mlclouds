@@ -1,6 +1,7 @@
 import logging
 import copy
 import pandas as pd
+import numpy as np
 
 from nsrdb.all_sky.rest2 import rest2, rest2_tuuclr
 from nsrdb.all_sky.utilities import ti_to_radius, calc_beta
@@ -21,37 +22,57 @@ logger = logging.getLogger(__name__)
 
 class TrainData:
     """ Load and prep training data """
-    def __init__(self, train_sites, train_files, config=CONFIG):
+    def __init__(self, train_sites, train_files, config=CONFIG,
+                 test_fraction=None):
         """
         Parameters
         ----------
-        train_sites: list of int
-            Surfrad gids to use for training
+        train_sites: 'all' | list of int
+            Surfrad gids to use for training. Use all if 'all'
         train_files: list | str
             File or list of files to use for training. Filenames must include
             the four-digit year.
         config: dict
             Dict of configuration options. See CONFIG for example.
+        test_fraction: None | float
+            Fraction of full data set to reserve for testing. Should be between
+            0 to 1. The test set is randomly selected and dropped from the
+            training set. If None, do not reserve a test set.
         """
         self.fp_surfrad_data = FP_SURFRAD_DATA
         self.fp_surfrad_meta = FP_SURFRAD_META
+        if train_sites == 'all':
+            train_sites = [k for k, v in
+                           surf_meta().to_dict()['surfrad_id'].items() if v not
+                           in ['srrl', 'sgp']]
         self.train_sites = train_sites
         self._config = config
 
         self.means = None
         self.stdevs = None
 
+        self.test_set_mask = None  # Rows of full set reserved for testing
+
         if not isinstance(train_files, list):
             train_files = [train_files]
         self.train_files = train_files
 
         logger.info('Loading training data')
-        self.load_data()
+        self._load_data(test_fraction)
         logger.info('Prepping training data')
-        self.prep_data()
+        self._prep_data()
 
-    def load_data(self):
-        """ Load training data """
+    def _load_data(self, test_fraction):
+        """
+        Load training data
+
+        Parameters
+        ----------
+        test_fraction: None | float
+            Fraction of full data set to reserve for testing. Should be between
+            0 to 1. The test set is randomly selected and dropped from the
+            training set. If None, do not reserve a test set.
+        """
         var_names = copy.deepcopy(self._config['features'])
         var_names += self._config['y_labels']
         logger.debug('Loading vars {}'.format(var_names))
@@ -114,6 +135,10 @@ class TrainData:
         df_surf = df_surf.drop(['gid', 'time_index'], axis=1)
         df_all_sky = df_all_sky.join(df_surf)
 
+        if test_fraction:
+            df_raw, df_all_sky = self._test_train_split(df_raw, df_all_sky,
+                                                        test_fraction)
+
         logger.debug('Extracting 2D arrays to run rest2 for '
                      'clearsky PhyGNN inputs.')
         n = len(df_all_sky)
@@ -160,7 +185,7 @@ class TrainData:
         self.df_all_sky = df_all_sky.interpolate('nearest').bfill().ffill()
         self.df_all_sky['time_index'] = time_index
 
-    def prep_data(self, kwargs=TRAINING_PREP_KWARGS):
+    def _prep_data(self, kwargs=TRAINING_PREP_KWARGS):
         """
         Clean and prepare training data
 
@@ -226,13 +251,53 @@ class TrainData:
         logger.debug('Training features: {}'.format(features))
         assert self.y.shape[0] == self.x.shape[0] == self.p.shape[0]
 
+    def _test_train_split(self, df_raw_orig, df_all_sky_orig, test_fraction):
+        """
+        Split data into test and train sets. Return train data.
+
+        Parameters
+        ----------
+        df_raw_orig: pandas.DataFrame
+            Satellite data for model training
+        df_all_sky_orig: pandas.DataFrame
+            All_sky inputs
+        test_fraction: None | float
+            Fraction of full data set to reserve for testing. Should be between
+            0 to 1. The test set is randomly selected and dropped from the
+            training set. If None, do not reserve a test set.
+
+        Returns
+        -------
+        df_raw: pandas.DataFrame
+            Training set of satellite data for model training
+        df_all_sky: pandas.DataFrame
+            Training set of all_sky inputs
+        """
+        logger.debug('Creating test set; {}% of full data set'
+                     ''.format(test_fraction*100))
+        assert 0 < test_fraction < 1
+
+        cutoff = int(len(df_raw_orig.index)*test_fraction)
+        test_rows = np.random.permutation(df_raw_orig.index)[:cutoff]
+        self.test_set_mask = df_raw_orig.index.isin(test_rows)
+        train_set_mask = ~self.test_set_mask
+
+        df_raw = df_raw_orig[train_set_mask]
+        df_all_sky = df_all_sky_orig[train_set_mask]
+        logger.debug('Train set shape: df_raw={}, df_all_sky={}'
+                     ''.format(df_raw.shape, df_all_sky.shape))
+        logger.debug('Test set shape: df_raw={}, df_all_sky={}'
+                     ''.format(df_raw_orig[self.test_set_mask].shape,
+                               df_all_sky_orig[self.test_set_mask].shape))
+        return df_raw, df_all_sky
+
 
 class ValidationData:
     """ Load and prep validation data """
 
-    def __init__(self, val_files, features, y_labels,
-                 all_sky_vars=ALL_SKY_VARS, one_hot_cats=None,
-                 predict_clearsky=True):
+    def __init__(self, val_files, features=CONFIG['features'],
+                 y_labels=CONFIG['y_labels'], all_sky_vars=ALL_SKY_VARS,
+                 one_hot_cats=None, predict_clearsky=True, test_set_mask=None):
         """
         Parameters
         ----------
@@ -245,11 +310,14 @@ class ValidationData:
         all_sky_vars: list of str
             Names of fields used for the allsky algorithm
         one_hot_cats: dict | None
-             Categories for one hot encoding. Keys are column names, values
-             are lists of category values. See phygnn.utlities.pre_processing.
+            Categories for one hot encoding. Keys are column names, values
+            are lists of category values. See phygnn.utlities.pre_processing.
         predict_clearsky: bool
             Let phygnn predict properties for clear and cloudy time steps if
             true, else, only predict properties for cloudy time steps.
+        test_set_mask: None | numpy.ndarray of bool
+            Set of full data set in val_files to use. If None, use full
+            dataset.
         """
         self.means = 0
         self.stdevs = 1
@@ -266,11 +334,19 @@ class ValidationData:
             val_files = [val_files]
         self.val_files = val_files
 
-        self.load_data()
-        self.prep_data(predict_clearsky)
+        self._load_data(test_set_mask)
+        self._prep_data(predict_clearsky)
 
-    def load_data(self):
-        """ Load validation data """
+    def _load_data(self, test_set_mask):
+        """
+        Load validation data
+
+        Parameters
+        ----------
+        test_set_mask: None | numpy.ndarray of bool
+            Set of full data set in val_files to use. If None, use full
+            dataset.
+        """
         logger.debug('Loading validation data')
 
         df_raw = None
@@ -279,14 +355,16 @@ class ValidationData:
         var_names += self.y_labels
         logger.debug('Loading vars {}'.format(var_names))
 
-        all_gids = surf_meta().index.unique().values.tolist()
+        gids = [k for k, v in surf_meta().to_dict()['surfrad_id'].items() if v
+                not in ['srrl', 'sgp']]
+
         for val_file in self.val_files:
             logger.debug('Loading validation data from {} for gids {}'
-                         ''.format(val_file, all_gids))
+                         ''.format(val_file, gids))
             with NSRDBFeatures(val_file) as res:
-                temp_raw = res.extract_features(all_gids, var_names)
+                temp_raw = res.extract_features(gids, var_names)
                 temp_all_sky = res.extract_features(
-                    all_gids, self.all_sky_vars)
+                    gids, self.all_sky_vars)
                 if df_raw is None:
                     df_raw = temp_raw
                     df_all_sky = temp_all_sky
@@ -309,6 +387,16 @@ class ValidationData:
         df_raw.reset_index(drop=True, inplace=True)
         df_all_sky.reset_index(drop=True, inplace=True)
 
+        if test_set_mask is not None:
+            assert (len(df_raw) == len(df_all_sky) == len(test_set_mask)), \
+                ('test_set_mask is the wrong length: {}. Ensure same sites '
+                 'and files are used for training and validation.'
+                 '').format(len(test_set_mask))
+            df_raw = df_raw[test_set_mask]
+            df_all_sky = df_all_sky[test_set_mask]
+            logger.debug('Test set shape: df_raw={}, df_all_sky={}'
+                         ''.format(df_raw.shape, df_all_sky.shape))
+
         self.df_feature_val = clean_cloud_df(df_raw, filter_daylight=False,
                                              filter_clear=False,
                                              add_feature_flag=True, sza_lim=89)
@@ -316,7 +404,7 @@ class ValidationData:
                                              filter_clear=False,
                                              add_feature_flag=True, sza_lim=89)
 
-    def prep_data(self, predict_clearsky):
+    def _prep_data(self, predict_clearsky):
         """
         Prepare validation data
 

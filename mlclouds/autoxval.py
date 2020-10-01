@@ -22,6 +22,37 @@ from phygnn import PhysicsGuidedNeuralNetwork as Phygnn
 logger = logging.getLogger(__name__)
 
 
+class TrainTest:
+    """
+    Train and test a model using a single dataset. Reserve a percentage
+    of the data for testing that is not used for training.
+    """
+    def __init__(self, data_files, config=CONFIG, test_fraction=0.2,
+                 stats_file=None):
+        """
+        Parameters
+        ----------
+        data_files: list of str | str
+            File or list of files to use for training and testing. Filenames
+            must include the four-digit year and satellite indicator
+            (east|west).
+        config: dict
+            Phygnn configuration dict
+        test_fraction: float
+            Fraction of full data set to reserve for testing. Should be between
+            0 to 1. The test set is randomly selected and dropped from the
+            training set.
+        """
+        self.trainer = Trainer(train_files=data_files, config=config,
+                               test_fraction=test_fraction)
+        self.validator = Validator(self.trainer.model, self.trainer.train_data,
+                                   config=config, val_files=data_files,
+                                   test_set_mask=self.trainer.test_set_mask)
+
+        if stats_file:
+            self.validator.stats.to_csv(stats_file)
+
+
 class XVal:
     """
     Train a PhyGNN using one or more satellite datasets then validate against
