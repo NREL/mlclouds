@@ -24,8 +24,7 @@ def p_fun_dummy(y_predicted, y_true, p, labels=None, loss_terms=None):
 
 
 def p_fun_all_sky(y_predicted, y_true, p, labels=None,
-                  loss_terms=('mae_ghi', 'mae_dni', 'mae_dhi',
-                              'mbe_ghi', 'mbe_dni', 'mbe_dhi')):
+                  loss_terms=('mae_ghi', 'mae_dni', 'mbe_ghi', 'mbe_dni')):
     """Physics loss function """
     n = len(y_true)
     tau = tf.expand_dims(y_predicted[:, 0], axis=1)

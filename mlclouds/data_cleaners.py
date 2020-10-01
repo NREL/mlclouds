@@ -51,7 +51,16 @@ def clean_cloud_df(cloud_df_raw, filter_daylight=True, filter_clear=True,
 
     if 'interp' in nan_option.lower():
         logger.debug('Interpolating opd and reff')
-        cloud_df = cloud_df.interpolate('nearest').ffill().bfill()
+
+        if 'time_index' in cloud_df.columns:
+            time_index = cloud_df.time_index
+            assert time_index.isnull().sum() == 0
+            cloud_df = cloud_df.drop('time_index', axis=1)
+            cloud_df = cloud_df.interpolate('nearest').ffill().bfill()
+            cloud_df['time_index'] = time_index
+        else:
+            cloud_df = cloud_df.interpolate('nearest').ffill().bfill()
+
         cloud_df.loc[~cloudy, 'cld_opd_dcomp'] = 0.0
         cloud_df.loc[~cloudy, 'cld_reff_dcomp'] = 0.0
     elif 'drop' in nan_option.lower():

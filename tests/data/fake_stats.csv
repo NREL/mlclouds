@@ -1,0 +1,2 @@
+Model,Site,Variable,Condition,MAE (%),MBE (%),RMSE (%)
+Baseline,BON,DNI,All-Sky,31.947923203491644,14.094140597504733,38.29307881174633
