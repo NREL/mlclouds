@@ -77,7 +77,6 @@ class TrainData:
         var_names += self._config['y_labels']
         logger.debug('Loading vars {}'.format(var_names))
 
-        # Grab satellite and ground data for training files
         df_raw = None
         df_all_sky = None
         df_surf = None

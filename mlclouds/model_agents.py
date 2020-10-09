@@ -75,8 +75,8 @@ class Trainer:
                        hidden_layers=self._config['hidden_layers'],
                        loss_weights=self._config['loss_weights_a'],
                        metric=self._config['metric'],
-                       input_dims=self.x.shape[1],
-                       output_dims=self.y.shape[1],
+                       n_features=self.x.shape[1],
+                       n_labels=self.y.shape[1],
                        learning_rate=self._config['learning_rate'])
 
         logger.info('Training part A - pure data. Loss is {}'
@@ -384,15 +384,29 @@ class Validator:
         self.stats = stats
         logger.info('Finished computing stats.')
 
-    def _timeseries_to_csv(self, gid, var, index, baseline, adjusted,
-                           mlclouds, surf):
-        # TODO index stuff
-        """Save irradiance timseries data to disk for later analysis"""
+    def _timeseries_to_csv(self, gid, var, baseline, adjusted, mlclouds, surf):
+        """
+        Save irradiance timseries data to disk for later analysis
+
+        Parameters
+        ----------
+        gid: int
+            Gid of site excluded from training, only used for file naming
+        var: str
+            Irradiance type of data: dni or ghi
+        baseline: pd.Series
+            Baseline NSRDB irradiance
+        adjusted: pd.Series
+            NSRDB irradiance, adjusted for solar position
+        mlclouds: pd.Series
+            Irradiance as predicted by PhyGNN
+        sur: pd.Series
+            Ground measured irradiance
+        """
         df = pd.DataFrame({'Baseline': baseline,
                            'Adjusted': adjusted,
                            'PhyGNN': mlclouds,
                            'Surfrad': surf})
-                           # 'Surfrad': surf}, index=index)
         tdir = self._config.get('timeseries_dir', 'timeseries/')
         if not os.path.exists(tdir):
             os.makedirs(tdir)
