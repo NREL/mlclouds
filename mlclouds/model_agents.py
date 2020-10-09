@@ -302,9 +302,9 @@ class Validator:
             args = self._get_all_sky_args(gid, self.df_all_sky_val,
                                           all_sky_vars=all_sky_vars)
             out = all_sky(**args)
-            all_sky_out = pd.DataFrame({k: v.flatten() for k,
-                                        v in out.items()},
-                                       index=args['time_index'])
+            index = pd.DatetimeIndex(args['time_index']).tz_localize('utc')
+            all_sky_out = pd.DataFrame({k: v.flatten() for k, v in
+                                        out.items()}, index=index)
 
             gid_mask = (self.df_all_sky_val.gid == gid)
             val_daylight_mask = (self.df_all_sky_val.loc[gid_mask,
@@ -336,8 +336,6 @@ class Validator:
                                             df_surf[var])
 
             for mask, condition in m_iter:
-                logger.debug('mask for {} has shape {}'.format(condition,
-                                                               mask.shape))
                 for var in ['dni', 'ghi']:
                     baseline = df_baseline.loc[mask, var].values
                     adjusted = df_baseline_adj.loc[mask, var].values
@@ -388,11 +386,13 @@ class Validator:
 
     def _timeseries_to_csv(self, gid, var, index, baseline, adjusted,
                            mlclouds, surf):
+        # TODO index stuff
         """Save irradiance timseries data to disk for later analysis"""
         df = pd.DataFrame({'Baseline': baseline,
                            'Adjusted': adjusted,
                            'PhyGNN': mlclouds,
-                           'Surfrad': surf}, index=index)
+                           'Surfrad': surf})
+                           # 'Surfrad': surf}, index=index)
         tdir = self._config.get('timeseries_dir', 'timeseries/')
         if not os.path.exists(tdir):
             os.makedirs(tdir)
