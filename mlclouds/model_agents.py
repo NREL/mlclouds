@@ -1,3 +1,7 @@
+"""
+mlclouds phygnn model trainer and validator classes.
+"""
+
 import logging
 import numpy as np
 import pandas as pd
@@ -21,6 +25,8 @@ logger = logging.getLogger(__name__)
 
 
 class Trainer:
+    """Class to handle the training of the mlclouds phygnn model"""
+
     def __init__(self, train_sites='all', train_files=FP_DATA, config=CONFIG,
                  test_fraction=None):
         """
@@ -329,7 +335,7 @@ class Validator:
 
             if save_timeseries:
                 for var in ['dni', 'ghi']:
-                    self._timeseries_to_csv(gid, var, args['time_index'],
+                    self._timeseries_to_csv(gid, var,
                                             df_baseline[var],
                                             df_baseline_adj[var],
                                             all_sky_out[var],
