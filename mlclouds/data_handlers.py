@@ -1,7 +1,6 @@
 import logging
 import copy
 import pandas as pd
-import numpy as np
 
 from nsrdb.all_sky.rest2 import rest2, rest2_tuuclr
 from nsrdb.all_sky.utilities import ti_to_radius, calc_beta
@@ -276,13 +275,11 @@ class TrainData:
                      ''.format(test_fraction*100))
         assert 0 < test_fraction < 1
 
-        cutoff = int(len(df_raw_orig.index)*test_fraction)
-        test_rows = np.random.permutation(df_raw_orig.index)[:cutoff]
-        self.test_set_mask = df_raw_orig.index.isin(test_rows)
-        train_set_mask = ~self.test_set_mask
+        df_raw = df_raw_orig.sample(frac=(1-test_fraction))
+        self.train_set_mask = df_raw_orig.index.isin(df_raw.index)
+        df_all_sky = df_all_sky_orig[self.train_set_mask]
+        self.test_set_mask = ~self.train_set_mask
 
-        df_raw = df_raw_orig[train_set_mask]
-        df_all_sky = df_all_sky_orig[train_set_mask]
         logger.debug('Train set shape: df_raw={}, df_all_sky={}'
                      ''.format(df_raw.shape, df_all_sky.shape))
         logger.debug('Test set shape: df_raw={}, df_all_sky={}'

@@ -2,8 +2,9 @@ import os
 import pandas as pd
 import pytest
 
-from mlclouds.autoxval import AutoXVal
+from mlclouds.autoxval import AutoXVal, CONFIG
 from mlclouds import TESTDATADIR
+from mlclouds.data_handlers import TrainData
 
 
 class FakeXVal:
@@ -52,6 +53,21 @@ def test_kxn_fold():
     axv = AutoXVal.kxn_fold(sites=[0, 1, 2], val_data='fake',
                             xval=FakeXVal)
     assert len(axv.stats) == 6
+
+
+def test_test_train_split():
+    """ Test train/test fraction has appropriate split """
+    west_2016 = '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/2016' +\
+                '_west_adj/mlclouds_surfrad_2016.h5'
+    config = CONFIG
+    td = TrainData('all', west_2016, config=config, test_fraction=0.2)
+    assert td.df_raw.shape[0] == 98381
+    assert td.test_set_mask.shape == (122976,)
+    assert td.test_set_mask.sum() == 24595
+
+    # Verify the two masks are unique
+    assert (td.test_set_mask | td.train_set_mask).sum() == 122976
+    assert (td.test_set_mask & td.train_set_mask).sum() == 0
 
 
 def execute_pytest(capture='all', flags='-rapP'):
