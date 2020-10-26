@@ -112,7 +112,7 @@ def test_xval_mismatched_timesteps(check_for_eagle):
         # 2018 has a 30 minute timestep
         '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/2018' +
         '_west_adj/mlclouds_surfrad_2018.h5',
-        # 2019 has a 5 minute timestep
+        # 2019 has a 10 minute timestep
         '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/2019' +
         '_west_adj/mlclouds_surfrad_2019.h5',
     ]
@@ -120,11 +120,14 @@ def test_xval_mismatched_timesteps(check_for_eagle):
     xv = XVal(config=config)
     xv.train(train_sites=[4, 5], train_files=files)
 
-    # Is there the correct amount of data for 1 year @ 30 min and 1 @ 5 min?
-    assert xv._train_data.df_raw.shape == (245280, 16)
+    # Is there the correct amount of data for 2 sites with 1 year @ 30 min
+    # and 1 @ 10 min?
+    size = (2*24*365 + 6*24*365)*2
+    assert xv._train_data.df_raw.shape == (size, 16)
+
     date = dt(2019, 1, 1, 0, 0, 0, 0, pytz.UTC)
-    assert (xv._train_data.df_raw.time_index >= date).sum() == 210240
-    assert (xv._train_data.df_raw.time_index < date).sum() == 35040
+    assert (xv._train_data.df_raw.time_index >= date).sum() == 6*24*365*2
+    assert (xv._train_data.df_raw.time_index < date).sum() == 2*24*365*2
 
     xv.validate(val_files=files)
 

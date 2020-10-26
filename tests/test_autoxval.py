@@ -22,7 +22,7 @@ class FakeXVal:
         assert train_sites == self.train_sets[self.__class__.i]
         self.__class__.i += 1
 
-    def validate(self, val_data=None):
+    def validate(self, val_data=None, save_timeseries=False):
         pass
 
 
