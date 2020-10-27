@@ -22,6 +22,37 @@ from phygnn import PhysicsGuidedNeuralNetwork as Phygnn
 logger = logging.getLogger(__name__)
 
 
+class TrainTest:
+    """
+    Train and test a model using a single dataset. Reserve a percentage
+    of the data for testing that is not used for training.
+    """
+    def __init__(self, data_files, config=CONFIG, test_fraction=0.2,
+                 stats_file=None):
+        """
+        Parameters
+        ----------
+        data_files: list of str | str
+            File or list of files to use for training and testing. Filenames
+            must include the four-digit year and satellite indicator
+            (east|west).
+        config: dict
+            Phygnn configuration dict
+        test_fraction: float
+            Fraction of full data set to reserve for testing. Should be between
+            0 to 1. The test set is randomly selected and dropped from the
+            training set.
+        """
+        self.trainer = Trainer(train_files=data_files, config=config,
+                               test_fraction=test_fraction)
+        self.validator = Validator(self.trainer.model, self.trainer.train_data,
+                                   config=config, val_files=data_files,
+                                   test_set_mask=self.trainer.test_set_mask)
+
+        if stats_file:
+            self.validator.stats.to_csv(stats_file)
+
+
 class XVal:
     """
     Train a PhyGNN using one or more satellite datasets then validate against
@@ -60,7 +91,7 @@ class XVal:
         self._train_data = trainer.train_data
 
     def validate(self, val_files=None, val_data=None, update_clear=False,
-                 update_cloudy=False):
+                 update_cloudy=False, save_timeseries=False):
         """
         Predict values using PhyGNN model and validation against baseline
         NSRDB data.
@@ -78,6 +109,8 @@ class XVal:
         update_cloudy: bool
             If true, update cloud type for cloudy time steps with phygnn
             predictions
+        save_timeseries: bool
+            Save time series data to disk
         """
         if self._model is None or self._train_data is None:
             msg = 'A model must be trained or loaded before validating.'
@@ -89,7 +122,8 @@ class XVal:
                               val_files=val_files,
                               val_data=val_data,
                               update_clear=update_clear,
-                              update_cloudy=update_cloudy)
+                              update_cloudy=update_cloudy,
+                              save_timeseries=save_timeseries)
         self.stats = validator.stats
         self._validator = validator
 
@@ -169,7 +203,7 @@ class AutoXVal:
     def __init__(self, sites=[0, 1, 2, 3, 4, 5, 6], val_sites=None,
                  data_files=FP_DATA, val_data=None, config=CONFIG,
                  shuffle_train=False, seed=None, xval=XVal, catch_nan=False,
-                 min_train=1):
+                 min_train=1, save_timeseries=False):
         """
         Parameters
         ----------
@@ -194,6 +228,8 @@ class AutoXVal:
             If true, catch loss==nan exceptions and continue analysis
         min_train: int
             Minimum # of sites to use for training
+        save_timeseries: bool
+            Save time series data to disk
         """
         if seed is not None:
             np.random.seed(seed)
@@ -229,9 +265,10 @@ class AutoXVal:
             if shuffle_train:
                 np.random.shuffle(train_set)
             self._run_train_set(val_site, train_set, min_train, catch_nan,
-                                xval)
+                                xval, save_timeseries=save_timeseries)
 
-    def _run_train_set(self, val_site, train_set, min_train, catch_nan, xval):
+    def _run_train_set(self, val_site, train_set, min_train, catch_nan, xval,
+                       save_timeseries=False):
         """
         Run XVal with permutations of a training set. "min_train" controls the
         number of permutations.
@@ -248,6 +285,8 @@ class AutoXVal:
             Minimum # of sites to use for training
         xval: Class
             Cross validation class. Used for testing.
+        save_timeseries: bool
+            Save time series data to disk
         """
         logger.info('Training set is {}, val site is {}'.format(train_set,
                                                                 val_site))
@@ -263,7 +302,8 @@ class AutoXVal:
                     continue
                 else:
                     raise e
-            xv.validate(val_data=self._val_data)
+            xv.validate(val_data=self._val_data,
+                        save_timeseries=save_timeseries)
 
             # The _ prevents the 0 from being trimmed off
             ts = '_' + ''.join([str(x) for x in train_sites])
@@ -314,22 +354,24 @@ class AutoXVal:
     @classmethod
     def k_fold(cls, data_files=FP_DATA, val_data=None,
                sites=[0, 1, 2, 3, 4, 5, 6], val_sites=None, config=CONFIG,
-               seed=None, xval=XVal, catch_nan=False):
+               seed=None, xval=XVal, catch_nan=False, save_timeseries=False):
         """ Perform k-fold validation, only train on n-1 sites """
         min_train = len(sites) - 1
         axv = cls(data_files=data_files, val_data=val_data, sites=sites,
                   val_sites=val_sites, config=config, seed=seed, xval=xval,
-                  catch_nan=catch_nan, min_train=min_train)
+                  catch_nan=catch_nan, min_train=min_train,
+                  save_timeseries=save_timeseries)
         return axv
 
     @classmethod
     def kxn_fold(cls, data_files=FP_DATA, val_data=None,
                  sites=[0, 1, 2, 3, 4, 5, 6], val_sites=None, config=CONFIG,
                  shuffle_train=False, seed=None, xval=XVal, catch_nan=False,
-                 min_train=1):
+                 min_train=1, save_timeseries=False):
         """ Perform cross validation against subsets of training sites """
         axv = cls(data_files=data_files, val_data=val_data, sites=sites,
                   val_sites=val_sites, config=config,
                   shuffle_train=shuffle_train, seed=seed, xval=xval,
-                  catch_nan=catch_nan, min_train=min_train)
+                  catch_nan=catch_nan, min_train=min_train,
+                  save_timeseries=save_timeseries)
         return axv

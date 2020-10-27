@@ -1,3 +1,7 @@
+"""
+mlclouds phygnn model trainer and validator classes.
+"""
+
 import logging
 import numpy as np
 import pandas as pd
@@ -21,32 +25,47 @@ logger = logging.getLogger(__name__)
 
 
 class Trainer:
-    def __init__(self, train_sites=[0, 1, 2, 3, 5, 6], train_files=FP_DATA,
-                 config=CONFIG):
+    """Class to handle the training of the mlclouds phygnn model"""
+
+    def __init__(self, train_sites='all', train_files=FP_DATA, config=CONFIG,
+                 test_fraction=None):
         """
         Train PhyGNN model
 
         Parameters
         ----------
-        train_sites: list of int
-            Sites to use for training
+        train_sites: 'all' | list of int
+            Surfrad gids to use for training. Use all if 'all'
         train_files: list of str | str
             File or list of files to use for training. Filenames must include
             the four-digit year and satellite indicator (east|west).
         config: dict
             Phygnn configuration dict
+        test_fraction: None | float
+            Fraction of full data set to reserve for testing. Should be between
+            0 to 1. The test set is randomly selected and dropped from the
+            training set. If None, do not reserve a test set.
         """
-        logger.info('XV: Training on sites {} from files {}'
+        logger.info('Trainer: Training on sites {} from files {}'
                     ''.format(train_sites, train_files))
+        if train_sites == 'all':
+            train_sites = [k for k, v in
+                           surf_meta().to_dict()['surfrad_id'].items() if v not
+                           in ['srrl', 'sgp']]
         self.train_sites = train_sites
         self.train_files = train_files
         self._config = config
 
+        logger.info('Trainer: Training on sites {} from files {}'
+                    ''.format(train_sites, train_files))
+
         self.train_data = TrainData(self.train_sites, self.train_files,
-                                    config=self._config)
+                                    config=self._config,
+                                    test_fraction=test_fraction)
         self.x = self.train_data.x
         self.y = self.train_data.y
         self.p = self.train_data.p
+        self.test_set_mask = self.train_data.test_set_mask
 
         self.p_kwargs = {'labels':
                          self.train_data.df_all_sky.columns.values.tolist()}
@@ -62,8 +81,8 @@ class Trainer:
                        hidden_layers=self._config['hidden_layers'],
                        loss_weights=self._config['loss_weights_a'],
                        metric=self._config['metric'],
-                       input_dims=self.x.shape[1],
-                       output_dims=self.y.shape[1],
+                       n_features=self.x.shape[1],
+                       n_labels=self.y.shape[1],
                        learning_rate=self._config['learning_rate'])
 
         logger.info('Training part A - pure data. Loss is {}'
@@ -92,7 +111,8 @@ class Validator:
     and compare to NSRDB baseline irradiance.
     """
     def __init__(self, model, train_data, config=CONFIG, val_files=None,
-                 val_data=None, update_clear=False, update_cloudy=False):
+                 val_data=None, update_clear=False, update_cloudy=False,
+                 test_set_mask=None, save_timeseries=False):
         """
         Parameters
         ----------
@@ -115,6 +135,11 @@ class Validator:
         update_cloudy: bool
             If true, update cloud type for cloudy time steps with phygnn
             predictions
+        test_set_mask: None | numpy.ndarray of bool
+            Set of full data set in val_files to use. If None, use full
+            dataset.
+        save_timeseries: bool
+            Save time series data to disk
         """
         if (val_files is None and val_data is None) or \
            (val_files is not None and val_data is not None):
@@ -130,10 +155,11 @@ class Validator:
         if val_data is None:
             all_sky_vars = self._config.get('all_sky_vars', ALL_SKY_VARS)
             vd = ValidationData(val_files=val_files,
-                                features=self._config['features'],
-                                y_labels=self._config['y_labels'],
+                                features=config['features'],
+                                y_labels=config['y_labels'],
                                 all_sky_vars=all_sky_vars,
-                                one_hot_cats=self._config['one_hot_categories']
+                                one_hot_cats=config['one_hot_categories'],
+                                test_set_mask=test_set_mask
                                 )
             val_data = vd
 
@@ -148,7 +174,7 @@ class Validator:
         self.val_data = val_data
 
         self._predict(model, update_clear, update_cloudy)
-        self._calc_stats()
+        self._calc_stats(test_set_mask, save_timeseries=save_timeseries)
 
     def _predict(self, model, update_clear, update_cloudy):
         """
@@ -219,12 +245,15 @@ class Validator:
                      ''.format(self.df_feature_val.shape,
                                self.df_all_sky_val.shape))
 
-    def _calc_stats(self, save_timeseries=False):
+    def _calc_stats(self, test_set_mask, save_timeseries=False):
         """
         Calculate accuracy of PhyGNN model predictions
 
         Parameters
         ----------
+        test_set_mask: None | numpy.ndarray of bool
+            Set of full data set in val_files to use. If None, use full
+            dataset.
         save_timeseries: bool
             Save time series data to disk
         """
@@ -232,40 +261,56 @@ class Validator:
         fp_baseline_adj = FP_BASELINE_ADJ
 
         logger.info('Calculating statistics')
+
+        gids = [k for k, v in surf_meta().to_dict()['surfrad_id'].items() if v
+                not in ['srrl', 'sgp']]
+        logger.debug('Calcing stats for gids: {}'.format(gids))
+
+        s_data = self._get_stats_data(self.files_meta, gids, fp_baseline,
+                                      fp_baseline_adj)
+        df_base_full = s_data[0]
+        df_base_adj_full = s_data[1]
+        df_surf_full = s_data[2]
+
+        logger.debug('Shapes: df_base_full={}, df_base_adj_full={}, '
+                     'df_surf_full={}'.format(df_base_full.shape,
+                                              df_base_adj_full.shape,
+                                              df_surf_full.shape))
+
+        if test_set_mask is not None:
+            df_base_full = df_base_full[test_set_mask]
+            df_base_adj_full = df_base_adj_full[test_set_mask]
+            df_surf_full = df_surf_full[test_set_mask]
+            logger.debug('Test set shapes: df_base_full={}, df_base_adj_full='
+                         '{}, df_surf_full={}'.format(df_base_full.shape,
+                                                      df_base_adj_full.shape,
+                                                      df_surf_full.shape))
+
+        i = 0
         stats = pd.DataFrame(columns=['Model', 'Site', 'Variable',
                                       'Condition'])
-        i = 0
-
-        all_sky_gids = [k for k, v in
-                        surf_meta().to_dict()['surfrad_id'].items()
-                        if v not in ['srrl', 'sgp']]
-        logger.debug('Calcing stats for all_sky_gids: {}'.format(all_sky_gids))
-
-        for gid in all_sky_gids:
+        for gid in gids:
             code = surf_meta().loc[gid, 'surfrad_id']
-            logger.debug('Computing stats for gid: {} {}'
-                         .format(gid, code))
+            logger.debug('Computing stats for gid: {} {}'.format(gid, code))
 
-            # Grab NSRDB baseline and ground measurement for current gid and
-            # all validation files
-            s_data = self._get_stats_data(self.files_meta, gid,
-                                          fp_baseline, fp_baseline_adj)
-            df_baseline = s_data[0]
-            df_baseline_adj = s_data[1]
-            df_surf = s_data[2]
+            idx = df_base_full.gid == gid
+            df_baseline = df_base_full[idx]
+            df_baseline_adj = df_base_adj_full[idx]
+            df_surf = df_surf_full[idx]
+
             logger.debug('Shapes: df_baseline={}, df_baseline_adj={}, '
                          'df_surf={}'.format(df_baseline.shape,
                                              df_baseline_adj.shape,
                                              df_surf.shape))
 
-            # Run allsky for current gid
+            # Run all_sky for current gid
             all_sky_vars = self._config.get('all_sky_vars', ALL_SKY_VARS)
             args = self._get_all_sky_args(gid, self.df_all_sky_val,
                                           all_sky_vars=all_sky_vars)
             out = all_sky(**args)
-            all_sky_out = pd.DataFrame({k: v.flatten() for k,
-                                        v in out.items()},
-                                       index=args['time_index'])
+            index = pd.DatetimeIndex(args['time_index']).tz_localize('utc')
+            all_sky_out = pd.DataFrame({k: v.flatten() for k, v in
+                                        out.items()}, index=index)
 
             gid_mask = (self.df_all_sky_val.gid == gid)
             val_daylight_mask = (self.df_all_sky_val.loc[gid_mask,
@@ -290,15 +335,13 @@ class Validator:
 
             if save_timeseries:
                 for var in ['dni', 'ghi']:
-                    self._timeseries_to_csv(gid, var, args['time_index'],
+                    self._timeseries_to_csv(gid, var,
                                             df_baseline[var],
                                             df_baseline_adj[var],
                                             all_sky_out[var],
                                             df_surf[var])
 
             for mask, condition in m_iter:
-                logger.debug('mask for {} has shape {}'.format(condition,
-                                                               mask.shape))
                 for var in ['dni', 'ghi']:
                     baseline = df_baseline.loc[mask, var].values
                     adjusted = df_baseline_adj.loc[mask, var].values
@@ -347,19 +390,35 @@ class Validator:
         self.stats = stats
         logger.info('Finished computing stats.')
 
-    def _timeseries_to_csv(self, gid, var, index, baseline, adjusted,
-                           mlclouds, surf):
-        """Save irradiance timseries data to disk for later analysis"""
+    def _timeseries_to_csv(self, gid, var, baseline, adjusted, mlclouds, surf):
+        """
+        Save irradiance timseries data to disk for later analysis
+
+        Parameters
+        ----------
+        gid: int
+            Gid of site excluded from training, only used for file naming
+        var: str
+            Irradiance type of data: dni or ghi
+        baseline: pd.Series
+            Baseline NSRDB irradiance
+        adjusted: pd.Series
+            NSRDB irradiance, adjusted for solar position
+        mlclouds: pd.Series
+            Irradiance as predicted by PhyGNN
+        sur: pd.Series
+            Ground measured irradiance
+        """
         df = pd.DataFrame({'Baseline': baseline,
                            'Adjusted': adjusted,
                            'PhyGNN': mlclouds,
-                           'Surfrad': surf}, index=index)
+                           'Surfrad': surf})
         tdir = self._config.get('timeseries_dir', 'timeseries/')
         if not os.path.exists(tdir):
             os.makedirs(tdir)
         df.to_csv(os.path.join(tdir, 'timeseries_{}_{}.csv'.format(var, gid)))
 
-    def _get_stats_data(self, files_meta, gid, fp_baseline, fp_baseline_adj):
+    def _get_stats_data(self, files_meta, gids, fp_baseline, fp_baseline_adj):
         """
         Grab baseline, baseline_adjusted, and surfrad for stats. Adjust time
         steps as necessary to match validation satellite data.
@@ -368,8 +427,8 @@ class Validator:
         ----------
         files_meta: dict
             Year, time step, and time_index for all satellite validation files
-        gid: int
-            Gid of desired surfrad site
+        gids: int
+            Gids of desired surfrad site
         fp_baseline: str
             Full path of NSRDB baseline irradiance
         fp_baseline_adj: str
@@ -385,8 +444,6 @@ class Validator:
         df_surf: pd.Dataframe
             Ground measured irradiance
         """
-        code = surf_meta().loc[gid, 'surfrad_id']
-
         df_base = None
         df_base_adj = None
         df_surf = None
@@ -394,34 +451,39 @@ class Validator:
             year = year_meta['year']
             area = year_meta['area']
 
-            tmp_base = self._get_baseline_df(fp_baseline, gid, year, area)
-            tmp_base_adj = self._get_baseline_df(fp_baseline_adj, gid, year,
-                                                 area)
-            tmp_surf = self._get_surfrad_df(code, year,
-                                            tstep=year_meta['time_step'])
+            logger.debug('Loading data for {} / {}'.format(year, area))
+            for gid in gids:
+                tmp_base = self._get_baseline_df(fp_baseline, gid, year, area)
+                tmp_base_adj = self._get_baseline_df(fp_baseline_adj, gid,
+                                                     year, area)
+                tmp_surf = self._get_surfrad_df(gid, year,
+                                                tstep=year_meta['time_step'])
 
-            tstep_base = calc_time_step(pd.Series(tmp_base.index))
-            tstep_base_adj = calc_time_step(pd.Series(tmp_base_adj.index))
-            assert tstep_base == tstep_base_adj == year_meta['time_step']
+                tstep_base = calc_time_step(pd.Series(tmp_base.index))
+                tstep_base_adj = calc_time_step(pd.Series(tmp_base_adj.index))
+                assert tstep_base == tstep_base_adj == year_meta['time_step']
 
-            if df_base is None:
-                df_base = tmp_base
-                df_base_adj = tmp_base_adj
-                df_surf = tmp_surf
-            else:
-                df_base = df_base.append(tmp_base)
-                df_base_adj = df_base_adj.append(tmp_base_adj)
-                df_surf = df_surf.append(tmp_surf)
+                if df_base is None:
+                    df_base = tmp_base
+                    df_base_adj = tmp_base_adj
+                    df_surf = tmp_surf
+                else:
+                    df_base = df_base.append(tmp_base)
+                    df_base_adj = df_base_adj.append(tmp_base_adj)
+                    df_surf = df_surf.append(tmp_surf)
+
+        assert (df_base.gid == df_base_adj.gid).all()
+        assert (df_base.gid == df_surf.gid).all()
         return df_base, df_base_adj, df_surf
 
-    def _get_surfrad_df(self, code, year, tstep=5, window_default=15):
+    def _get_surfrad_df(self, gid, year, tstep=5, window_default=15):
         """
         Get ground measured irradiance data for location and year
 
         Parameters
         ----------
-        code: str
-            Three letter surfrad site code
+        gid: int
+            Gid of desired surfrad site
         year: int
             Four digit year
         tstep: int
@@ -434,13 +496,17 @@ class Validator:
         df_surf: pandas.DataFrame
             Surfrad data
         """
+        code = surf_meta().loc[gid, 'surfrad_id']
         fp_surf = FP_SURFRAD_DATA.format(code=code, year=year)
-        logger.debug('Getting surfrad data from {}'
-                     ''.format(os.path.basename(fp_surf)))
+        logger.debug('\tGetting surfrad data for {} from {}'
+                     ''.format(gid, os.path.basename(fp_surf)))
+
         w = self._config.get('surfrad_window_minutes', window_default)
         with Surfrad(fp_surf) as surf:
             df_surf = surf.get_df(dt_out='{}min'.format(tstep),
                                   window_minutes=w)
+        df_surf['gid'] = gid
+        df_surf.index = df_surf.index.tz_localize('utc')
         return df_surf
 
     @staticmethod
@@ -465,7 +531,8 @@ class Validator:
             Data frame with ghi, dni, cloud_type, fill_flag, and sza
         """
         fname = fp_baseline.format(year=year, yy=year % 100, area=area)
-        logger.debug('Getting gid {} from {}'.format(gid, fname))
+        logger.debug('\tGetting gid {} from {}'
+                     ''.format(gid, os.path.basename(fname)))
         with MultiFileResource(fname) as res:
             df = pd.DataFrame({'ghi': res['ghi', :, gid],
                                'dni': res['dni', :, gid],
@@ -474,6 +541,7 @@ class Validator:
                                'solar_zenith_angle': res['solar_zenith_angle',
                                                          :, gid],
                                }, index=res.time_index)
+        df['gid'] = gid
         return df
 
     @staticmethod
