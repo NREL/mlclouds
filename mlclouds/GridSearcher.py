@@ -85,7 +85,7 @@ class GridSearcher(object):
             Filepath to folder used for config file and output files storage.
             Must have write access.
         exe_fpath: str
-            Filepath to 'run_phygnn.py'.
+            Filepath to 'run_mlclouds.py'.
         data_root: str
             Filepath to surfrad data root. Defaults to
             '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/'.
@@ -216,7 +216,7 @@ class GridSearcher(object):
                   learning_rate, loss_weights_b, test_fraction, epochs_a,
                   epochs_b, id=0):
         """
-        Start a single HPC task for a single model run via run_phygnn.py.
+        Start a single HPC task for a single model run via run_mlclouds.py.
 
         Parameters
         ----------
@@ -360,7 +360,7 @@ if __name__ == '__main__':
     kvals = {
         'conda_env': 'mlclouds',
         'data_root': '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/',
-        'exe_fpath': '~/src/mlclouds/mlclouds/run_phygnn.py',
+        'exe_fpath': '~/src/mlclouds/mlclouds/scripts/run_mlclouds.py',
         'output_ws': f'/scratch/{user}/mlclouds/optimization/',
         'number_hidden_layers': [3, 5],
         'number_hidden_nodes': [32, 64, 128],
