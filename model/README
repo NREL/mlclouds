@@ -1,0 +1,29 @@
+Train model for production use in NSRDB. Train on all available data, reserving
+20% for testing. This should be run on Eagle with `sbatch run_train_test.sh`. Testing 
+results are available in the Jupyter notebook `Post_proc_scenario_1_80_20_split.ipynb`.
+
+mlclouds master branch version used:
+    commit 0f3e865b820c84694c9e79119647284439ef3050
+    Author: Bannister, Mike <Mike.Bannister@nrel.gov>
+    Date:   Tue Dec 1 12:17:44 2020 -0700
+
+        Use normalization and OHE in PhygnnModel (#10)
+
+phygnn master branch version used:
+    commit 303b42dc5018cf6a4587ff0251648d9fdfef653b
+    Author: Michael Rossol <mrossol@gmail.com>
+    Date:   Wed Nov 25 11:32:40 2020 -0700
+
+        Don't run pytest twice
+
+rex master branch version used:
+    commit 4abd5414a9e5958ad101e6ed342c745e6a8a8c0c
+    Merge: 030d636 7f87534
+    Author: Michael Rossol <18647211+MRossol@users.noreply.github.com>
+    Date:   Thu Nov 5 10:57:42 2020 -0700
+
+        Merge pull request #51 from NREL/combine_h5
+
+        Combine h5
+
+MJB 12/01/2020
