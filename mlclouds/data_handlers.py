@@ -275,7 +275,7 @@ class TrainData:
                      ''.format(test_fraction*100))
         assert 0 < test_fraction < 1
 
-        df_raw = df_raw_orig.sample(frac=(1-test_fraction))
+        df_raw = df_raw_orig.sample(frac=(1-test_fraction)).sort_index()
         self.train_set_mask = df_raw_orig.index.isin(df_raw.index)
         df_all_sky = df_all_sky_orig[self.train_set_mask]
         self.test_set_mask = ~self.train_set_mask
