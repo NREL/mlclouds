@@ -1,0 +1,8 @@
+number_hidden_layers = int_list()
+number_hidden_nodes = int_list()
+dropouts = float_list()
+learning_rates = float_list()
+loss_weights_b = float_list()
+test_fractions = float_list()
+epochs_a = int_list()
+epochs_b = int_list()

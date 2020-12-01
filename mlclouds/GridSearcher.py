@@ -1,7 +1,6 @@
 """
 Perform a grid search over a phygnn mlclouds model.
 """
-
 import argparse
 import pandas as pd
 
@@ -10,8 +9,9 @@ from itertools import product
 from os import makedirs
 from os.path import join
 
-from configobj import ConfigObj
+from configobj import ConfigObj, ConfigspecError, flatten_errors
 from rex.utilities.hpc import SLURM
+from validate import Validator
 
 
 DATA_FILES = {'east': {2016: '2016_east_adj/mlclouds_surfrad_2016.h5',
@@ -346,35 +346,74 @@ class GridSearcher(object):
 
 
 if __name__ == '__main__':
+    user = getuser()
 
     parser = argparse.ArgumentParser(description='Conduct a hyperparameter '
                                                  'grid search over a '
                                                  'mlclouds Phygnn model')
+    parser.add_argument('config', type=str,
+                        help='Grid search configuration file')
+    parser.add_argument('--conda_env', type=str, default='mlclouds',
+                        help='Anaconda environment for HPC jobs. Defaults'
+                        'to mlclouds')
+    parser.add_argument('--output_ws', type=str,
+                        default=f'/scratch/{user}/mlclouds/optimization/',
+                        help='Output folder for stats, training history,'
+                        ' etc. Defaults to /scratch/{user}/mlclouds/'
+                        'optimization/.')
+    parser.add_argument('--exe_fpath', type=str,
+                        default='~/src/mlclouds/mlclouds/scripts/train.py',
+                        help='File path to train.py. Defaults to'
+                        '~/src/mlclouds/mlclouds/scripts/train.py')
+    parser.add_argument('--data_root', type=str,
+                        default='/lustre/eaprojects/mlclouds/data_surfrad_9/',
+                        help='Surfrad data root directory. Defaults to'
+                        '/lustre/eaprojects/mlclouds/data_surfrad_9/')
     parser.add_argument('--collect_results', action='store_true',
-                        help='Collect results instead of run jobs.')
+                        help='Collect results instead of run jobs.'
+                        'Saved as {output_ws}/results.csv')
 
     args = parser.parse_args()
 
-    user = getuser()
+    validator = Validator()
+    config = ConfigObj(args.config, configspec='gridsearch.spec',
+                       stringify=True)
+    validation = config.validate(validator, preserve_errors=True)
+
+    if validation is not True:
+        msg = ''
+        for entry in flatten_errors(config, validation):
+            section_list, key, error = entry
+            if key is not None:
+                if error is False:
+                    msg += f'{key}: missing\n'
+                else:
+                    msg += f'{key}: {error}\n'
+        raise ConfigspecError(msg)
+
+    loss_weights_b = []
+    for loss_weight in config['loss_weights_b']:
+        loss_weights_b.append([round(1.0 - loss_weight, 2), loss_weight])
 
     kvals = {
-        'conda_env': 'mlclouds',
-        'data_root': '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/',
-        'exe_fpath': '~/src/mlclouds/mlclouds/scripts/run_mlclouds.py',
-        'output_ws': f'/scratch/{user}/mlclouds/optimization/',
-        'number_hidden_layers': [3, 5],
-        'number_hidden_nodes': [32, 64, 128],
-        'dropouts': [0.01, 0.10, 0.30],
-        'learning_rates': [1e-3, 1e-4, 1e-5],
-        'loss_weights_b': [[0.5, 0.5], [0.25, 0.75], [0.1, 0.9]],
-        'test_fractions': [0.05, 0.1, 0.2],
-        'epochs_a': [100, 500, 1000],
-        'epochs_b': [100, 500, 1000]
+        'conda_env': args.conda_env,
+        'data_root': args.data_root,
+        'exe_fpath': args.exe_fpath,
+        'output_ws': args.output_ws,
+        'number_hidden_layers': config['number_hidden_layers'],
+        'number_hidden_nodes': config['number_hidden_nodes'],
+        'dropouts': config['dropouts'],
+        'learning_rates': config['learning_rates'],
+        'loss_weights_b': config['loss_weights_b'],
+        'test_fractions': config['test_fractions'],
+        'epochs_a': config['epochs_a'],
+        'epochs_b': config['epochs_b']
     }
 
     GS = GridSearcher(**kvals)
 
-    if not args.collect:
+    if not args.collect_results:
         GS.run_grid_search()
     else:
-        GS.collect_results()
+        GS.collect_results().to_csv(join(args.output_ws, 'results.csv'),
+                                    index=False)
