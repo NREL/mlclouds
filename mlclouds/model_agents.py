@@ -14,7 +14,7 @@ from nsrdb.all_sky.all_sky import all_sky
 from nsrdb.all_sky import ICE_TYPES, WATER_TYPES, CLEAR_TYPES
 from nsrdb.utilities.statistics import mae_perc, mbe_perc, rmse_perc
 
-from phygnn import PhysicsGuidedNeuralNetwork as Phygnn
+from phygnn import PhygnnModel as Phygnn
 
 from mlclouds.data_handlers import ValidationData, TrainData
 from mlclouds.utilities import FP_DATA, FP_BASELINE, ALL_SKY_VARS, P_FUNS
@@ -72,33 +72,37 @@ class Trainer:
         self.p_kwargs.update(self._config.get('p_kwargs', {}))
 
         logger.debug('Building PhyGNN model')
-        Phygnn.seed(self._config['phygnn_seed'])
 
         p_fun = P_FUNS[self._config.get('p_fun', 'p_fun_all_sky')]
         logger.info('Using p_fun: {}'.format(p_fun))
 
-        model = Phygnn(p_fun=p_fun,
-                       hidden_layers=self._config['hidden_layers'],
-                       loss_weights=self._config['loss_weights_a'],
-                       metric=self._config['metric'],
-                       n_features=self.x.shape[1],
-                       n_labels=self.y.shape[1],
-                       learning_rate=self._config['learning_rate'])
+        Phygnn.seed(self._config['phygnn_seed'])
+        one_hot_categories = self._config['one_hot_categories']
+
+        model = Phygnn.build(p_fun=p_fun,
+                             one_hot_categories=one_hot_categories,
+                             feature_names=list(self.x.columns),
+                             label_names=self._config['y_labels'],
+                             hidden_layers=self._config['hidden_layers'],
+                             loss_weights=self._config['loss_weights_a'],
+                             metric=self._config['metric'],
+                             learning_rate=self._config['learning_rate'])
 
         logger.info('Training part A - pure data. Loss is {}'
                     ''.format(self._config['loss_weights_a']))
-        out = model.fit(self.x, self.y, self.p,
-                        n_batch=self._config['n_batch'],
-                        n_epoch=self._config['epochs_a'],
-                        p_kwargs=self.p_kwargs)
+
+        out = model.train_model(self.x, self.y, self.p,
+                                n_batch=self._config['n_batch'],
+                                n_epoch=self._config['epochs_a'],
+                                p_kwargs=self.p_kwargs)
 
         logger.info('Training part B - data and phygnn. Loss is {}'
                     ''.format(self._config['loss_weights_b']))
         model.set_loss_weights(self._config['loss_weights_b'])
-        out = model.fit(self.x, self.y, self.p,
-                        n_batch=self._config['n_batch'],
-                        n_epoch=self._config['epochs_b'],
-                        p_kwargs=self.p_kwargs)
+        out = model.train_model(self.x, self.y, self.p,
+                                n_batch=self._config['n_batch'],
+                                n_epoch=self._config['epochs_b'],
+                                p_kwargs=self.p_kwargs)
 
         self.model = model
         self.out = out
@@ -107,19 +111,17 @@ class Trainer:
 
 class Validator:
     """
-    Run PhyGNN model predictions, run allsky using predicted cloud properties
+    Run PhygnnModel predictions, run allsky using predicted cloud properties
     and compare to NSRDB baseline irradiance.
     """
-    def __init__(self, model, train_data, config=CONFIG, val_files=None,
-                 val_data=None, update_clear=False, update_cloudy=False,
-                 test_set_mask=None, save_timeseries=False):
+    def __init__(self, model, config=CONFIG, val_files=None, val_data=None,
+                 update_clear=False, update_cloudy=False, test_set_mask=None,
+                 save_timeseries=False):
         """
         Parameters
         ----------
         model: Phygnn instance
             Trained or loaded Phygnn model
-        train_data: TrainData instance
-            Data used to train Phygnn model. Used for normalizing data.
         config: dict
             Phygnn configuration dict
         val_files: str | list of str | None
@@ -163,9 +165,6 @@ class Validator:
                                 )
             val_data = vd
 
-        val_data.un_norm_data()
-        val_data.norm_data(train_data.means, train_data.stdevs)
-
         self.df_x_val = val_data.df_x_val
         self.df_all_sky_val = val_data.df_all_sky_val
         self.df_feature_val = val_data.df_feature_val
@@ -193,11 +192,12 @@ class Validator:
         """
         logger.info('Predicting opd and reff')
         predicted_raw = model.predict(self.df_x_val)
+        assert not predicted_raw.isnull().values.any()
         logger.debug('Predicted data shape is {}'.format(predicted_raw.shape))
 
         # TODO - use config['y_labels'] for this
-        opd_raw = predicted_raw[:, 0]
-        reff_raw = predicted_raw[:, 1]
+        opd_raw = predicted_raw['cld_opd_dcomp'].values
+        reff_raw = predicted_raw['cld_reff_dcomp'].values
 
         opd = np.minimum(opd_raw, 160)
         reff = np.minimum(reff_raw, 160)
@@ -244,6 +244,9 @@ class Validator:
         logger.debug('shapes: df_feature_val={}, df_all_sky_val={}'
                      ''.format(self.df_feature_val.shape,
                                self.df_all_sky_val.shape))
+
+        assert not self.df_feature_val.isnull().values.any()
+        assert not self.df_all_sky_val.isnull().values.any()
 
     def _calc_stats(self, test_set_mask, save_timeseries=False):
         """
@@ -406,7 +409,7 @@ class Validator:
             NSRDB irradiance, adjusted for solar position
         mlclouds: pd.Series
             Irradiance as predicted by PhyGNN
-        sur: pd.Series
+        surf: pd.Series
             Ground measured irradiance
         """
         df = pd.DataFrame({'Baseline': baseline,

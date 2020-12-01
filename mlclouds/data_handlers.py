@@ -1,13 +1,12 @@
 import logging
 import copy
 import pandas as pd
+import numpy as np
 
 from nsrdb.all_sky.rest2 import rest2, rest2_tuuclr
 from nsrdb.all_sky.utilities import ti_to_radius, calc_beta
 from nsrdb.all_sky import ICE_TYPES, WATER_TYPES
 from nsrdb.file_handlers.surfrad import Surfrad
-
-from phygnn.utilities import PreProcess
 
 from mlclouds.data_cleaners import clean_cloud_df
 from mlclouds.nsrdb import NSRDBFeatures
@@ -46,9 +45,6 @@ class TrainData:
                            in ['srrl', 'sgp']]
         self.train_sites = train_sites
         self._config = config
-
-        self.means = None
-        self.stdevs = None
 
         self.test_set_mask = None  # Rows of full set reserved for testing
 
@@ -134,6 +130,8 @@ class TrainData:
         df_all_sky = df_all_sky.join(df_surf)
 
         if test_fraction:
+            np.random.seed(self._config['phygnn_seed'])
+
             df_raw, df_all_sky = self._test_train_split(df_raw, df_all_sky,
                                                         test_fraction)
 
@@ -202,36 +200,18 @@ class TrainData:
         logger.debug('Cleaning df_all_sky training data (for pfun).')
         logger.debug('Shape before cleaning: df_all_sky={}'
                      ''.format(self.df_all_sky.shape))
+
         self.df_all_sky = clean_cloud_df(self.df_all_sky, **kwargs)
         logger.debug('Shape after cleaning: df_all_sky={}'
                      ''.format(self.df_all_sky.shape))
 
         # Inspecting features would go here
 
-        # Final cleaning and one-hot encoding
+        # Final cleaning
         drop_list = ('gid', 'time_index', 'cloud_type')
         for name in drop_list:
             if name in self.df_train:
                 self.df_train = self.df_train.drop(name, axis=1)
-        logger.debug('Adding one-hot vectors to training data.')
-        logger.debug('*Shape: df_train={}'.format(self.df_train.shape))
-
-        self.df_train = PreProcess.one_hot(
-            self.df_train, categories=self._config['one_hot_categories'])
-        one_hot_labels = [a for b in
-                          self._config['one_hot_categories'].values()
-                          for a in b]
-        norm_cols = [c for c in self.df_train.columns
-                     if c not in one_hot_labels
-                     and c not in self._config['y_labels']]
-        self.df_train[norm_cols], means, stdevs = PreProcess.normalize(
-            self.df_train[norm_cols])
-        self.means = means
-        self.stdevs = stdevs
-        temp_means = {c: means[i] for i, c in enumerate(norm_cols)}
-        temp_stdevs = {c: stdevs[i] for i, c in enumerate(norm_cols)}
-        logger.debug('Norm means: {}'.format(temp_means))
-        logger.debug('Norm stdevs: {}'.format(temp_stdevs))
 
         logger.debug('**Shape: df_train={}'.format(self.df_train.shape))
         features = self.df_train.columns.values.tolist()
@@ -428,38 +408,5 @@ class ValidationData:
 
         features = [c for c in self.df_feature_val.columns if
                     c not in not_features]
-        self.df_x_val = PreProcess.one_hot(
-            self.df_feature_val.loc[self.mask, features],
-            categories=self.one_hot_cats)
+        self.df_x_val = self.df_feature_val.loc[self.mask, features]
         logger.debug('Validation features: {}'.format(features))
-
-    def norm_data(self, means, stdevs):
-        """ Normalize the feature inputs for the validation dataset. """
-        self.means = means
-        self.stdevs = stdevs
-        one_hot_labels = [a for b in self.one_hot_cats.values()
-                          for a in b]
-        norm_cols = [c for c in self.df_x_val.columns
-                     if c not in one_hot_labels
-                     and c not in self.y_labels]
-        self.df_x_val[norm_cols], m, s = PreProcess.normalize(
-            self.df_x_val[norm_cols], mean=means, stdev=stdevs)
-        temp_means = {c: m[i] for i, c in enumerate(norm_cols)}
-        temp_stdevs = {c: s[i] for i, c in enumerate(norm_cols)}
-        logger.debug('Norm means: {}'.format(temp_means))
-        logger.debug('Norm stdevs: {}'.format(temp_stdevs))
-
-    def un_norm_data(self, means=None, stdevs=None):
-        """ Un-normalize the feature inputs for the validation dataset. """
-        if means is None:
-            means = self.means
-        if stdevs is None:
-            stdevs = self.stdevs
-        one_hot_labels = [a for b in self.one_hot_cats.values()
-                          for a in b]
-        norm_cols = [c for c in self.df_x_val.columns
-                     if c not in one_hot_labels
-                     and c not in self.y_labels]
-        logger.debug('Un-normalizing validation feature inputs.')
-        self.df_x_val[norm_cols] = PreProcess.unnormalize(
-            self.df_x_val[norm_cols], means, stdevs)

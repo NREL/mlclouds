@@ -56,7 +56,6 @@ def test_xval(check_for_eagle):
     xv2.validate(val_files=FP_DATA)
 
     for stat_field in STAT_FIELDS:
-        print('testing', stat_field)
         assert np.isclose(stats[stat_field], xv2.stats[stat_field]).all()
 
     with tempfile.TemporaryDirectory() as td:
@@ -92,7 +91,6 @@ def test_xval_two_year(check_for_eagle):
     stats = pd.read_csv(stats_file)
 
     for stat_field in STAT_FIELDS:
-        print('testing', stat_field)
         assert np.isclose(stats[stat_field], xv.stats[stat_field]).all()
 
 
@@ -132,7 +130,6 @@ def test_xval_mismatched_timesteps(check_for_eagle):
     xv.validate(val_files=files)
 
     for stat_field in STAT_FIELDS:
-        print('testing', stat_field)
         assert np.isclose(stats[stat_field], xv.stats[stat_field]).all()
 
 

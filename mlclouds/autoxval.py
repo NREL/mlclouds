@@ -8,7 +8,6 @@ import pandas as pd
 import numpy as np
 import os
 import logging
-import pickle
 import plotly.express as px
 import json
 from copy import deepcopy
@@ -17,7 +16,7 @@ from mlclouds.data_handlers import ValidationData
 from mlclouds.model_agents import Trainer, Validator
 from mlclouds.utilities import FP_DATA, ALL_SKY_VARS, CONFIG, surf_meta
 
-from phygnn import PhysicsGuidedNeuralNetwork as Phygnn
+from phygnn import PhygnnModel as Phygnn
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +27,7 @@ class TrainTest:
     of the data for testing that is not used for training.
     """
     def __init__(self, data_files, config=CONFIG, test_fraction=0.2,
-                 stats_file=None):
+                 stats_file=None, model_file=None):
         """
         Parameters
         ----------
@@ -42,15 +41,38 @@ class TrainTest:
             Fraction of full data set to reserve for testing. Should be between
             0 to 1. The test set is randomly selected and dropped from the
             training set.
+        stats_file: str | None
+            If str, save stats to stats_file
+        model_file: str | None
+            If str, save model to model_file, and config to model_file.config
         """
         self.trainer = Trainer(train_files=data_files, config=config,
                                test_fraction=test_fraction)
-        self.validator = Validator(self.trainer.model, self.trainer.train_data,
-                                   config=config, val_files=data_files,
+        self.validator = Validator(self.trainer.model, config=config,
+                                   val_files=data_files,
                                    test_set_mask=self.trainer.test_set_mask)
+
+        self._config = config
+        self._model = self.trainer.model
 
         if stats_file:
             self.validator.stats.to_csv(stats_file)
+
+        if model_file:
+            self.save_model(model_file)
+
+    def save_model(self, fname):
+        """
+        Save model to disk
+
+        Parameters
+        ----------
+        fname: str
+            File name and path for pickle file
+        """
+        self._model.save_model(fname)
+        with open(fname+'.config', 'w') as f:
+            json.dump(self._config, f)
 
 
 class XVal:
@@ -83,12 +105,13 @@ class XVal:
             File or list of files to use for training. Filenames must include
             the four-digit year and satellite domain (east|west).
         """
-        trainer = Trainer(train_sites=train_sites,
-                          train_files=train_files,
+        trainer = Trainer(train_sites=train_sites, train_files=train_files,
                           config=self._config)
 
         self._model = trainer.model
         self._train_data = trainer.train_data
+        self._config['train_files'] = self._train_data.train_files
+        self._config['train_sites'] = self._train_data.train_sites
 
     def validate(self, val_files=None, val_data=None, update_clear=False,
                  update_cloudy=False, save_timeseries=False):
@@ -112,12 +135,12 @@ class XVal:
         save_timeseries: bool
             Save time series data to disk
         """
-        if self._model is None or self._train_data is None:
+        if self._model is None or self._config is None:
             msg = 'A model must be trained or loaded before validating.'
             logger.critical(msg)
             raise RuntimeError(msg)
 
-        validator = Validator(self._model, self._train_data,
+        validator = Validator(self._model,
                               config=self._config,
                               val_files=val_files,
                               val_data=val_data,
@@ -137,10 +160,8 @@ class XVal:
             File name and path of pickle file
         """
         self._model = Phygnn.load(fname)
-        with open(fname+'.td', 'rb') as f:
-            d = pickle.load(f)
-            self._train_data = d['td']
-            self._config = d['config']
+        with open(fname+'.config', 'rb') as f:
+            self._config = json.load(f)
 
     def save_model(self, fname):
         """
@@ -151,9 +172,9 @@ class XVal:
         fname: str
             File name and path for pickle file
         """
-        self._model.save(fname)
-        with open(fname+'.td', 'wb') as f:
-            pickle.dump({'td': self._train_data, 'config': self._config}, f)
+        self._model.save_model(fname)
+        with open(fname+'.config', 'w') as f:
+            json.dump(self._config, f)
 
     def save_stats(self, fname):
         """
@@ -171,8 +192,7 @@ class XVal:
 
         self.stats.to_csv(fname, index=False)
         conf = deepcopy(self._config)
-        conf['train_files'] = self._train_data.train_files
-        conf['train_sites'] = self._train_data.train_sites
+
         conf['val_files'] = self._validator.val_data.val_files
         conf['val_files_meta'] = self._validator.val_data.files_meta
         with open(fname[:-4] + '.json', 'wt') as f:
