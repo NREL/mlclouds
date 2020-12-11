@@ -273,7 +273,7 @@ class GridSearcher(object):
                                           memory=12, feature=None,
                                           name=f'clds_opt_{id}',
                                           stdout_path=self.output_ws,
-                                          keep_sh=True,
+                                          keep_sh=False,
                                           conda_env=self.conda_env,
                                           module=None,
                                           module_root=None)
