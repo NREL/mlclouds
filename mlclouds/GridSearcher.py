@@ -244,13 +244,13 @@ class GridSearcher(object):
             Run ID number. Defaults to 0.
         """
 
-        _config = ConfigObj(self.base_config)
+        config = ConfigObj(self.base_config)
 
-        _hidden_layers = [{"units": number_hidden_nodes, "activation": "relu",
-                           "dropout": dropout}] * number_hidden_layers
+        hidden_layers = [{"units": number_hidden_nodes, "activation": "relu",
+                          "dropout": dropout}] * number_hidden_layers
 
-        _config.update(
-            {'hidden_layers': _hidden_layers,
+        config.update(
+            {'hidden_layers': hidden_layers,
              'learning_rate': learning_rate,
              'loss_weights_b': loss_weights_b,
              'epochs_a': epochs_a,
@@ -258,8 +258,8 @@ class GridSearcher(object):
              }
         )
 
-        _config.filename = self.config_fpath.format(id=id)
-        _config.write()
+        config.filename = self.config_fpath.format(id=id)
+        config.write()
 
         cmd = f'python {self.exe_fpath} {self.config_fpath.format(id=id)} '\
               f'{test_fraction} ' \
