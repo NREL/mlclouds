@@ -270,7 +270,7 @@ class GridSearcher(object):
               f'--model_path={self.model_fpath.format(id=id)}'
 
         jobid, stdout = self.slurm.sbatch(cmd, alloc='mlclouds', walltime=1,
-                                          memory=12, feature=None,
+                                          memory=None, feature=None,
                                           name=f'clds_opt_{id}',
                                           stdout_path=self.output_ws,
                                           keep_sh=False,
