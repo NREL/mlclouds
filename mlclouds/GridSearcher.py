@@ -313,7 +313,7 @@ class GridSearcher(object):
         status: str
             SLURM status for all active jobs for current user.
         """
-        return self.slurm.query_queue()
+        return self.slurm.queue
 
     def collect_results(self):
         """
