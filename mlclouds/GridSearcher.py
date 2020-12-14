@@ -160,13 +160,23 @@ class GridSearcher(object):
                                                  "water_cloud", "bad_cloud"]}
                 }
        """
-
         self._output_ws = None
         self.output_ws = output_ws
 
-        self.jobs = product(number_hidden_layers, number_hidden_nodes,
-                            dropouts, learning_rates, loss_weights_b,
-                            test_fractions, epochs_a, epochs_b)
+        self.jobs = list(product(number_hidden_layers, number_hidden_nodes,
+                                 dropouts, learning_rates, loss_weights_b,
+                                 test_fractions, epochs_a, epochs_b))
+
+        self.results = pd.DataFrame(self.jobs, columns=['number_hidden_layers',
+                                                        'number_hidden_nodes',
+                                                        'dropout',
+                                                        'learning_rate',
+                                                        'loss_weights_b',
+                                                        'test_fraction',
+                                                        'epochs_a',
+                                                        'epochs_b'])
+        for var in ['elapsed_time', 'training_loss', 'validation_loss']:
+            self.results[var] = [None, ] * len(self.jobs)
 
         self.base_config = base_config
 
@@ -318,31 +328,18 @@ class GridSearcher(object):
             dropout, learning_rate, loss_weights_b, test_fraction, epochs_a,
             epochs_b.
         """
-        results = pd.DataFrame([], columns=['epoch', 'elapsed_time',
-                                            'training_loss', 'validation_loss',
-                                            'number_hidden_layers',
-                                            'number_hidden_nodes', 'dropout',
-                                            'learning_rate', 'loss_weights_b',
-                                            'test_fraction', 'epochs_a',
-                                            'epochs_b'])
+        for i in range(len(self.jobs)):
+            try:
+                df = pd.read_csv(self.history_fpath.format(id=i)).iloc[[-1]]
+            except IOError:
+                continue
+            else:
+                idx = self.results.index == i
+                for var in ['elapsed_time', 'training_loss',
+                            'validation_loss']:
+                    self.results.loc[idx, var] = df[var].values
 
-        for i, job in enumerate(self.jobs):
-            number_hidden_layers, number_hidden_nodes, dropout, \
-                learning_rate, loss_weights_b, test_fraction, \
-                epochs_a, epochs_b = job
-            df = pd.read_csv(self.history_fpath.format(id=i)).iloc[[-1]]
-            df['number_hidden_layers'] = number_hidden_layers
-            df['number_hidden_nodes'] = number_hidden_nodes
-            df['dropout'] = dropout
-            df['learning_rate'] = learning_rate
-            df['loss_weights_b'] = loss_weights_b
-            df['test_fraction'] = test_fraction
-            df['epochs_a'] = epochs_a
-            df['epochs_b'] = epochs_b
-
-            results = pd.concat([results, df])
-
-        return results
+        return self.results
 
 
 if __name__ == '__main__':
@@ -416,4 +413,4 @@ if __name__ == '__main__':
         GS.run_grid_search()
     else:
         GS.collect_results().to_csv(join(args.output_ws, 'results.csv'),
-                                    index=False)
+                                    index=True)
