@@ -163,6 +163,23 @@ class GridSearcher(object):
         self._output_ws = None
         self.output_ws = output_ws
 
+        self.exe_fpath = exe_fpath
+        self.config_fpath = join(self.output_ws, 'clds_opt_{id}.ini')
+        self.stats_fpath = join(self.output_ws, 'clds_opt_{id}_stats.csv')
+        self.log_fpath = join(self.output_ws, 'clds_opt_{id}.log')
+        self.history_fpath = join(self.output_ws,
+                                  'clds_opt_{id}_training_history.csv')
+        self.model_fpath = join(self.output_ws, 'clds_opt_{id}.pkl')
+
+        self.base_config = base_config
+
+        self.conda_env = conda_env
+
+        self.slurm = SLURM()
+
+        self.job_ids = []
+        self.job_stdout = []
+
         self.jobs = list(product(number_hidden_layers, number_hidden_nodes,
                                  dropouts, learning_rates, loss_weights_b,
                                  test_fractions, epochs_a, epochs_b))
@@ -177,29 +194,13 @@ class GridSearcher(object):
                                                         'epochs_b'])
         for var in ['elapsed_time', 'training_loss', 'validation_loss']:
             self.results[var] = [None, ] * len(self.jobs)
-
-        self.base_config = base_config
-
-        self.conda_env = conda_env
+        self.collect_results(fpath=join(self.output_ws, 'results.csv'))
 
         files = []
         for region in DATA_FILES:
             for year in DATA_FILES[region]:
                 files.append(join(data_root, DATA_FILES[region][year]))
         self.base_config['files'] = files
-
-        self.slurm = SLURM()
-
-        self.job_ids = []
-        self.job_stdout = []
-
-        self.exe_fpath = exe_fpath
-        self.config_fpath = join(self.output_ws, 'clds_opt_{id}.ini')
-        self.stats_fpath = join(self.output_ws, 'clds_opt_{id}_stats.csv')
-        self.log_fpath = join(self.output_ws, 'clds_opt_{id}.log')
-        self.history_fpath = join(self.output_ws,
-                                  'clds_opt_{id}_training_history.csv')
-        self.model_fpath = join(self.output_ws, 'clds_opt_{id}.pkl')
 
     @property
     def output_ws(self):
@@ -315,10 +316,14 @@ class GridSearcher(object):
         """
         return self.slurm.queue
 
-    def collect_results(self):
+    def collect_results(self, fpath=None):
         """
-        Collect training metrics for each job in self.jobs. Assumes all jobs
-        have completed successfully.
+        Collect and save training metrics for each successful job in self.jobs.
+
+        Parameters
+        ----------
+        fpath: str
+            Output file path of results CSV. Pass None to skip saving.
 
         Returns
         -------
@@ -338,6 +343,9 @@ class GridSearcher(object):
                 for var in ['elapsed_time', 'training_loss',
                             'validation_loss']:
                     self.results.loc[idx, var] = df[var].values
+
+        if fpath is not None:
+            self.results.to_csv(fpath)
 
         return self.results
 
@@ -412,5 +420,4 @@ if __name__ == '__main__':
     if not args.collect_results:
         GS.run_grid_search()
     else:
-        GS.collect_results().to_csv(join(args.output_ws, 'results.csv'),
-                                    index=True)
+        GS.collect_results(fpath=join(args.output_ws, 'results.csv'))
