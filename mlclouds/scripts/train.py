@@ -2,10 +2,10 @@
 Train a phygnn mlclouds model.
 """
 import argparse
+import json
 
 from datetime import datetime
 
-from configobj import ConfigObj
 from mlclouds.autoxval import TrainTest
 from rex.utilities.loggers import init_logger
 
@@ -35,12 +35,14 @@ if __name__ == '__main__':
     init_logger(logger_name='phygnn', log_level=args.log_level,
                 log_file=args.log)
 
-    config = ConfigObj(args.config)
+    with open(args.config, 'r') as f:
+        config = json.load(f)
+
     test_fraction = args.test_fraction
     stats_file = args.stats_file
     training_history_fpath = args.training_history
     model_fpath = args.model_path
-    files = config.as_list('files')
+    files = config['files']
 
     tt = TrainTest(files, config=config, test_fraction=test_fraction,
                    stats_file=stats_file)
