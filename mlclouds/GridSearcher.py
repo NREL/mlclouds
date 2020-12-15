@@ -292,18 +292,24 @@ class GridSearcher(object):
         self.job_ids.append(jobid)
         self.job_stdout.append(stdout)
 
-    def run_grid_search(self):
+    def run_grid_search(self, dry_run=False):
         """
         Start an HPC job for each job in self.jobs.
+
+        Parameters
+        ---------
+        dry_run: bool
+            Prepare runs without executing.
         """
         for i, job in enumerate(self.jobs):
             number_hidden_layers, number_hidden_nodes, dropout, \
                 learning_rate, loss_weights_b, test_fraction, epochs_a, \
                 epochs_b = job
 
-            self.start_job(number_hidden_layers, number_hidden_nodes, dropout,
-                           learning_rate, loss_weights_b, test_fraction,
-                           epochs_a, epochs_b, id=i)
+            if not dry_run:
+                self.start_job(number_hidden_layers, number_hidden_nodes,
+                               dropout, learning_rate, loss_weights_b,
+                               test_fraction, epochs_a, epochs_b, id=i)
 
     def jobs_status(self):
         """
@@ -374,6 +380,8 @@ if __name__ == '__main__':
                         default='/lustre/eaprojects/mlclouds/data_surfrad_9/',
                         help='Surfrad data root directory. Defaults to'
                         '/lustre/eaprojects/mlclouds/data_surfrad_9/')
+    parser.add_argument('--dry_run', action='store_true',
+                        help='Prepare runs without executing.')
     parser.add_argument('--collect_results', action='store_true',
                         help='Collect results instead of run jobs.'
                         'Saved as {output_ws}/results.csv')
@@ -418,6 +426,6 @@ if __name__ == '__main__':
     GS = GridSearcher(**kvals)
 
     if not args.collect_results:
-        GS.run_grid_search()
+        GS.run_grid_search(args.dry_run)
     else:
         GS.collect_results(fpath=join(args.output_ws, 'results.csv'))
