@@ -2,16 +2,16 @@
 Perform a grid search over a phygnn mlclouds model.
 """
 import argparse
+import json
 import pandas as pd
 
+from copy import deepcopy
 from getpass import getuser
 from itertools import product
 from os import makedirs
 from os.path import join
 
-from configobj import ConfigObj, ConfigspecError, flatten_errors
 from rex.utilities.hpc import SLURM
-from validate import Validator
 
 
 DATA_FILES = {'east': {2016: '2016_east_adj/mlclouds_surfrad_2016.h5',
@@ -72,7 +72,7 @@ class GridSearcher(object):
     Perform a grid search over provided model hyperparmaters.
     """
     def __init__(self, output_ws, exe_fpath,
-                 data_root='/lustre/eaglefs/projects/mlclouds/data_surfrad_9/',
+                 data_root='/eaglefs/projects/mlclouds/data_surfrad_9/',
                  conda_env='mlclouds', number_hidden_layers=(3, ),
                  number_hidden_nodes=(64, ), dropouts=(0.01, ),
                  learning_rates=(0.001, ), loss_weights_b=([0.5, 0.5], ),
@@ -88,7 +88,7 @@ class GridSearcher(object):
             Filepath to 'run_mlclouds.py'.
         data_root: str
             Filepath to surfrad data root. Defaults to
-            '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/'.
+            '/eaglefs/projects/mlclouds/data_surfrad_9/'.
         conda_env: str
             Anaconda environment for HPC jobs. Defaults to mlclouds.
         number_hidden_layers: list of int
@@ -255,7 +255,7 @@ class GridSearcher(object):
             Run ID number. Defaults to 0.
         """
 
-        config = ConfigObj(self.base_config)
+        config = deepcopy(self.base_config)
 
         hidden_layers = [{"units": number_hidden_nodes, "activation": "relu",
                           "dropout": dropout}] * number_hidden_layers
@@ -269,8 +269,8 @@ class GridSearcher(object):
              }
         )
 
-        config.filename = self.config_fpath.format(id=id)
-        config.write()
+        with open(self.config_fpath.format(id=id), 'w') as f:
+            json.dump(config, f)
 
         cmd = f'python {self.exe_fpath} {self.config_fpath.format(id=id)} '\
               f'{test_fraction} ' \
@@ -377,9 +377,9 @@ if __name__ == '__main__':
                         help='File path to train.py. Defaults to'
                         '~/src/mlclouds/mlclouds/scripts/train.py')
     parser.add_argument('--data_root', type=str,
-                        default='/lustre/eaprojects/mlclouds/data_surfrad_9/',
+                        default='/projects/mlclouds/data_surfrad_9/',
                         help='Surfrad data root directory. Defaults to'
-                        '/lustre/eaprojects/mlclouds/data_surfrad_9/')
+                        '/projects/mlclouds/data_surfrad_9/')
     parser.add_argument('--dry_run', action='store_true',
                         help='Prepare runs without executing.')
     parser.add_argument('--collect_results', action='store_true',
@@ -388,25 +388,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    validator = Validator()
-    config = ConfigObj(args.config, configspec='gridsearch.spec',
-                       stringify=True)
-    validation = config.validate(validator, preserve_errors=True)
-
-    if validation is not True:
-        msg = ''
-        for entry in flatten_errors(config, validation):
-            section_list, key, error = entry
-            if key is not None:
-                if error is False:
-                    msg += f'{key}: missing\n'
-                else:
-                    msg += f'{key}: {error}\n'
-        raise ConfigspecError(msg)
-
-    loss_weights_b = []
-    for loss_weight in config['loss_weights_b']:
-        loss_weights_b.append([round(1.0 - loss_weight, 2), loss_weight])
+    with open(args.config, 'r') as f:
+        config = json.load(f)
 
     kvals = {
         'conda_env': args.conda_env,
