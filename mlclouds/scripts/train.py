@@ -48,4 +48,4 @@ if __name__ == '__main__':
                    stats_file=stats_file)
 
     tt.trainer.model.history.to_csv(training_history_fpath)
-    tt.trainer.model.save(model_fpath)
+    tt.trainer.model.save_model(model_fpath)
