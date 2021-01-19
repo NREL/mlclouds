@@ -28,7 +28,7 @@ if __name__ == '__main__':
                         help='training history filepath',
                         default='{}_training_history.csv'.format(now))
     parser.add_argument('--model_path', type=str, help='save model filepath',
-                        default='{}_model.pkl')
+                        default='{}_model.pkl'.format(now))
 
     args = parser.parse_args()
 
