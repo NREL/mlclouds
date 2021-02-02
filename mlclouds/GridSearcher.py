@@ -225,7 +225,7 @@ class GridSearcher(object):
 
     def start_job(self, number_hidden_layers, number_hidden_nodes, dropout,
                   learning_rate, loss_weights_b, test_fraction, epochs_a,
-                  epochs_b, id=0):
+                  epochs_b, id='0'):
         """
         Start a single HPC task for a single model run via run_mlclouds.py.
 
@@ -251,10 +251,9 @@ class GridSearcher(object):
             Number of epochs to train without physics loss function applied.
         epochs_b: int
             Number of epochs to train with physcs loss function applied.
-        id: int
+        id: str
             Run ID number. Defaults to 0.
         """
-
         config = deepcopy(self.base_config)
 
         hidden_layers = [{"units": number_hidden_nodes, "activation": "relu",
@@ -302,6 +301,7 @@ class GridSearcher(object):
             Prepare runs without executing.
         """
         for i, job in enumerate(self.jobs):
+            i = str(i).zfill(len(self.jobs))
             number_hidden_layers, number_hidden_nodes, dropout, \
                 learning_rate, loss_weights_b, test_fraction, epochs_a, \
                 epochs_b = job
@@ -341,7 +341,8 @@ class GridSearcher(object):
         """
         for i in range(len(self.jobs)):
             try:
-                df = pd.read_csv(self.history_fpath.format(id=i)).iloc[[-1]]
+                id = i.zfill(len(self.jobs))
+                df = pd.read_csv(self.history_fpath.format(id=id)).iloc[[-1]]
             except IOError:
                 continue
             else:
@@ -370,7 +371,7 @@ if __name__ == '__main__':
     parser.add_argument('--output_ws', type=str,
                         default=f'/scratch/{user}/mlclouds/optimization/',
                         help='Output folder for stats, training history,'
-                        ' etc. Defaults to /scratch/{user}/mlclouds/'
+                        'etc. Defaults to /scratch/{user}/mlclouds/'
                         'optimization/.')
     parser.add_argument('--exe_fpath', type=str,
                         default='~/src/mlclouds/mlclouds/scripts/train.py',
