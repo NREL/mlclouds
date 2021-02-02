@@ -366,25 +366,25 @@ if __name__ == '__main__':
     parser.add_argument('config', type=str,
                         help='Grid search configuration file')
     parser.add_argument('--conda_env', type=str, default='mlclouds',
-                        help='Anaconda environment for HPC jobs. Defaults'
+                        help='Anaconda environment for HPC jobs. Defaults '
                         'to mlclouds')
     parser.add_argument('--output_ws', type=str,
                         default=f'/scratch/{user}/mlclouds/optimization/',
-                        help='Output folder for stats, training history,'
+                        help='Output folder for stats, training history, '
                         'etc. Defaults to /scratch/{user}/mlclouds/'
                         'optimization/.')
     parser.add_argument('--exe_fpath', type=str,
                         default='~/src/mlclouds/mlclouds/scripts/train.py',
-                        help='File path to train.py. Defaults to'
+                        help='File path to train.py. Defaults to '
                         '~/src/mlclouds/mlclouds/scripts/train.py')
     parser.add_argument('--data_root', type=str,
                         default='/projects/mlclouds/data_surfrad_9/',
-                        help='Surfrad data root directory. Defaults to'
+                        help='Surfrad data root directory. Defaults to '
                         '/projects/mlclouds/data_surfrad_9/')
     parser.add_argument('--dry_run', action='store_true',
                         help='Prepare runs without executing.')
     parser.add_argument('--collect_results', action='store_true',
-                        help='Collect results instead of run jobs.'
+                        help='Collect results instead of run jobs. '
                         'Saved as {output_ws}/results.csv')
 
     args = parser.parse_args()
