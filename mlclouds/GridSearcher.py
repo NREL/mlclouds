@@ -371,7 +371,7 @@ if __name__ == '__main__':
     parser.add_argument('--output_ws', type=str,
                         default=f'/scratch/{user}/mlclouds/optimization/',
                         help='Output folder for stats, training history, '
-                        'etc. Defaults to /scratch/{user}/mlclouds/'
+                        f'etc. Defaults to /scratch/{user}/mlclouds/'
                         'optimization/.')
     parser.add_argument('--exe_fpath', type=str,
                         default='~/src/mlclouds/mlclouds/scripts/train.py',
