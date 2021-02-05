@@ -225,7 +225,7 @@ class GridSearcher(object):
 
     def start_job(self, number_hidden_layers, number_hidden_nodes, dropout,
                   learning_rate, loss_weights_b, test_fraction, epochs_a,
-                  epochs_b, id='0'):
+                  epochs_b, id='0', walltime=1):
         """
         Start a single HPC task for a single model run via run_mlclouds.py.
 
@@ -253,6 +253,8 @@ class GridSearcher(object):
             Number of epochs to train with physcs loss function applied.
         id: str
             Run ID number. Defaults to 0.
+        walltime: int
+            HPC job walltime in hours. Deafults to 1 hour.
         """
         config = deepcopy(self.base_config)
 
@@ -279,7 +281,8 @@ class GridSearcher(object):
               f'--training_history={self.history_fpath.format(id=id)} ' \
               f'--model_path={self.model_fpath.format(id=id)}'
 
-        jobid, stdout = self.slurm.sbatch(cmd, alloc='mlclouds', walltime=1,
+        jobid, stdout = self.slurm.sbatch(cmd, alloc='mlclouds',
+                                          walltime=walltime,
                                           memory=None, feature=None,
                                           name=f'clds_opt_{id}',
                                           stdout_path=self.output_ws,
@@ -291,17 +294,19 @@ class GridSearcher(object):
         self.job_ids.append(jobid)
         self.job_stdout.append(stdout)
 
-    def run_grid_search(self, dry_run=False):
+    def run_grid_search(self, dry_run=False, walltime=1):
         """
         Start an HPC job for each job in self.jobs.
 
         Parameters
         ---------
         dry_run: bool
-            Prepare runs without executing.
+            Prepare runs without executing. Defaults to False.
+        walltime: int
+            HPC job walltime in hours. Defaults to 1.
         """
         for i, job in enumerate(self.jobs):
-            i = str(i).zfill(len(self.jobs))
+            i = str(i).zfill(len(str(len(self.jobs))))
             number_hidden_layers, number_hidden_nodes, dropout, \
                 learning_rate, loss_weights_b, test_fraction, epochs_a, \
                 epochs_b = job
@@ -309,7 +314,8 @@ class GridSearcher(object):
             if not dry_run:
                 self.start_job(number_hidden_layers, number_hidden_nodes,
                                dropout, learning_rate, loss_weights_b,
-                               test_fraction, epochs_a, epochs_b, id=i)
+                               test_fraction, epochs_a, epochs_b, id=i,
+                               walltime=walltime)
 
     def jobs_status(self):
         """
@@ -341,7 +347,7 @@ class GridSearcher(object):
         """
         for i in range(len(self.jobs)):
             try:
-                id = i.zfill(len(self.jobs))
+                id = str(i).zfill(len(str(len(self.jobs))))
                 df = pd.read_csv(self.history_fpath.format(id=id)).iloc[[-1]]
             except IOError:
                 continue
@@ -381,6 +387,8 @@ if __name__ == '__main__':
                         default='/projects/mlclouds/data_surfrad_9/',
                         help='Surfrad data root directory. Defaults to '
                         '/projects/mlclouds/data_surfrad_9/')
+    parser.add_argument('--walltime', type=int, default=1,
+                        help='HPC job walltime in hours. Defaults to 1')
     parser.add_argument('--dry_run', action='store_true',
                         help='Prepare runs without executing.')
     parser.add_argument('--collect_results', action='store_true',
@@ -410,6 +418,6 @@ if __name__ == '__main__':
     GS = GridSearcher(**kvals)
 
     if not args.collect_results:
-        GS.run_grid_search(args.dry_run)
+        GS.run_grid_search(args.dry_run, walltime=args.walltime)
     else:
         GS.collect_results(fpath=join(args.output_ws, 'results.csv'))
