@@ -50,8 +50,7 @@ class Trainer:
                     ''.format(train_sites, train_files))
         if train_sites == 'all':
             train_sites = [k for k, v in
-                           surf_meta().to_dict()['surfrad_id'].items() if v not
-                           in ['srrl', 'sgp']]
+                           surf_meta().to_dict()['surfrad_id'].items()]
         self.train_sites = train_sites
         self.train_files = train_files
         self._config = config
@@ -265,8 +264,7 @@ class Validator:
 
         logger.info('Calculating statistics')
 
-        gids = [k for k, v in surf_meta().to_dict()['surfrad_id'].items() if v
-                not in ['srrl', 'sgp']]
+        gids = [k for k, v in surf_meta().to_dict()['surfrad_id'].items()]
         logger.debug('Calcing stats for gids: {}'.format(gids))
 
         s_data = self._get_stats_data(self.files_meta, gids, fp_baseline,

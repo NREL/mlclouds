@@ -41,8 +41,7 @@ class TrainData:
         self.fp_surfrad_meta = FP_SURFRAD_META
         if train_sites == 'all':
             train_sites = [k for k, v in
-                           surf_meta().to_dict()['surfrad_id'].items() if v not
-                           in ['srrl', 'sgp']]
+                           surf_meta().to_dict()['surfrad_id'].items()]
         self.train_sites = train_sites
         self._config = config
 
@@ -108,6 +107,8 @@ class TrainData:
                 w_minutes = self._config.get('surfrad_window_minutes', 15)
                 surfrad_file = self.fp_surfrad_data.format(year=year,
                                                            code=code)
+                logger.debug('\t\tGrabbing surface data for {} from {}'
+                            .format(code, surfrad_file))
                 with Surfrad(surfrad_file) as surf:
                     temp_surf = surf.get_df(dt_out='{}min'.format(time_step),
                                             window_minutes=w_minutes)
@@ -331,8 +332,7 @@ class ValidationData:
         var_names += self.y_labels
         logger.debug('Loading vars {}'.format(var_names))
 
-        gids = [k for k, v in surf_meta().to_dict()['surfrad_id'].items() if v
-                not in ['srrl', 'sgp']]
+        gids = [k for k, v in surf_meta().to_dict()['surfrad_id'].items()]
 
         for val_file in self.val_files:
             logger.debug('Loading validation data from {} for gids {}'
@@ -362,6 +362,9 @@ class ValidationData:
         assert df_raw.shape[0] == df_all_sky.shape[0]
         df_raw.reset_index(drop=True, inplace=True)
         df_all_sky.reset_index(drop=True, inplace=True)
+
+        logger.debug('Shape after reset_index: df_raw={}, df_all_sky={}'
+                     ''.format(df_raw.shape, df_all_sky.shape))
 
         if test_set_mask is not None:
             assert (len(df_raw) == len(df_all_sky) == len(test_set_mask)), \
