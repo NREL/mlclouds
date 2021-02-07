@@ -17,17 +17,17 @@
                  "surface_albedo"
                  ],
     "y_labels": ["cld_opd_dcomp", "cld_reff_dcomp"],
-    "hidden_layers": [{"units": 256, "activation": "relu", "name": "relu1", "dropout": 0.1},
-                      {"units": 256, "activation": "relu", "name": "relu2", "dropout": 0.1},
-                      {"units": 256, "activation": "relu", "name": "relu2", "dropout": 0.1},
-                      {"units": 256, "activation": "relu", "name": "relu2", "dropout": 0.1},
-                      {"units": 256, "activation": "relu", "name": "relu3", "dropout": 0.1}
+    "hidden_layers": [{"units": 512, "activation": "relu", "dropout": 0.1},
+                      {"units": 512, "activation": "relu", "dropout": 0.1},
+                      {"units": 512, "activation": "relu", "dropout": 0.1},
+                      {"units": 512, "activation": "relu", "dropout": 0.1},
+                      {"units": 512, "activation": "relu", "dropout": 0.1}
                       ],
     "phygnn_seed": 0,
     "metric": "relative_mae",
     "learning_rate": 0.001,
     "n_batch": 64,
-    "epochs_a": 100,
+    "epochs_a": 200,
     "epochs_b": 100,
     "loss_weights_a": [1, 0],
     "loss_weights_b": [0.5, 0.5],

@@ -1,0 +1,37 @@
+{
+    "surfrad_window_minutes": 15,
+    "features": ["solar_zenith_angle",
+                 "cloud_type",
+                 "refl_0_65um_nom",
+                 "refl_0_65um_nom_stddev_3x3",
+                 "refl_3_75um_nom",
+                 "temp_3_75um_nom",
+                 "temp_11_0um_nom",
+                 "temp_11_0um_nom_stddev_3x3",
+                 "cloud_probability",
+                 "cloud_fraction",
+                 "air_temperature",
+                 "dew_point",
+                 "relative_humidity",
+                 "total_precipitable_water",
+                 "surface_albedo"
+                 ],
+    "y_labels": ["cld_opd_dcomp", "cld_reff_dcomp"],
+    "hidden_layers": [{"units": 64, "activation": "relu", "dropout": 0.1},
+                      {"units": 64, "activation": "relu", "dropout": 0.1},
+                      {"units": 64, "activation": "relu", "dropout": 0.1}
+                      ],
+    "phygnn_seed": 0,
+    "metric": "relative_mae",
+    "learning_rate": 0.0002,
+    "n_batch": 64,
+    "epochs_a": 100,
+    "epochs_b": 100,
+    "loss_weights_a": [1, 0],
+    "loss_weights_b": [0.5, 0.5],
+    "p_kwargs": {"loss_terms": ["mae_ghi", "mae_dni", "mbe_ghi", "mbe_dni"]},
+    "p_fun": "p_fun_all_sky",
+    "clean_training_data_kwargs": {"filter_clear": false, "nan_option": "interp"},
+    "one_hot_categories": {"flag": ["clear", "ice_cloud", "water_cloud", "bad_cloud"]}
+}
+
