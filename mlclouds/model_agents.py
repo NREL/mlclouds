@@ -30,7 +30,7 @@ class Trainer:
     def __init__(self, train_sites='all', train_files=FP_DATA, config=CONFIG,
                  test_fraction=None):
         """
-        Train PhyGNN model
+        Train PHYGNN model
 
         Parameters
         ----------
@@ -70,7 +70,7 @@ class Trainer:
                          self.train_data.df_all_sky.columns.values.tolist()}
         self.p_kwargs.update(self._config.get('p_kwargs', {}))
 
-        logger.debug('Building PhyGNN model')
+        logger.debug('Building PHYGNN model')
 
         p_fun = P_FUNS[self._config.get('p_fun', 'p_fun_all_sky')]
         logger.info('Using p_fun: {}'.format(p_fun))
@@ -176,7 +176,7 @@ class Validator:
 
     def _predict(self, model, update_clear, update_cloudy):
         """
-        Use PhyGNN model to predict cloud properties.
+        Use PHYGNN model to predict cloud properties.
 
         Parameters
         ----------
@@ -249,7 +249,7 @@ class Validator:
 
     def _calc_stats(self, test_set_mask, save_timeseries=False):
         """
-        Calculate accuracy of PhyGNN model predictions
+        Calculate accuracy of PHYGNN model predictions
 
         Parameters
         ----------
@@ -289,7 +289,7 @@ class Validator:
 
         i = 0
         stats = pd.DataFrame(columns=['Model', 'Site', 'Variable',
-                                      'Condition'])
+                                      'Condition', 'N'])
         for gid in gids:
             code = surf_meta().loc[gid, 'surfrad_id']
             logger.debug('Computing stats for gid: {} {}'.format(gid, code))
@@ -368,6 +368,7 @@ class Validator:
                     stats.at[i, 'MAE (%)'] = mae_baseline
                     stats.at[i, 'MBE (%)'] = mbe_baseline
                     stats.at[i, 'RMSE (%)'] = rmse_baseline
+                    stats.at[i, 'N'] = mask.sum()
                     i += 1
 
                     stats.at[i, 'Model'] = 'Adjusted'
@@ -377,15 +378,17 @@ class Validator:
                     stats.at[i, 'MAE (%)'] = mae_adj
                     stats.at[i, 'MBE (%)'] = mbe_adj
                     stats.at[i, 'RMSE (%)'] = rmse_adj
+                    stats.at[i, 'N'] = mask.sum()
                     i += 1
 
-                    stats.at[i, 'Model'] = 'PhyGNN'
+                    stats.at[i, 'Model'] = 'PHYGNN'
                     stats.at[i, 'Site'] = code.upper()
                     stats.at[i, 'Variable'] = var.upper()
                     stats.at[i, 'Condition'] = condition
                     stats.at[i, 'MAE (%)'] = mae_ml
                     stats.at[i, 'MBE (%)'] = mbe_ml
                     stats.at[i, 'RMSE (%)'] = rmse_ml
+                    stats.at[i, 'N'] = mask.sum()
                     i += 1
 
         self.stats = stats
@@ -406,13 +409,13 @@ class Validator:
         adjusted: pd.Series
             NSRDB irradiance, adjusted for solar position
         mlclouds: pd.Series
-            Irradiance as predicted by PhyGNN
+            Irradiance as predicted by PHYGNN
         surf: pd.Series
             Ground measured irradiance
         """
         df = pd.DataFrame({'Baseline': baseline,
                            'Adjusted': adjusted,
-                           'PhyGNN': mlclouds,
+                           'PHYGNN': mlclouds,
                            'Surfrad': surf})
         tdir = self._config.get('timeseries_dir', 'timeseries/')
         if not os.path.exists(tdir):

@@ -1,5 +1,5 @@
 """
-Automatic cross validation of PhyGNN models predicting opd and reff
+Automatic cross validation of PHYGNN models predicting opd and reff
 
 Mike Bannister 7/2020
 Based on code by Grant Buster
@@ -27,7 +27,7 @@ class TrainTest:
     of the data for testing that is not used for training.
     """
     def __init__(self, data_files, config=CONFIG, test_fraction=0.2,
-                 stats_file=None, model_file=None):
+                 stats_file=None, model_file=None, history_file=None):
         """
         Parameters
         ----------
@@ -45,6 +45,8 @@ class TrainTest:
             If str, save stats to stats_file
         model_file: str | None
             If str, save model to model_file, and config to model_file.config
+        history_file : str | None
+            If str, save model training history to history_file.
         """
         self.trainer = Trainer(train_files=data_files, config=config,
                                test_fraction=test_fraction)
@@ -61,6 +63,9 @@ class TrainTest:
         if model_file:
             self.save_model(model_file)
 
+        if history_file:
+            self.save_history(history_file)
+
     def save_model(self, fname):
         """
         Save model to disk
@@ -74,10 +79,21 @@ class TrainTest:
         with open(fname+'.config', 'w') as f:
             json.dump(self._config, f)
 
+    def save_history(self, fname):
+        """
+        Save model training history to disk
+
+        Parameters
+        ----------
+        fname: str
+            File name and path for csv
+        """
+        self._model.history.to_csv(fname)
+
 
 class XVal:
     """
-    Train a PhyGNN using one or more satellite datasets then validate against
+    Train a PHYGNN using one or more satellite datasets then validate against
     the NSRDB baseline data using another satellite dataset to predict cloud
     parameters. The sites used for training may also be controlled.
     """
@@ -95,7 +111,7 @@ class XVal:
 
     def train(self, train_sites=[0, 1, 2, 3, 5, 6], train_files=FP_DATA):
         """
-        Train PhyGNN model
+        Train PHYGNN model
 
         Parameters
         ----------
@@ -116,7 +132,7 @@ class XVal:
     def validate(self, val_files=None, val_data=None, update_clear=False,
                  update_cloudy=False, save_timeseries=False):
         """
-        Predict values using PhyGNN model and validation against baseline
+        Predict values using PHYGNN model and validation against baseline
         NSRDB data.
 
         val_files: str | list of str | None
