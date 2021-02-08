@@ -13,7 +13,8 @@ import json
 from copy import deepcopy
 
 from mlclouds.data_handlers import ValidationData
-from mlclouds.model_agents import Trainer, Validator
+from mlclouds.trainer import Trainer
+from mlclouds.validator import Validator
 from mlclouds.utilities import FP_DATA, ALL_SKY_VARS, CONFIG, surf_meta
 
 from phygnn import PhygnnModel as Phygnn
@@ -44,7 +45,7 @@ class TrainTest:
         stats_file: str | None
             If str, save stats to stats_file
         model_file: str | None
-            If str, save model to model_file, and config to model_file.config
+            If str, save model to model_file (pkl and json)
         history_file : str | None
             If str, save model training history to history_file.
         """
@@ -66,29 +67,27 @@ class TrainTest:
         if history_file:
             self.save_history(history_file)
 
-    def save_model(self, fname):
+    def save_model(self, fp):
         """
         Save model to disk
 
         Parameters
         ----------
-        fname: str
-            File name and path for pickle file
+        fp: str
+            File name and path for model file (pkl and json)
         """
-        self._model.save_model(fname)
-        with open(fname+'.config', 'w') as f:
-            json.dump(self._config, f)
+        self._model.save_model(fp)
 
-    def save_history(self, fname):
+    def save_history(self, fp):
         """
         Save model training history to disk
 
         Parameters
         ----------
-        fname: str
+        fp: str
             File name and path for csv
         """
-        self._model.history.to_csv(fname)
+        self._model.history.to_csv(fp)
 
 
 class XVal:
@@ -108,6 +107,7 @@ class XVal:
         self._model = None
         self._train_data = None
         self.stats = None
+        self._validator = None
 
     def train(self, train_sites=[0, 1, 2, 3, 5, 6], train_files=FP_DATA):
         """
@@ -176,7 +176,7 @@ class XVal:
             File name and path of pickle file
         """
         self._model = Phygnn.load(fname)
-        with open(fname+'.config', 'rb') as f:
+        with open(fname + '.config', 'rb') as f:
             self._config = json.load(f)
 
     def save_model(self, fname):
@@ -189,7 +189,7 @@ class XVal:
             File name and path for pickle file
         """
         self._model.save_model(fname)
-        with open(fname+'.config', 'w') as f:
+        with open(fname + '.config', 'w') as f:
             json.dump(self._config, f)
 
     def save_stats(self, fname):

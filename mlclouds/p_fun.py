@@ -26,6 +26,7 @@ def p_fun_dummy(model, y_true, y_predicted, p, labels=None, loss_terms=None):
 def p_fun_all_sky(model, y_true, y_predicted, p, labels=None,
                   loss_terms=('mae_ghi', 'mae_dni', 'mbe_ghi', 'mbe_dni')):
     """Physics loss function """
+    # pylint: disable-msg=W0613
     n = len(y_true)
     tau = tf.expand_dims(y_predicted[:, 0], axis=1)
     cld_reff = tf.expand_dims(y_predicted[:, 1], axis=1)
@@ -105,16 +106,6 @@ def p_fun_all_sky(model, y_true, y_predicted, p, labels=None,
                          / tf.reduce_mean(dni_ground))
     terms['rmse_dhi'] = (tf.sqrt(tf.reduce_sum(tf.square(err_dhi)))
                          / tf.reduce_mean(dhi_ground))
-
-    logger.debug('GHI MAE: {:.3f}% GHI MBE: {:.3f}% GHI RMSE: {:.3f}%'
-                 .format(100 * terms['mae_ghi'], 100 * terms['mbe_ghi'],
-                         100 * terms['rmse_ghi']))
-    logger.debug('DNI MAE: {:.3f}% DNI MBE: {:.3f}% DNI RMSE: {:.3f}%'
-                 .format(100 * terms['mae_dni'], 100 * terms['mbe_dni'],
-                         100 * terms['rmse_dni']))
-    logger.debug('DHI MAE: {:.3f}% DHI MBE: {:.3f}%, DHI RMSE: {:.3f}%'
-                 .format(100 * terms['mae_dhi'], 100 * terms['mbe_dhi'],
-                         100 * terms['rmse_dhi']))
 
     p_loss = sum([terms[x] for x in loss_terms])
     return p_loss
