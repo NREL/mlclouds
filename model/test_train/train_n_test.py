@@ -5,9 +5,7 @@ import json
 from mlclouds.autoxval import TrainTest
 from rex.utilities.loggers import init_logger
 
-init_logger('mlclouds.data_cleaners', log_level='DEBUG', log_file=None)
-init_logger('mlclouds.data_handlers', log_level='DEBUG', log_file=None)
-init_logger('mlclouds.model_agents', log_level='DEBUG', log_file=None)
+init_logger('mlclouds', log_level='DEBUG', log_file=None)
 init_logger('phygnn', log_level='INFO', log_file=None)
 
 fp_config = './config_optm.json'
@@ -28,4 +26,5 @@ print('config:', config)
 
 tt = TrainTest(files, config=config,
                stats_file='validation_stats.csv',
-               history_file='training_history.csv')
+               history_file='training_history.csv',
+               model_file='mlclouds_model.pkl')
