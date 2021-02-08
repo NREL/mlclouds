@@ -16,8 +16,8 @@ from rex.utilities.hpc import SLURM
 
 DATA_FILES = {'east': {2016: '2016_east_adj/mlclouds_surfrad_2016.h5',
                        2017: '2017_east_adj/mlclouds_surfrad_2017.h5',
-                       2018: '2018_east_adj/mlclouds_surfrad_2018_adj.h5',
-                       2019: '2019_east_adj/mlclouds_surfrad_2019_adj.h5'},
+                       2018: '2018_east_adj/mlclouds_surfrad_2018.h5',
+                       2019: '2019_east_adj/mlclouds_surfrad_2019.h5'},
               'west': {2016: '2016_west_adj/mlclouds_surfrad_2016.h5',
                        2017: '2017_west_adj/mlclouds_surfrad_2017.h5',
                        2018: '2018_west_adj/mlclouds_surfrad_2018.h5',
