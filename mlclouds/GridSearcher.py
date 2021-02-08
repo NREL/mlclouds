@@ -77,7 +77,7 @@ class GridSearcher(object):
                  number_hidden_nodes=(64, ), dropouts=(0.01, ),
                  learning_rates=(0.001, ), loss_weights_b=([0.5, 0.5], ),
                  test_fractions=(0.2, ), epochs_a=(10, ), epochs_b=(10, ),
-                 base_config=CONFIG):
+                 n_batches=(16, ), base_config=CONFIG):
         """
         Parameters
         ----------
@@ -115,6 +115,8 @@ class GridSearcher(object):
         epochs_b: list of int
             Number of epochs to train with physcs loss function applied.
             Defaults to (10, ).
+        n_batches: list of int
+            Training batch sizes. Defaults to (16, 0).
         base_config:
             Base configuration for model. Defaults to:
 
@@ -182,7 +184,8 @@ class GridSearcher(object):
 
         self.jobs = list(product(number_hidden_layers, number_hidden_nodes,
                                  dropouts, learning_rates, loss_weights_b,
-                                 test_fractions, epochs_a, epochs_b))
+                                 test_fractions, epochs_a, epochs_b,
+                                 n_batches))
 
         self.results = pd.DataFrame(self.jobs, columns=['number_hidden_layers',
                                                         'number_hidden_nodes',
@@ -191,7 +194,8 @@ class GridSearcher(object):
                                                         'loss_weights_b',
                                                         'test_fraction',
                                                         'epochs_a',
-                                                        'epochs_b'])
+                                                        'epochs_b',
+                                                        'n_batch'])
         for var in ['elapsed_time', 'training_loss', 'validation_loss']:
             self.results[var] = [None, ] * len(self.jobs)
         self.collect_results(fpath=join(self.output_ws, 'results.csv'))
@@ -225,7 +229,7 @@ class GridSearcher(object):
 
     def start_job(self, number_hidden_layers, number_hidden_nodes, dropout,
                   learning_rate, loss_weights_b, test_fraction, epochs_a,
-                  epochs_b, id='0', walltime=1):
+                  epochs_b, n_batch, id='0', walltime=1):
         """
         Start a single HPC task for a single model run via run_mlclouds.py.
 
@@ -251,6 +255,8 @@ class GridSearcher(object):
             Number of epochs to train without physics loss function applied.
         epochs_b: int
             Number of epochs to train with physcs loss function applied.
+        n_batch: int
+            Training batch size.
         id: str
             Run ID number. Defaults to 0.
         walltime: int
@@ -266,7 +272,8 @@ class GridSearcher(object):
              'learning_rate': learning_rate,
              'loss_weights_b': loss_weights_b,
              'epochs_a': epochs_a,
-             'epochs_b': epochs_b
+             'epochs_b': epochs_b,
+             'n_batch': n_batch
              }
         )
 
@@ -283,7 +290,7 @@ class GridSearcher(object):
 
         jobid, stdout = self.slurm.sbatch(cmd, alloc='mlclouds',
                                           walltime=walltime,
-                                          memory=None, feature=None,
+                                          memory=None, feature='--qos=high',
                                           name=f'clds_opt_{id}',
                                           stdout_path=self.output_ws,
                                           keep_sh=False,
@@ -309,13 +316,13 @@ class GridSearcher(object):
             i = str(i).zfill(len(str(len(self.jobs))))
             number_hidden_layers, number_hidden_nodes, dropout, \
                 learning_rate, loss_weights_b, test_fraction, epochs_a, \
-                epochs_b = job
+                epochs_b, n_batch = job
 
             if not dry_run:
                 self.start_job(number_hidden_layers, number_hidden_nodes,
                                dropout, learning_rate, loss_weights_b,
-                               test_fraction, epochs_a, epochs_b, id=i,
-                               walltime=walltime)
+                               test_fraction, epochs_a, epochs_b, n_batch,
+                               id=i, walltime=walltime)
 
     def jobs_status(self):
         """
@@ -343,7 +350,7 @@ class GridSearcher(object):
             Pandas DataFrame with columns: epoch, elapsed_time, training_loss,
             validation_loss, number_hidden_layers, number_hidden_nodes,
             dropout, learning_rate, loss_weights_b, test_fraction, epochs_a,
-            epochs_b.
+            epochs_b, n_batch.
         """
         for i in range(len(self.jobs)):
             try:
@@ -412,7 +419,8 @@ if __name__ == '__main__':
         'loss_weights_b': config['loss_weights_b'],
         'test_fractions': config['test_fractions'],
         'epochs_a': config['epochs_a'],
-        'epochs_b': config['epochs_b']
+        'epochs_b': config['epochs_b'],
+        'n_batches': config['n_batches']
     }
 
     GS = GridSearcher(**kvals)
