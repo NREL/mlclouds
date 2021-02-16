@@ -290,7 +290,7 @@ class GridSearcher(object):
 
         jobid, stdout = self.slurm.sbatch(cmd, alloc='mlclouds',
                                           walltime=walltime,
-                                          memory=None, feature='--qos=high',
+                                          memory=None, feature='--gres=gpu:1',
                                           name=f'clds_opt_{id}',
                                           stdout_path=self.output_ws,
                                           keep_sh=False,
