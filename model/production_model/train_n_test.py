@@ -1,6 +1,7 @@
 """
 Randomly split full dataset using 80% for training and 20% for testing
 """
+import os
 import json
 from mlclouds.autoxval import TrainTest
 from rex.utilities.loggers import init_logger
@@ -8,45 +9,25 @@ from rex.utilities.loggers import init_logger
 init_logger('mlclouds', log_level='DEBUG', log_file=None)
 init_logger('phygnn', log_level='INFO', log_file=None)
 
-with open('./xval_config.json', 'r') as f:
+fp_config = './config_optm.json'
+with open(fp_config, 'r') as f:
     config = json.load(f)
 
-east_2016 = '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/2016' +\
-                '_east_adj/mlclouds_surfrad_2016.h5'
-east_2017 = '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/2017' +\
-                '_east_adj/mlclouds_surfrad_2017.h5'
-east_2018 = '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/2018' +\
-                '_east_adj/mlclouds_surfrad_2018_adj.h5'
-east_2019 = '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/2019' +\
-                '_east_adj/mlclouds_surfrad_2019_adj.h5'
+out_dir = './outputs/'
+if not os.path.exists(out_dir):
+    os.makedirs(out_dir)
 
-west_2016 = '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/2016' +\
-                '_west_adj/mlclouds_surfrad_2016.h5'
-west_2017 = '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/2017' +\
-                '_west_adj/mlclouds_surfrad_2017.h5'
-west_2018 = '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/2018' +\
-                '_west_adj/mlclouds_surfrad_2018.h5'
-west_2019 = '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/2019' +\
-                '_west_adj/mlclouds_surfrad_2019.h5'
+fp_base = ('/projects/mlclouds/data_surfrad_9/{y}_{ew}_adj/'
+           'mlclouds_surfrad_{y}.h5')
+files = [fp_base.format(y=y, ew=ew)
+         for y in range(2016, 2020)
+         for ew in ('east', 'west')]
 
-fs = {
-      # 'east_files':  [east_2016, east_2017, east_2018, east_2019],
-      'all_files': [east_2016, east_2017, east_2018, east_2019,
-                    west_2016, west_2017, west_2018, west_2019],
-      # 'west_files':  [west_2016, west_2017, west_2018, west_2019]
-}
+print('Number of files:', len(files))
+print('Source files:', files)
+print('Full config:', config)
 
-scenario = 'all_files'
-files = fs[scenario]
-
-test_fraction = 0.2
-
-print('scenario:', scenario)
-print('files:', files)
-print('config:', config)
-print('test_fraction:', test_fraction)
-
-tt = TrainTest(files, config=config, test_fraction=test_fraction,
-               stats_file='stats/stats_{}.csv'.format(scenario))
-
-tt.save_model('./models/model.pkl')
+tt = TrainTest(files, config=config,
+               stats_file=os.path.join(out_dir, 'validation_stats.csv'),
+               history_file=os.path.join(out_dir, 'training_history.csv'),
+               model_file=os.path.join(out_dir, 'mlclouds_model.pkl'))

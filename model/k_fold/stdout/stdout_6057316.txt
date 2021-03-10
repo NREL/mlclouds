@@ -1,0 +1,789 @@
+Starting scenario 4, validation against site 1
+2021-03-09 16:37:12.847028: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /nopt/slurm/current/lib:/nopt/slurm/current/lib:
+2021-03-09 16:37:12.847056: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+Cross validation site: 1
+Training sites: [0, 2, 3, 4, 5, 6, 7, 8]
+Number of files: 8
+Source files: ['/projects/mlclouds/data_surfrad_9/2016_east_adj/mlclouds_surfrad_2016.h5', '/projects/mlclouds/data_surfrad_9/2016_west_adj/mlclouds_surfrad_2016.h5', '/projects/mlclouds/data_surfrad_9/2017_east_adj/mlclouds_surfrad_2017.h5', '/projects/mlclouds/data_surfrad_9/2017_west_adj/mlclouds_surfrad_2017.h5', '/projects/mlclouds/data_surfrad_9/2018_east_adj/mlclouds_surfrad_2018.h5', '/projects/mlclouds/data_surfrad_9/2018_west_adj/mlclouds_surfrad_2018.h5', '/projects/mlclouds/data_surfrad_9/2019_east_adj/mlclouds_surfrad_2019.h5', '/projects/mlclouds/data_surfrad_9/2019_west_adj/mlclouds_surfrad_2019.h5']
+Full config: {'clean_training_data_kwargs': {'filter_clear': False, 'nan_option': 'interp'}, 'epochs_a': 100, 'epochs_b': 100, 'features': ['solar_zenith_angle', 'cloud_type', 'refl_0_65um_nom', 'refl_0_65um_nom_stddev_3x3', 'refl_3_75um_nom', 'temp_3_75um_nom', 'temp_11_0um_nom', 'temp_11_0um_nom_stddev_3x3', 'cloud_probability', 'cloud_fraction', 'air_temperature', 'dew_point', 'relative_humidity', 'total_precipitable_water', 'surface_albedo'], 'hidden_layers': [{'activation': 'relu', 'dropout': 0.1, 'units': 256}, {'activation': 'relu', 'dropout': 0.1, 'units': 256}, {'activation': 'relu', 'dropout': 0.1, 'units': 256}, {'activation': 'relu', 'dropout': 0.1, 'units': 256}, {'activation': 'relu', 'dropout': 0.1, 'units': 256}], 'learning_rate': 0.001, 'loss_weights_a': [1, 0], 'loss_weights_b': [0.5, 0.5], 'metric': 'relative_mae', 'n_batch': 64, 'one_hot_categories': {'flag': ['clear', 'ice_cloud', 'water_cloud', 'bad_cloud']}, 'p_fun': 'p_fun_all_sky', 'p_kwargs': {'loss_terms': ['mae_ghi', 'mae_dni', 'mbe_ghi', 'mbe_dni']}, 'phygnn_seed': 0, 'surfrad_window_minutes': 15, 'y_labels': ['cld_opd_dcomp', 'cld_reff_dcomp']}
+INFO - 2021-03-09 16:37:19,269 [trainer.py:37] : Trainer: Training on sites [0, 2, 3, 4, 5, 6, 7, 8] from files ['/projects/mlclouds/data_surfrad_9/2016_east_adj/mlclouds_surfrad_2016.h5', '/projects/mlclouds/data_surfrad_9/2016_west_adj/mlclouds_surfrad_2016.h5', '/projects/mlclouds/data_surfrad_9/2017_east_adj/mlclouds_surfrad_2017.h5', '/projects/mlclouds/data_surfrad_9/2017_west_adj/mlclouds_surfrad_2017.h5', '/projects/mlclouds/data_surfrad_9/2018_east_adj/mlclouds_surfrad_2018.h5', '/projects/mlclouds/data_surfrad_9/2018_west_adj/mlclouds_surfrad_2018.h5', '/projects/mlclouds/data_surfrad_9/2019_east_adj/mlclouds_surfrad_2019.h5', '/projects/mlclouds/data_surfrad_9/2019_west_adj/mlclouds_surfrad_2019.h5']
+INFO - 2021-03-09 16:37:19,270 [trainer.py:46] : Trainer: Training on sites [0, 2, 3, 4, 5, 6, 7, 8] from files ['/projects/mlclouds/data_surfrad_9/2016_east_adj/mlclouds_surfrad_2016.h5', '/projects/mlclouds/data_surfrad_9/2016_west_adj/mlclouds_surfrad_2016.h5', '/projects/mlclouds/data_surfrad_9/2017_east_adj/mlclouds_surfrad_2017.h5', '/projects/mlclouds/data_surfrad_9/2017_west_adj/mlclouds_surfrad_2017.h5', '/projects/mlclouds/data_surfrad_9/2018_east_adj/mlclouds_surfrad_2018.h5', '/projects/mlclouds/data_surfrad_9/2018_west_adj/mlclouds_surfrad_2018.h5', '/projects/mlclouds/data_surfrad_9/2019_east_adj/mlclouds_surfrad_2019.h5', '/projects/mlclouds/data_surfrad_9/2019_west_adj/mlclouds_surfrad_2019.h5']
+INFO - 2021-03-09 16:37:19,270 [data_handlers.py:54] : Loading training data
+DEBUG - 2021-03-09 16:37:19,270 [data_handlers.py:72] : Loading vars ['solar_zenith_angle', 'cloud_type', 'refl_0_65um_nom', 'refl_0_65um_nom_stddev_3x3', 'refl_3_75um_nom', 'temp_3_75um_nom', 'temp_11_0um_nom', 'temp_11_0um_nom_stddev_3x3', 'cloud_probability', 'cloud_fraction', 'air_temperature', 'dew_point', 'relative_humidity', 'total_precipitable_water', 'surface_albedo', 'cld_opd_dcomp', 'cld_reff_dcomp']
+DEBUG - 2021-03-09 16:37:19,270 [data_handlers.py:79] : Loading data for site(s) [0, 2, 3, 4, 5, 6, 7, 8], from /projects/mlclouds/data_surfrad_9/2016_east_adj/mlclouds_surfrad_2016.h5
+DEBUG - 2021-03-09 16:37:20,335 [data_handlers.py:95] : 	Shape temp_raw=(140544, 19), temp_all_sky=(140544, 14)
+DEBUG - 2021-03-09 16:37:20,338 [data_handlers.py:98] : 	Time step is 30 minutes
+DEBUG - 2021-03-09 16:37:20,338 [data_handlers.py:103] : 	Grabbing surface data for 2016 and [0, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 16:37:20,342 [data_handlers.py:110] : 		Grabbing surface data for bon from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/bon_2016.h5
+DEBUG - 2021-03-09 16:37:21,045 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:21,049 [data_handlers.py:110] : 		Grabbing surface data for dra from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/dra_2016.h5
+DEBUG - 2021-03-09 16:37:21,724 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:21,727 [data_handlers.py:110] : 		Grabbing surface data for fpk from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/fpk_2016.h5
+DEBUG - 2021-03-09 16:37:22,430 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:22,434 [data_handlers.py:110] : 		Grabbing surface data for gwn from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/gwn_2016.h5
+DEBUG - 2021-03-09 16:37:23,110 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:23,113 [data_handlers.py:110] : 		Grabbing surface data for psu from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/psu_2016.h5
+DEBUG - 2021-03-09 16:37:23,797 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:23,800 [data_handlers.py:110] : 		Grabbing surface data for sxf from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sxf_2016.h5
+DEBUG - 2021-03-09 16:37:24,484 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:24,487 [data_handlers.py:110] : 		Grabbing surface data for sgp from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sgp_2016.h5
+DEBUG - 2021-03-09 16:37:25,166 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:25,169 [data_handlers.py:110] : 		Grabbing surface data for srrl from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/srrl_2016.h5
+DEBUG - 2021-03-09 16:37:25,861 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:25,861 [data_handlers.py:79] : Loading data for site(s) [0, 2, 3, 4, 5, 6, 7, 8], from /projects/mlclouds/data_surfrad_9/2016_west_adj/mlclouds_surfrad_2016.h5
+DEBUG - 2021-03-09 16:37:26,786 [data_handlers.py:95] : 	Shape temp_raw=(140544, 19), temp_all_sky=(140544, 14)
+DEBUG - 2021-03-09 16:37:26,789 [data_handlers.py:98] : 	Time step is 30 minutes
+DEBUG - 2021-03-09 16:37:26,789 [data_handlers.py:103] : 	Grabbing surface data for 2016 and [0, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 16:37:26,792 [data_handlers.py:110] : 		Grabbing surface data for bon from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/bon_2016.h5
+DEBUG - 2021-03-09 16:37:27,455 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:27,458 [data_handlers.py:110] : 		Grabbing surface data for dra from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/dra_2016.h5
+DEBUG - 2021-03-09 16:37:28,116 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:28,119 [data_handlers.py:110] : 		Grabbing surface data for fpk from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/fpk_2016.h5
+DEBUG - 2021-03-09 16:37:28,782 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:28,784 [data_handlers.py:110] : 		Grabbing surface data for gwn from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/gwn_2016.h5
+DEBUG - 2021-03-09 16:37:29,434 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:29,437 [data_handlers.py:110] : 		Grabbing surface data for psu from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/psu_2016.h5
+DEBUG - 2021-03-09 16:37:30,088 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:30,091 [data_handlers.py:110] : 		Grabbing surface data for sxf from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sxf_2016.h5
+DEBUG - 2021-03-09 16:37:30,739 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:30,742 [data_handlers.py:110] : 		Grabbing surface data for sgp from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sgp_2016.h5
+DEBUG - 2021-03-09 16:37:31,388 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:31,391 [data_handlers.py:110] : 		Grabbing surface data for srrl from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/srrl_2016.h5
+DEBUG - 2021-03-09 16:37:32,044 [data_handlers.py:122] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2021-03-09 16:37:32,045 [data_handlers.py:79] : Loading data for site(s) [0, 2, 3, 4, 5, 6, 7, 8], from /projects/mlclouds/data_surfrad_9/2017_east_adj/mlclouds_surfrad_2017.h5
+DEBUG - 2021-03-09 16:37:32,967 [data_handlers.py:95] : 	Shape temp_raw=(140160, 19), temp_all_sky=(140160, 14)
+DEBUG - 2021-03-09 16:37:32,970 [data_handlers.py:98] : 	Time step is 30 minutes
+DEBUG - 2021-03-09 16:37:32,970 [data_handlers.py:103] : 	Grabbing surface data for 2017 and [0, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 16:37:32,973 [data_handlers.py:110] : 		Grabbing surface data for bon from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/bon_2017.h5
+DEBUG - 2021-03-09 16:37:33,660 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:33,663 [data_handlers.py:110] : 		Grabbing surface data for dra from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/dra_2017.h5
+DEBUG - 2021-03-09 16:37:34,328 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:34,331 [data_handlers.py:110] : 		Grabbing surface data for fpk from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/fpk_2017.h5
+DEBUG - 2021-03-09 16:37:34,998 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:35,001 [data_handlers.py:110] : 		Grabbing surface data for gwn from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/gwn_2017.h5
+DEBUG - 2021-03-09 16:37:35,665 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:35,668 [data_handlers.py:110] : 		Grabbing surface data for psu from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/psu_2017.h5
+DEBUG - 2021-03-09 16:37:36,355 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:36,358 [data_handlers.py:110] : 		Grabbing surface data for sxf from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sxf_2017.h5
+DEBUG - 2021-03-09 16:37:37,025 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:37,028 [data_handlers.py:110] : 		Grabbing surface data for sgp from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sgp_2017.h5
+DEBUG - 2021-03-09 16:37:37,708 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:37,711 [data_handlers.py:110] : 		Grabbing surface data for srrl from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/srrl_2017.h5
+DEBUG - 2021-03-09 16:37:38,389 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:38,389 [data_handlers.py:79] : Loading data for site(s) [0, 2, 3, 4, 5, 6, 7, 8], from /projects/mlclouds/data_surfrad_9/2017_west_adj/mlclouds_surfrad_2017.h5
+DEBUG - 2021-03-09 16:37:39,321 [data_handlers.py:95] : 	Shape temp_raw=(140160, 19), temp_all_sky=(140160, 14)
+DEBUG - 2021-03-09 16:37:39,324 [data_handlers.py:98] : 	Time step is 30 minutes
+DEBUG - 2021-03-09 16:37:39,324 [data_handlers.py:103] : 	Grabbing surface data for 2017 and [0, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 16:37:39,327 [data_handlers.py:110] : 		Grabbing surface data for bon from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/bon_2017.h5
+DEBUG - 2021-03-09 16:37:39,993 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:39,996 [data_handlers.py:110] : 		Grabbing surface data for dra from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/dra_2017.h5
+DEBUG - 2021-03-09 16:37:40,631 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:40,634 [data_handlers.py:110] : 		Grabbing surface data for fpk from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/fpk_2017.h5
+DEBUG - 2021-03-09 16:37:41,267 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:41,270 [data_handlers.py:110] : 		Grabbing surface data for gwn from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/gwn_2017.h5
+DEBUG - 2021-03-09 16:37:41,912 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:41,915 [data_handlers.py:110] : 		Grabbing surface data for psu from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/psu_2017.h5
+DEBUG - 2021-03-09 16:37:42,574 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:42,577 [data_handlers.py:110] : 		Grabbing surface data for sxf from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sxf_2017.h5
+DEBUG - 2021-03-09 16:37:43,222 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:43,225 [data_handlers.py:110] : 		Grabbing surface data for sgp from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sgp_2017.h5
+DEBUG - 2021-03-09 16:37:43,878 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:43,881 [data_handlers.py:110] : 		Grabbing surface data for srrl from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/srrl_2017.h5
+DEBUG - 2021-03-09 16:37:44,520 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:44,521 [data_handlers.py:79] : Loading data for site(s) [0, 2, 3, 4, 5, 6, 7, 8], from /projects/mlclouds/data_surfrad_9/2018_east_adj/mlclouds_surfrad_2018.h5
+DEBUG - 2021-03-09 16:37:49,994 [data_handlers.py:95] : 	Shape temp_raw=(840960, 19), temp_all_sky=(840960, 14)
+DEBUG - 2021-03-09 16:37:50,007 [data_handlers.py:98] : 	Time step is 5 minutes
+DEBUG - 2021-03-09 16:37:50,007 [data_handlers.py:103] : 	Grabbing surface data for 2018 and [0, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 16:37:50,010 [data_handlers.py:110] : 		Grabbing surface data for bon from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/bon_2018.h5
+DEBUG - 2021-03-09 16:37:50,669 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:37:50,672 [data_handlers.py:110] : 		Grabbing surface data for dra from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/dra_2018.h5
+DEBUG - 2021-03-09 16:37:51,335 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:37:51,338 [data_handlers.py:110] : 		Grabbing surface data for fpk from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/fpk_2018.h5
+DEBUG - 2021-03-09 16:37:52,000 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:37:52,003 [data_handlers.py:110] : 		Grabbing surface data for gwn from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/gwn_2018.h5
+DEBUG - 2021-03-09 16:37:52,666 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:37:52,669 [data_handlers.py:110] : 		Grabbing surface data for psu from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/psu_2018.h5
+DEBUG - 2021-03-09 16:37:53,332 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:37:53,335 [data_handlers.py:110] : 		Grabbing surface data for sxf from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sxf_2018.h5
+DEBUG - 2021-03-09 16:37:54,000 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:37:54,003 [data_handlers.py:110] : 		Grabbing surface data for sgp from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sgp_2018.h5
+DEBUG - 2021-03-09 16:37:54,671 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:37:54,674 [data_handlers.py:110] : 		Grabbing surface data for srrl from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/srrl_2018.h5
+DEBUG - 2021-03-09 16:37:55,411 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:37:55,411 [data_handlers.py:79] : Loading data for site(s) [0, 2, 3, 4, 5, 6, 7, 8], from /projects/mlclouds/data_surfrad_9/2018_west_adj/mlclouds_surfrad_2018.h5
+DEBUG - 2021-03-09 16:37:56,394 [data_handlers.py:95] : 	Shape temp_raw=(140160, 19), temp_all_sky=(140160, 14)
+DEBUG - 2021-03-09 16:37:56,397 [data_handlers.py:98] : 	Time step is 30 minutes
+DEBUG - 2021-03-09 16:37:56,397 [data_handlers.py:103] : 	Grabbing surface data for 2018 and [0, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 16:37:56,400 [data_handlers.py:110] : 		Grabbing surface data for bon from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/bon_2018.h5
+DEBUG - 2021-03-09 16:37:57,042 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:57,045 [data_handlers.py:110] : 		Grabbing surface data for dra from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/dra_2018.h5
+DEBUG - 2021-03-09 16:37:57,691 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:57,694 [data_handlers.py:110] : 		Grabbing surface data for fpk from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/fpk_2018.h5
+DEBUG - 2021-03-09 16:37:58,337 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:58,340 [data_handlers.py:110] : 		Grabbing surface data for gwn from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/gwn_2018.h5
+DEBUG - 2021-03-09 16:37:58,985 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:58,989 [data_handlers.py:110] : 		Grabbing surface data for psu from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/psu_2018.h5
+DEBUG - 2021-03-09 16:37:59,638 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:37:59,641 [data_handlers.py:110] : 		Grabbing surface data for sxf from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sxf_2018.h5
+DEBUG - 2021-03-09 16:38:00,284 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:38:00,287 [data_handlers.py:110] : 		Grabbing surface data for sgp from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sgp_2018.h5
+DEBUG - 2021-03-09 16:38:00,956 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:38:00,959 [data_handlers.py:110] : 		Grabbing surface data for srrl from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/srrl_2018.h5
+DEBUG - 2021-03-09 16:38:01,602 [data_handlers.py:122] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2021-03-09 16:38:01,602 [data_handlers.py:79] : Loading data for site(s) [0, 2, 3, 4, 5, 6, 7, 8], from /projects/mlclouds/data_surfrad_9/2019_east_adj/mlclouds_surfrad_2019.h5
+DEBUG - 2021-03-09 16:38:07,086 [data_handlers.py:95] : 	Shape temp_raw=(840960, 19), temp_all_sky=(840960, 14)
+DEBUG - 2021-03-09 16:38:07,099 [data_handlers.py:98] : 	Time step is 5 minutes
+DEBUG - 2021-03-09 16:38:07,099 [data_handlers.py:103] : 	Grabbing surface data for 2019 and [0, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 16:38:07,102 [data_handlers.py:110] : 		Grabbing surface data for bon from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/bon_2019.h5
+DEBUG - 2021-03-09 16:38:07,772 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:38:07,775 [data_handlers.py:110] : 		Grabbing surface data for dra from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/dra_2019.h5
+DEBUG - 2021-03-09 16:38:08,448 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:38:08,450 [data_handlers.py:110] : 		Grabbing surface data for fpk from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/fpk_2019.h5
+DEBUG - 2021-03-09 16:38:09,118 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:38:09,121 [data_handlers.py:110] : 		Grabbing surface data for gwn from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/gwn_2019.h5
+DEBUG - 2021-03-09 16:38:09,800 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:38:09,803 [data_handlers.py:110] : 		Grabbing surface data for psu from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/psu_2019.h5
+DEBUG - 2021-03-09 16:38:10,485 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:38:10,488 [data_handlers.py:110] : 		Grabbing surface data for sxf from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sxf_2019.h5
+DEBUG - 2021-03-09 16:38:11,162 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:38:11,165 [data_handlers.py:110] : 		Grabbing surface data for sgp from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sgp_2019.h5
+DEBUG - 2021-03-09 16:38:11,862 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:38:11,866 [data_handlers.py:110] : 		Grabbing surface data for srrl from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/srrl_2019.h5
+DEBUG - 2021-03-09 16:38:12,551 [data_handlers.py:122] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2021-03-09 16:38:12,551 [data_handlers.py:79] : Loading data for site(s) [0, 2, 3, 4, 5, 6, 7, 8], from /projects/mlclouds/data_surfrad_9/2019_west_adj/mlclouds_surfrad_2019.h5
+DEBUG - 2021-03-09 16:38:15,247 [data_handlers.py:95] : 	Shape temp_raw=(420480, 19), temp_all_sky=(420480, 14)
+DEBUG - 2021-03-09 16:38:15,254 [data_handlers.py:98] : 	Time step is 10 minutes
+DEBUG - 2021-03-09 16:38:15,254 [data_handlers.py:103] : 	Grabbing surface data for 2019 and [0, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 16:38:15,257 [data_handlers.py:110] : 		Grabbing surface data for bon from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/bon_2019.h5
+DEBUG - 2021-03-09 16:38:15,927 [data_handlers.py:122] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2021-03-09 16:38:15,930 [data_handlers.py:110] : 		Grabbing surface data for dra from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/dra_2019.h5
+DEBUG - 2021-03-09 16:38:16,598 [data_handlers.py:122] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2021-03-09 16:38:16,602 [data_handlers.py:110] : 		Grabbing surface data for fpk from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/fpk_2019.h5
+DEBUG - 2021-03-09 16:38:17,271 [data_handlers.py:122] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2021-03-09 16:38:17,274 [data_handlers.py:110] : 		Grabbing surface data for gwn from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/gwn_2019.h5
+DEBUG - 2021-03-09 16:38:17,941 [data_handlers.py:122] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2021-03-09 16:38:17,944 [data_handlers.py:110] : 		Grabbing surface data for psu from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/psu_2019.h5
+DEBUG - 2021-03-09 16:38:18,620 [data_handlers.py:122] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2021-03-09 16:38:18,624 [data_handlers.py:110] : 		Grabbing surface data for sxf from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sxf_2019.h5
+DEBUG - 2021-03-09 16:38:19,293 [data_handlers.py:122] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2021-03-09 16:38:19,296 [data_handlers.py:110] : 		Grabbing surface data for sgp from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/sgp_2019.h5
+DEBUG - 2021-03-09 16:38:19,978 [data_handlers.py:122] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2021-03-09 16:38:19,981 [data_handlers.py:110] : 		Grabbing surface data for srrl from /lustre/eaglefs/projects/mlclouds/ground_measurement/surfrad/srrl_2019.h5
+DEBUG - 2021-03-09 16:38:20,654 [data_handlers.py:122] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2021-03-09 16:38:20,655 [data_handlers.py:123] : Shape df_raw=(2803968, 19), df_all_sky=(2803968, 14), df_surf=(2803968, 5)
+DEBUG - 2021-03-09 16:38:20,875 [data_handlers.py:139] : Extracting 2D arrays to run rest2 for clearsky PhyGNN inputs.
+DEBUG - 2021-03-09 16:38:33,060 [data_handlers.py:156] : Running rest2 for clearsky PhyGNN inputs.
+DEBUG - 2021-03-09 16:40:31,906 [data_handlers.py:174] : Completed rest2 run for clearsky PhyGNN inputs.
+INFO - 2021-03-09 16:40:33,530 [data_handlers.py:56] : Prepping training data
+DEBUG - 2021-03-09 16:40:33,530 [data_handlers.py:194] : Training data clean kwargs: {'filter_daylight': True, 'filter_clear': False, 'add_feature_flag': True, 'sza_lim': 89, 'nan_option': 'interp'}
+DEBUG - 2021-03-09 16:40:33,530 [data_handlers.py:195] : Shape before cleaning: df_raw=(2803968, 19)
+INFO - 2021-03-09 16:40:33,755 [data_cleaners.py:36] : 49.69% of timesteps are daylight
+INFO - 2021-03-09 16:40:33,760 [data_cleaners.py:38] : 55.84% of daylight timesteps are cloudy
+INFO - 2021-03-09 16:40:33,764 [data_cleaners.py:40] : 0.63% of daylight timesteps are missing cloud type
+INFO - 2021-03-09 16:40:33,769 [data_cleaners.py:42] : 35.11% of cloudy daylight timesteps are missing cloud opd
+INFO - 2021-03-09 16:40:33,774 [data_cleaners.py:44] : 35.31% of cloudy daylight timesteps are missing cloud reff
+DEBUG - 2021-03-09 16:40:33,774 [data_cleaners.py:47] : Column NaN values:
+DEBUG - 2021-03-09 16:40:33,776 [data_cleaners.py:50] : 	"gid" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:33,781 [data_cleaners.py:50] : 	"time_index" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:33,784 [data_cleaners.py:50] : 	"solar_zenith_angle" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:33,788 [data_cleaners.py:50] : 	"cloud_type" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:33,791 [data_cleaners.py:50] : 	"refl_0_65um_nom" has 49.79% NaN values
+DEBUG - 2021-03-09 16:40:33,794 [data_cleaners.py:50] : 	"refl_0_65um_nom_stddev_3x3" has 49.79% NaN values
+DEBUG - 2021-03-09 16:40:33,798 [data_cleaners.py:50] : 	"refl_3_75um_nom" has 0.63% NaN values
+DEBUG - 2021-03-09 16:40:33,801 [data_cleaners.py:50] : 	"temp_3_75um_nom" has 0.54% NaN values
+DEBUG - 2021-03-09 16:40:33,804 [data_cleaners.py:50] : 	"temp_11_0um_nom" has 0.54% NaN values
+DEBUG - 2021-03-09 16:40:33,808 [data_cleaners.py:50] : 	"temp_11_0um_nom_stddev_3x3" has 0.61% NaN values
+DEBUG - 2021-03-09 16:40:33,811 [data_cleaners.py:50] : 	"cloud_probability" has 0.61% NaN values
+DEBUG - 2021-03-09 16:40:33,814 [data_cleaners.py:50] : 	"cloud_fraction" has 0.61% NaN values
+DEBUG - 2021-03-09 16:40:33,818 [data_cleaners.py:50] : 	"air_temperature" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:33,821 [data_cleaners.py:50] : 	"dew_point" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:33,825 [data_cleaners.py:50] : 	"relative_humidity" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:33,828 [data_cleaners.py:50] : 	"total_precipitable_water" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:33,831 [data_cleaners.py:50] : 	"surface_albedo" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:33,835 [data_cleaners.py:50] : 	"cld_opd_dcomp" has 81.99% NaN values
+DEBUG - 2021-03-09 16:40:33,838 [data_cleaners.py:50] : 	"cld_reff_dcomp" has 82.05% NaN values
+DEBUG - 2021-03-09 16:40:33,838 [data_cleaners.py:53] : Interpolating opd and reff
+DEBUG - 2021-03-09 16:40:36,576 [data_cleaners.py:79] : Adding feature flag
+INFO - 2021-03-09 16:40:36,991 [data_cleaners.py:98] : Data reduced from 2803968 rows to 1393391 after filters (49.69% of original)
+DEBUG - 2021-03-09 16:40:37,088 [data_cleaners.py:104] : Feature flag column has these values: ['clear' 'bad_cloud' 'water_cloud' 'ice_cloud']
+INFO - 2021-03-09 16:40:37,088 [data_cleaners.py:106] : Cleaning took 3.6 seconds
+DEBUG - 2021-03-09 16:40:37,088 [data_handlers.py:198] : Shape after cleaning: df_train=(1393391, 20)
+DEBUG - 2021-03-09 16:40:37,088 [data_handlers.py:201] : Cleaning df_all_sky training data (for pfun).
+DEBUG - 2021-03-09 16:40:37,088 [data_handlers.py:202] : Shape before cleaning: df_all_sky=(2803968, 25)
+INFO - 2021-03-09 16:40:37,357 [data_cleaners.py:36] : 49.69% of timesteps are daylight
+INFO - 2021-03-09 16:40:37,361 [data_cleaners.py:38] : 55.84% of daylight timesteps are cloudy
+INFO - 2021-03-09 16:40:37,366 [data_cleaners.py:40] : 0.63% of daylight timesteps are missing cloud type
+INFO - 2021-03-09 16:40:37,371 [data_cleaners.py:42] : 35.11% of cloudy daylight timesteps are missing cloud opd
+INFO - 2021-03-09 16:40:37,375 [data_cleaners.py:44] : 35.31% of cloudy daylight timesteps are missing cloud reff
+DEBUG - 2021-03-09 16:40:37,375 [data_cleaners.py:47] : Column NaN values:
+DEBUG - 2021-03-09 16:40:37,378 [data_cleaners.py:50] : 	"gid" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,381 [data_cleaners.py:50] : 	"alpha" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,385 [data_cleaners.py:50] : 	"aod" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,388 [data_cleaners.py:50] : 	"asymmetry" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,391 [data_cleaners.py:50] : 	"cloud_type" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,395 [data_cleaners.py:50] : 	"cld_opd_dcomp" has 81.99% NaN values
+DEBUG - 2021-03-09 16:40:37,398 [data_cleaners.py:50] : 	"cld_reff_dcomp" has 82.05% NaN values
+DEBUG - 2021-03-09 16:40:37,401 [data_cleaners.py:50] : 	"ozone" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,405 [data_cleaners.py:50] : 	"solar_zenith_angle" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,408 [data_cleaners.py:50] : 	"ssa" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,411 [data_cleaners.py:50] : 	"surface_albedo" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,414 [data_cleaners.py:50] : 	"surface_pressure" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,418 [data_cleaners.py:50] : 	"total_precipitable_water" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,422 [data_cleaners.py:50] : 	"dhi" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,426 [data_cleaners.py:50] : 	"dni" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,430 [data_cleaners.py:50] : 	"ghi" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,433 [data_cleaners.py:50] : 	"doy" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,437 [data_cleaners.py:50] : 	"radius" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,441 [data_cleaners.py:50] : 	"Tuuclr" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,446 [data_cleaners.py:50] : 	"clearsky_ghi" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,450 [data_cleaners.py:50] : 	"clearsky_dni" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,454 [data_cleaners.py:50] : 	"Ruuclr" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,458 [data_cleaners.py:50] : 	"Tddclr" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,463 [data_cleaners.py:50] : 	"Tduclr" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,467 [data_cleaners.py:50] : 	"time_index" has 0.00% NaN values
+DEBUG - 2021-03-09 16:40:37,467 [data_cleaners.py:53] : Interpolating opd and reff
+DEBUG - 2021-03-09 16:40:39,812 [data_cleaners.py:79] : Adding feature flag
+INFO - 2021-03-09 16:40:40,227 [data_cleaners.py:98] : Data reduced from 2803968 rows to 1393391 after filters (49.69% of original)
+DEBUG - 2021-03-09 16:40:40,345 [data_cleaners.py:104] : Feature flag column has these values: ['clear' 'bad_cloud' 'water_cloud' 'ice_cloud']
+INFO - 2021-03-09 16:40:40,345 [data_cleaners.py:106] : Cleaning took 3.3 seconds
+DEBUG - 2021-03-09 16:40:40,346 [data_handlers.py:206] : Shape after cleaning: df_all_sky=(1393391, 26)
+DEBUG - 2021-03-09 16:40:40,422 [data_handlers.py:217] : **Shape: df_train=(1393391, 17)
+DEBUG - 2021-03-09 16:40:40,445 [data_handlers.py:227] : Shapes: x=(1393391, 15), y=(1393391, 2), p=(1393391, 26)
+DEBUG - 2021-03-09 16:40:40,446 [data_handlers.py:230] : Training features: ['solar_zenith_angle', 'refl_0_65um_nom', 'refl_0_65um_nom_stddev_3x3', 'refl_3_75um_nom', 'temp_3_75um_nom', 'temp_11_0um_nom', 'temp_11_0um_nom_stddev_3x3', 'cloud_probability', 'cloud_fraction', 'air_temperature', 'dew_point', 'relative_humidity', 'total_precipitable_water', 'surface_albedo', 'flag']
+DEBUG - 2021-03-09 16:40:40,446 [trainer.py:61] : Building PHYGNN model
+INFO - 2021-03-09 16:40:40,446 [trainer.py:64] : Using p_fun: <function p_fun_all_sky at 0x2abc88c68310>
+INFO - 2021-03-09 16:40:40,460 [trainer.py:78] : Training part A - pure data. Loss is [1, 0]
+2021-03-09 16:40:49.774315: I tensorflow/compiler/jit/xla_cpu_device.cc:41] Not creating XLA devices, tf_xla_enable_xla_devices not set
+2021-03-09 16:40:49.776218: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /nopt/slurm/current/lib:/nopt/slurm/current/lib:
+2021-03-09 16:40:49.776237: W tensorflow/stream_executor/cuda/cuda_driver.cc:326] failed call to cuInit: UNKNOWN ERROR (303)
+2021-03-09 16:40:49.776258: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (r5i2n8): /proc/driver/nvidia/version does not exist
+2021-03-09 16:40:49.776547: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2021-03-09 16:40:49.778329: I tensorflow/compiler/jit/xla_gpu_device.cc:99] Not creating XLA devices, tf_xla_enable_xla_devices not set
+INFO - 2021-03-09 16:40:55,085 [phygnn.py:819] : Epoch 0 train loss: 5.88e-01 val loss: 5.75e-01 for "phygnn"
+INFO - 2021-03-09 16:41:02,451 [phygnn.py:819] : Epoch 1 train loss: 5.13e-01 val loss: 4.96e-01 for "phygnn"
+INFO - 2021-03-09 16:41:09,446 [phygnn.py:819] : Epoch 2 train loss: 4.84e-01 val loss: 4.75e-01 for "phygnn"
+INFO - 2021-03-09 16:41:16,391 [phygnn.py:819] : Epoch 3 train loss: 4.85e-01 val loss: 4.70e-01 for "phygnn"
+INFO - 2021-03-09 16:41:22,934 [phygnn.py:819] : Epoch 4 train loss: 4.70e-01 val loss: 4.62e-01 for "phygnn"
+INFO - 2021-03-09 16:41:29,904 [phygnn.py:819] : Epoch 5 train loss: 4.66e-01 val loss: 4.56e-01 for "phygnn"
+INFO - 2021-03-09 16:41:36,899 [phygnn.py:819] : Epoch 6 train loss: 4.69e-01 val loss: 4.56e-01 for "phygnn"
+INFO - 2021-03-09 16:41:43,482 [phygnn.py:819] : Epoch 7 train loss: 4.60e-01 val loss: 4.52e-01 for "phygnn"
+INFO - 2021-03-09 16:41:49,902 [phygnn.py:819] : Epoch 8 train loss: 4.60e-01 val loss: 4.52e-01 for "phygnn"
+INFO - 2021-03-09 16:41:56,519 [phygnn.py:819] : Epoch 9 train loss: 4.61e-01 val loss: 4.47e-01 for "phygnn"
+INFO - 2021-03-09 16:42:03,642 [phygnn.py:819] : Epoch 10 train loss: 4.64e-01 val loss: 4.43e-01 for "phygnn"
+INFO - 2021-03-09 16:42:10,795 [phygnn.py:819] : Epoch 11 train loss: 4.57e-01 val loss: 4.42e-01 for "phygnn"
+INFO - 2021-03-09 16:42:17,937 [phygnn.py:819] : Epoch 12 train loss: 4.55e-01 val loss: 4.38e-01 for "phygnn"
+INFO - 2021-03-09 16:42:24,655 [phygnn.py:819] : Epoch 13 train loss: 4.50e-01 val loss: 4.40e-01 for "phygnn"
+INFO - 2021-03-09 16:42:31,758 [phygnn.py:819] : Epoch 14 train loss: 4.48e-01 val loss: 4.34e-01 for "phygnn"
+INFO - 2021-03-09 16:42:38,469 [phygnn.py:819] : Epoch 15 train loss: 4.51e-01 val loss: 4.33e-01 for "phygnn"
+INFO - 2021-03-09 16:42:45,050 [phygnn.py:819] : Epoch 16 train loss: 4.46e-01 val loss: 4.33e-01 for "phygnn"
+INFO - 2021-03-09 16:42:51,636 [phygnn.py:819] : Epoch 17 train loss: 4.41e-01 val loss: 4.32e-01 for "phygnn"
+INFO - 2021-03-09 16:42:58,807 [phygnn.py:819] : Epoch 18 train loss: 4.39e-01 val loss: 4.28e-01 for "phygnn"
+INFO - 2021-03-09 16:43:05,986 [phygnn.py:819] : Epoch 19 train loss: 4.38e-01 val loss: 4.26e-01 for "phygnn"
+INFO - 2021-03-09 16:43:13,145 [phygnn.py:819] : Epoch 20 train loss: 4.42e-01 val loss: 4.27e-01 for "phygnn"
+INFO - 2021-03-09 16:43:20,322 [phygnn.py:819] : Epoch 21 train loss: 4.40e-01 val loss: 4.24e-01 for "phygnn"
+INFO - 2021-03-09 16:43:27,462 [phygnn.py:819] : Epoch 22 train loss: 4.42e-01 val loss: 4.25e-01 for "phygnn"
+INFO - 2021-03-09 16:43:34,103 [phygnn.py:819] : Epoch 23 train loss: 4.42e-01 val loss: 4.21e-01 for "phygnn"
+INFO - 2021-03-09 16:43:40,694 [phygnn.py:819] : Epoch 24 train loss: 4.39e-01 val loss: 4.20e-01 for "phygnn"
+INFO - 2021-03-09 16:43:47,851 [phygnn.py:819] : Epoch 25 train loss: 4.36e-01 val loss: 4.19e-01 for "phygnn"
+INFO - 2021-03-09 16:43:55,023 [phygnn.py:819] : Epoch 26 train loss: 4.33e-01 val loss: 4.17e-01 for "phygnn"
+INFO - 2021-03-09 16:44:02,204 [phygnn.py:819] : Epoch 27 train loss: 4.36e-01 val loss: 4.17e-01 for "phygnn"
+INFO - 2021-03-09 16:44:09,379 [phygnn.py:819] : Epoch 28 train loss: 4.22e-01 val loss: 4.16e-01 for "phygnn"
+INFO - 2021-03-09 16:44:16,058 [phygnn.py:819] : Epoch 29 train loss: 4.30e-01 val loss: 4.15e-01 for "phygnn"
+INFO - 2021-03-09 16:44:22,632 [phygnn.py:819] : Epoch 30 train loss: 4.23e-01 val loss: 4.14e-01 for "phygnn"
+INFO - 2021-03-09 16:44:29,763 [phygnn.py:819] : Epoch 31 train loss: 4.37e-01 val loss: 4.13e-01 for "phygnn"
+INFO - 2021-03-09 16:44:36,937 [phygnn.py:819] : Epoch 32 train loss: 4.22e-01 val loss: 4.12e-01 for "phygnn"
+INFO - 2021-03-09 16:44:43,640 [phygnn.py:819] : Epoch 33 train loss: 4.22e-01 val loss: 4.12e-01 for "phygnn"
+INFO - 2021-03-09 16:44:50,824 [phygnn.py:819] : Epoch 34 train loss: 4.25e-01 val loss: 4.09e-01 for "phygnn"
+INFO - 2021-03-09 16:44:58,012 [phygnn.py:819] : Epoch 35 train loss: 4.30e-01 val loss: 4.08e-01 for "phygnn"
+INFO - 2021-03-09 16:45:05,122 [phygnn.py:819] : Epoch 36 train loss: 4.13e-01 val loss: 4.08e-01 for "phygnn"
+INFO - 2021-03-09 16:45:11,818 [phygnn.py:819] : Epoch 37 train loss: 4.24e-01 val loss: 4.09e-01 for "phygnn"
+INFO - 2021-03-09 16:45:19,017 [phygnn.py:819] : Epoch 38 train loss: 4.25e-01 val loss: 4.07e-01 for "phygnn"
+INFO - 2021-03-09 16:45:26,222 [phygnn.py:819] : Epoch 39 train loss: 4.19e-01 val loss: 4.07e-01 for "phygnn"
+INFO - 2021-03-09 16:45:32,948 [phygnn.py:819] : Epoch 40 train loss: 4.17e-01 val loss: 4.05e-01 for "phygnn"
+INFO - 2021-03-09 16:45:40,109 [phygnn.py:819] : Epoch 41 train loss: 4.21e-01 val loss: 4.04e-01 for "phygnn"
+INFO - 2021-03-09 16:45:46,830 [phygnn.py:819] : Epoch 42 train loss: 4.20e-01 val loss: 4.05e-01 for "phygnn"
+INFO - 2021-03-09 16:45:53,412 [phygnn.py:819] : Epoch 43 train loss: 4.14e-01 val loss: 4.02e-01 for "phygnn"
+INFO - 2021-03-09 16:46:00,528 [phygnn.py:819] : Epoch 44 train loss: 4.12e-01 val loss: 4.02e-01 for "phygnn"
+INFO - 2021-03-09 16:46:07,695 [phygnn.py:819] : Epoch 45 train loss: 4.12e-01 val loss: 4.01e-01 for "phygnn"
+INFO - 2021-03-09 16:46:14,818 [phygnn.py:819] : Epoch 46 train loss: 4.09e-01 val loss: 4.02e-01 for "phygnn"
+INFO - 2021-03-09 16:46:21,967 [phygnn.py:819] : Epoch 47 train loss: 4.18e-01 val loss: 4.00e-01 for "phygnn"
+INFO - 2021-03-09 16:46:29,094 [phygnn.py:819] : Epoch 48 train loss: 4.15e-01 val loss: 3.99e-01 for "phygnn"
+INFO - 2021-03-09 16:46:36,245 [phygnn.py:819] : Epoch 49 train loss: 4.12e-01 val loss: 3.98e-01 for "phygnn"
+INFO - 2021-03-09 16:46:42,978 [phygnn.py:819] : Epoch 50 train loss: 4.06e-01 val loss: 3.99e-01 for "phygnn"
+INFO - 2021-03-09 16:46:49,515 [phygnn.py:819] : Epoch 51 train loss: 4.08e-01 val loss: 3.97e-01 for "phygnn"
+INFO - 2021-03-09 16:46:56,684 [phygnn.py:819] : Epoch 52 train loss: 4.16e-01 val loss: 3.97e-01 for "phygnn"
+INFO - 2021-03-09 16:47:03,404 [phygnn.py:819] : Epoch 53 train loss: 4.09e-01 val loss: 3.97e-01 for "phygnn"
+INFO - 2021-03-09 16:47:09,938 [phygnn.py:819] : Epoch 54 train loss: 4.08e-01 val loss: 3.95e-01 for "phygnn"
+INFO - 2021-03-09 16:47:17,090 [phygnn.py:819] : Epoch 55 train loss: 4.03e-01 val loss: 3.95e-01 for "phygnn"
+INFO - 2021-03-09 16:47:24,260 [phygnn.py:819] : Epoch 56 train loss: 4.08e-01 val loss: 3.93e-01 for "phygnn"
+INFO - 2021-03-09 16:47:31,418 [phygnn.py:819] : Epoch 57 train loss: 4.00e-01 val loss: 3.94e-01 for "phygnn"
+INFO - 2021-03-09 16:47:38,613 [phygnn.py:819] : Epoch 58 train loss: 4.06e-01 val loss: 3.93e-01 for "phygnn"
+INFO - 2021-03-09 16:47:45,778 [phygnn.py:819] : Epoch 59 train loss: 4.08e-01 val loss: 3.96e-01 for "phygnn"
+INFO - 2021-03-09 16:47:52,934 [phygnn.py:819] : Epoch 60 train loss: 4.09e-01 val loss: 3.92e-01 for "phygnn"
+INFO - 2021-03-09 16:48:00,075 [phygnn.py:819] : Epoch 61 train loss: 4.13e-01 val loss: 3.91e-01 for "phygnn"
+INFO - 2021-03-09 16:48:07,252 [phygnn.py:819] : Epoch 62 train loss: 4.02e-01 val loss: 3.91e-01 for "phygnn"
+INFO - 2021-03-09 16:48:13,959 [phygnn.py:819] : Epoch 63 train loss: 4.00e-01 val loss: 3.90e-01 for "phygnn"
+INFO - 2021-03-09 16:48:21,109 [phygnn.py:819] : Epoch 64 train loss: 4.08e-01 val loss: 3.91e-01 for "phygnn"
+INFO - 2021-03-09 16:48:28,311 [phygnn.py:819] : Epoch 65 train loss: 4.07e-01 val loss: 3.91e-01 for "phygnn"
+INFO - 2021-03-09 16:48:35,411 [phygnn.py:819] : Epoch 66 train loss: 4.04e-01 val loss: 3.89e-01 for "phygnn"
+INFO - 2021-03-09 16:48:42,150 [phygnn.py:819] : Epoch 67 train loss: 4.05e-01 val loss: 3.89e-01 for "phygnn"
+INFO - 2021-03-09 16:48:49,335 [phygnn.py:819] : Epoch 68 train loss: 4.00e-01 val loss: 3.88e-01 for "phygnn"
+INFO - 2021-03-09 16:48:56,480 [phygnn.py:819] : Epoch 69 train loss: 4.03e-01 val loss: 3.88e-01 for "phygnn"
+INFO - 2021-03-09 16:49:03,135 [phygnn.py:819] : Epoch 70 train loss: 4.06e-01 val loss: 3.89e-01 for "phygnn"
+INFO - 2021-03-09 16:49:09,723 [phygnn.py:819] : Epoch 71 train loss: 4.03e-01 val loss: 3.88e-01 for "phygnn"
+INFO - 2021-03-09 16:49:16,875 [phygnn.py:819] : Epoch 72 train loss: 4.07e-01 val loss: 3.88e-01 for "phygnn"
+INFO - 2021-03-09 16:49:24,017 [phygnn.py:819] : Epoch 73 train loss: 4.12e-01 val loss: 3.87e-01 for "phygnn"
+INFO - 2021-03-09 16:49:30,778 [phygnn.py:819] : Epoch 74 train loss: 3.89e-01 val loss: 3.87e-01 for "phygnn"
+INFO - 2021-03-09 16:49:37,928 [phygnn.py:819] : Epoch 75 train loss: 3.98e-01 val loss: 3.87e-01 for "phygnn"
+INFO - 2021-03-09 16:49:44,648 [phygnn.py:819] : Epoch 76 train loss: 3.96e-01 val loss: 3.86e-01 for "phygnn"
+INFO - 2021-03-09 16:49:51,793 [phygnn.py:819] : Epoch 77 train loss: 3.95e-01 val loss: 3.85e-01 for "phygnn"
+INFO - 2021-03-09 16:49:58,969 [phygnn.py:819] : Epoch 78 train loss: 3.96e-01 val loss: 3.86e-01 for "phygnn"
+INFO - 2021-03-09 16:50:06,030 [phygnn.py:819] : Epoch 79 train loss: 3.91e-01 val loss: 3.85e-01 for "phygnn"
+INFO - 2021-03-09 16:50:12,733 [phygnn.py:819] : Epoch 80 train loss: 4.04e-01 val loss: 3.85e-01 for "phygnn"
+INFO - 2021-03-09 16:50:19,339 [phygnn.py:819] : Epoch 81 train loss: 3.96e-01 val loss: 3.83e-01 for "phygnn"
+INFO - 2021-03-09 16:50:25,950 [phygnn.py:819] : Epoch 82 train loss: 4.00e-01 val loss: 3.84e-01 for "phygnn"
+INFO - 2021-03-09 16:50:32,565 [phygnn.py:819] : Epoch 83 train loss: 4.09e-01 val loss: 3.84e-01 for "phygnn"
+INFO - 2021-03-09 16:50:39,182 [phygnn.py:819] : Epoch 84 train loss: 3.89e-01 val loss: 3.84e-01 for "phygnn"
+INFO - 2021-03-09 16:50:45,795 [phygnn.py:819] : Epoch 85 train loss: 4.03e-01 val loss: 3.84e-01 for "phygnn"
+INFO - 2021-03-09 16:50:52,916 [phygnn.py:819] : Epoch 86 train loss: 3.97e-01 val loss: 3.83e-01 for "phygnn"
+INFO - 2021-03-09 16:51:00,041 [phygnn.py:819] : Epoch 87 train loss: 3.95e-01 val loss: 3.81e-01 for "phygnn"
+INFO - 2021-03-09 16:51:07,173 [phygnn.py:819] : Epoch 88 train loss: 3.97e-01 val loss: 3.82e-01 for "phygnn"
+INFO - 2021-03-09 16:51:14,313 [phygnn.py:819] : Epoch 89 train loss: 3.93e-01 val loss: 3.84e-01 for "phygnn"
+INFO - 2021-03-09 16:51:21,456 [phygnn.py:819] : Epoch 90 train loss: 3.99e-01 val loss: 3.83e-01 for "phygnn"
+INFO - 2021-03-09 16:51:28,559 [phygnn.py:819] : Epoch 91 train loss: 4.00e-01 val loss: 3.81e-01 for "phygnn"
+INFO - 2021-03-09 16:51:35,280 [phygnn.py:819] : Epoch 92 train loss: 3.88e-01 val loss: 3.81e-01 for "phygnn"
+INFO - 2021-03-09 16:51:42,445 [phygnn.py:819] : Epoch 93 train loss: 4.00e-01 val loss: 3.80e-01 for "phygnn"
+INFO - 2021-03-09 16:51:49,529 [phygnn.py:819] : Epoch 94 train loss: 3.91e-01 val loss: 3.80e-01 for "phygnn"
+INFO - 2021-03-09 16:51:56,213 [phygnn.py:819] : Epoch 95 train loss: 4.02e-01 val loss: 3.79e-01 for "phygnn"
+INFO - 2021-03-09 16:52:02,829 [phygnn.py:819] : Epoch 96 train loss: 3.87e-01 val loss: 3.80e-01 for "phygnn"
+INFO - 2021-03-09 16:52:09,439 [phygnn.py:819] : Epoch 97 train loss: 3.91e-01 val loss: 3.79e-01 for "phygnn"
+INFO - 2021-03-09 16:52:16,046 [phygnn.py:819] : Epoch 98 train loss: 3.98e-01 val loss: 3.79e-01 for "phygnn"
+INFO - 2021-03-09 16:52:23,191 [phygnn.py:819] : Epoch 99 train loss: 3.94e-01 val loss: 3.78e-01 for "phygnn"
+INFO - 2021-03-09 16:52:24,641 [trainer.py:86] : Training part B - data and phygnn. Loss is [0.5, 0.5]
+INFO - 2021-03-09 16:52:45,360 [phygnn.py:819] : Epoch 100 train loss: 7.12e-01 val loss: 6.91e-01 for "phygnn"
+INFO - 2021-03-09 16:52:56,852 [phygnn.py:819] : Epoch 101 train loss: 7.05e-01 val loss: 6.84e-01 for "phygnn"
+INFO - 2021-03-09 16:53:09,014 [phygnn.py:819] : Epoch 102 train loss: 7.09e-01 val loss: 6.87e-01 for "phygnn"
+INFO - 2021-03-09 16:53:20,670 [phygnn.py:819] : Epoch 103 train loss: 6.96e-01 val loss: 6.89e-01 for "phygnn"
+INFO - 2021-03-09 16:53:32,742 [phygnn.py:819] : Epoch 104 train loss: 7.05e-01 val loss: 6.88e-01 for "phygnn"
+INFO - 2021-03-09 16:53:44,794 [phygnn.py:819] : Epoch 105 train loss: 7.10e-01 val loss: 6.88e-01 for "phygnn"
+INFO - 2021-03-09 16:53:56,675 [phygnn.py:819] : Epoch 106 train loss: 6.91e-01 val loss: 6.83e-01 for "phygnn"
+INFO - 2021-03-09 16:54:08,874 [phygnn.py:819] : Epoch 107 train loss: 7.04e-01 val loss: 6.80e-01 for "phygnn"
+INFO - 2021-03-09 16:54:20,742 [phygnn.py:819] : Epoch 108 train loss: 6.97e-01 val loss: 6.90e-01 for "phygnn"
+INFO - 2021-03-09 16:54:32,964 [phygnn.py:819] : Epoch 109 train loss: 7.00e-01 val loss: 6.84e-01 for "phygnn"
+INFO - 2021-03-09 16:54:44,540 [phygnn.py:819] : Epoch 110 train loss: 6.99e-01 val loss: 6.87e-01 for "phygnn"
+INFO - 2021-03-09 16:54:56,602 [phygnn.py:819] : Epoch 111 train loss: 6.96e-01 val loss: 6.86e-01 for "phygnn"
+INFO - 2021-03-09 16:55:08,422 [phygnn.py:819] : Epoch 112 train loss: 7.07e-01 val loss: 6.88e-01 for "phygnn"
+INFO - 2021-03-09 16:55:19,973 [phygnn.py:819] : Epoch 113 train loss: 6.96e-01 val loss: 6.87e-01 for "phygnn"
+INFO - 2021-03-09 16:55:31,620 [phygnn.py:819] : Epoch 114 train loss: 7.00e-01 val loss: 6.84e-01 for "phygnn"
+INFO - 2021-03-09 16:55:43,121 [phygnn.py:819] : Epoch 115 train loss: 6.93e-01 val loss: 6.84e-01 for "phygnn"
+INFO - 2021-03-09 16:55:55,376 [phygnn.py:819] : Epoch 116 train loss: 7.01e-01 val loss: 6.88e-01 for "phygnn"
+INFO - 2021-03-09 16:56:07,231 [phygnn.py:819] : Epoch 117 train loss: 6.98e-01 val loss: 6.86e-01 for "phygnn"
+INFO - 2021-03-09 16:56:19,069 [phygnn.py:819] : Epoch 118 train loss: 7.03e-01 val loss: 6.86e-01 for "phygnn"
+INFO - 2021-03-09 16:56:30,824 [phygnn.py:819] : Epoch 119 train loss: 6.94e-01 val loss: 6.87e-01 for "phygnn"
+INFO - 2021-03-09 16:56:42,593 [phygnn.py:819] : Epoch 120 train loss: 6.93e-01 val loss: 6.86e-01 for "phygnn"
+INFO - 2021-03-09 16:56:54,762 [phygnn.py:819] : Epoch 121 train loss: 7.06e-01 val loss: 6.88e-01 for "phygnn"
+INFO - 2021-03-09 16:57:06,433 [phygnn.py:819] : Epoch 122 train loss: 6.93e-01 val loss: 6.86e-01 for "phygnn"
+INFO - 2021-03-09 16:57:18,098 [phygnn.py:819] : Epoch 123 train loss: 6.95e-01 val loss: 6.84e-01 for "phygnn"
+INFO - 2021-03-09 16:57:29,722 [phygnn.py:819] : Epoch 124 train loss: 6.99e-01 val loss: 6.90e-01 for "phygnn"
+INFO - 2021-03-09 16:57:41,644 [phygnn.py:819] : Epoch 125 train loss: 6.98e-01 val loss: 6.85e-01 for "phygnn"
+INFO - 2021-03-09 16:57:53,249 [phygnn.py:819] : Epoch 126 train loss: 7.11e-01 val loss: 6.85e-01 for "phygnn"
+INFO - 2021-03-09 16:58:04,631 [phygnn.py:819] : Epoch 127 train loss: 7.00e-01 val loss: 6.88e-01 for "phygnn"
+INFO - 2021-03-09 16:58:16,308 [phygnn.py:819] : Epoch 128 train loss: 6.97e-01 val loss: 6.84e-01 for "phygnn"
+INFO - 2021-03-09 16:58:28,082 [phygnn.py:819] : Epoch 129 train loss: 6.90e-01 val loss: 6.84e-01 for "phygnn"
+INFO - 2021-03-09 16:58:39,810 [phygnn.py:819] : Epoch 130 train loss: 7.05e-01 val loss: 6.85e-01 for "phygnn"
+INFO - 2021-03-09 16:58:51,415 [phygnn.py:819] : Epoch 131 train loss: 6.87e-01 val loss: 6.83e-01 for "phygnn"
+INFO - 2021-03-09 16:59:03,516 [phygnn.py:819] : Epoch 132 train loss: 6.96e-01 val loss: 6.84e-01 for "phygnn"
+INFO - 2021-03-09 16:59:15,651 [phygnn.py:819] : Epoch 133 train loss: 6.94e-01 val loss: 6.86e-01 for "phygnn"
+INFO - 2021-03-09 16:59:27,405 [phygnn.py:819] : Epoch 134 train loss: 6.96e-01 val loss: 6.85e-01 for "phygnn"
+INFO - 2021-03-09 16:59:39,567 [phygnn.py:819] : Epoch 135 train loss: 7.06e-01 val loss: 6.88e-01 for "phygnn"
+INFO - 2021-03-09 16:59:51,360 [phygnn.py:819] : Epoch 136 train loss: 7.01e-01 val loss: 6.86e-01 for "phygnn"
+INFO - 2021-03-09 17:00:03,667 [phygnn.py:819] : Epoch 137 train loss: 7.04e-01 val loss: 6.98e-01 for "phygnn"
+INFO - 2021-03-09 17:00:15,369 [phygnn.py:819] : Epoch 138 train loss: 7.03e-01 val loss: 6.88e-01 for "phygnn"
+INFO - 2021-03-09 17:00:27,120 [phygnn.py:819] : Epoch 139 train loss: 7.00e-01 val loss: 6.86e-01 for "phygnn"
+INFO - 2021-03-09 17:00:38,587 [phygnn.py:819] : Epoch 140 train loss: 6.98e-01 val loss: 6.88e-01 for "phygnn"
+INFO - 2021-03-09 17:00:50,437 [phygnn.py:819] : Epoch 141 train loss: 6.93e-01 val loss: 6.86e-01 for "phygnn"
+INFO - 2021-03-09 17:01:02,402 [phygnn.py:819] : Epoch 142 train loss: 6.84e-01 val loss: 6.83e-01 for "phygnn"
+INFO - 2021-03-09 17:01:14,143 [phygnn.py:819] : Epoch 143 train loss: 6.94e-01 val loss: 6.86e-01 for "phygnn"
+INFO - 2021-03-09 17:01:25,879 [phygnn.py:819] : Epoch 144 train loss: 7.07e-01 val loss: 6.85e-01 for "phygnn"
+INFO - 2021-03-09 17:01:38,020 [phygnn.py:819] : Epoch 145 train loss: 6.87e-01 val loss: 6.89e-01 for "phygnn"
+INFO - 2021-03-09 17:01:49,710 [phygnn.py:819] : Epoch 146 train loss: 6.92e-01 val loss: 6.88e-01 for "phygnn"
+INFO - 2021-03-09 17:02:01,997 [phygnn.py:819] : Epoch 147 train loss: 6.98e-01 val loss: 6.85e-01 for "phygnn"
+INFO - 2021-03-09 17:02:14,106 [phygnn.py:819] : Epoch 148 train loss: 6.95e-01 val loss: 6.87e-01 for "phygnn"
+INFO - 2021-03-09 17:02:25,611 [phygnn.py:819] : Epoch 149 train loss: 7.01e-01 val loss: 6.85e-01 for "phygnn"
+INFO - 2021-03-09 17:02:37,213 [phygnn.py:819] : Epoch 150 train loss: 6.98e-01 val loss: 6.86e-01 for "phygnn"
+INFO - 2021-03-09 17:02:48,637 [phygnn.py:819] : Epoch 151 train loss: 6.92e-01 val loss: 6.84e-01 for "phygnn"
+INFO - 2021-03-09 17:03:00,518 [phygnn.py:819] : Epoch 152 train loss: 6.96e-01 val loss: 6.85e-01 for "phygnn"
+INFO - 2021-03-09 17:03:12,061 [phygnn.py:819] : Epoch 153 train loss: 7.01e-01 val loss: 6.83e-01 for "phygnn"
+INFO - 2021-03-09 17:03:24,350 [phygnn.py:819] : Epoch 154 train loss: 7.04e-01 val loss: 6.87e-01 for "phygnn"
+INFO - 2021-03-09 17:03:36,165 [phygnn.py:819] : Epoch 155 train loss: 6.94e-01 val loss: 6.88e-01 for "phygnn"
+INFO - 2021-03-09 17:03:47,666 [phygnn.py:819] : Epoch 156 train loss: 6.86e-01 val loss: 6.85e-01 for "phygnn"
+INFO - 2021-03-09 17:03:59,191 [phygnn.py:819] : Epoch 157 train loss: 7.03e-01 val loss: 6.86e-01 for "phygnn"
+INFO - 2021-03-09 17:04:10,764 [phygnn.py:819] : Epoch 158 train loss: 6.83e-01 val loss: 6.84e-01 for "phygnn"
+INFO - 2021-03-09 17:04:22,369 [phygnn.py:819] : Epoch 159 train loss: 6.94e-01 val loss: 6.89e-01 for "phygnn"
+INFO - 2021-03-09 17:04:33,755 [phygnn.py:819] : Epoch 160 train loss: 6.89e-01 val loss: 6.84e-01 for "phygnn"
+INFO - 2021-03-09 17:04:45,503 [phygnn.py:819] : Epoch 161 train loss: 6.95e-01 val loss: 6.84e-01 for "phygnn"
+INFO - 2021-03-09 17:04:57,661 [phygnn.py:819] : Epoch 162 train loss: 6.98e-01 val loss: 6.84e-01 for "phygnn"
+INFO - 2021-03-09 17:05:09,491 [phygnn.py:819] : Epoch 163 train loss: 7.04e-01 val loss: 6.85e-01 for "phygnn"
+INFO - 2021-03-09 17:05:21,547 [phygnn.py:819] : Epoch 164 train loss: 7.03e-01 val loss: 6.84e-01 for "phygnn"
+INFO - 2021-03-09 17:05:33,279 [phygnn.py:819] : Epoch 165 train loss: 6.90e-01 val loss: 6.82e-01 for "phygnn"
+INFO - 2021-03-09 17:05:45,404 [phygnn.py:819] : Epoch 166 train loss: 6.99e-01 val loss: 6.86e-01 for "phygnn"
+INFO - 2021-03-09 17:05:57,208 [phygnn.py:819] : Epoch 167 train loss: 6.94e-01 val loss: 6.83e-01 for "phygnn"
+INFO - 2021-03-09 17:06:08,793 [phygnn.py:819] : Epoch 168 train loss: 7.09e-01 val loss: 6.85e-01 for "phygnn"
+INFO - 2021-03-09 17:06:20,828 [phygnn.py:819] : Epoch 169 train loss: 6.93e-01 val loss: 6.83e-01 for "phygnn"
+INFO - 2021-03-09 17:06:32,554 [phygnn.py:819] : Epoch 170 train loss: 6.93e-01 val loss: 6.82e-01 for "phygnn"
+INFO - 2021-03-09 17:06:44,256 [phygnn.py:819] : Epoch 171 train loss: 6.89e-01 val loss: 6.83e-01 for "phygnn"
+INFO - 2021-03-09 17:06:56,507 [phygnn.py:819] : Epoch 172 train loss: 6.97e-01 val loss: 6.83e-01 for "phygnn"
+INFO - 2021-03-09 17:07:08,450 [phygnn.py:819] : Epoch 173 train loss: 6.88e-01 val loss: 6.84e-01 for "phygnn"
+INFO - 2021-03-09 17:07:20,570 [phygnn.py:819] : Epoch 174 train loss: 6.95e-01 val loss: 6.82e-01 for "phygnn"
+INFO - 2021-03-09 17:07:32,764 [phygnn.py:819] : Epoch 175 train loss: 6.89e-01 val loss: 6.82e-01 for "phygnn"
+INFO - 2021-03-09 17:07:44,384 [phygnn.py:819] : Epoch 176 train loss: 6.91e-01 val loss: 6.85e-01 for "phygnn"
+INFO - 2021-03-09 17:07:55,931 [phygnn.py:819] : Epoch 177 train loss: 6.96e-01 val loss: 6.87e-01 for "phygnn"
+INFO - 2021-03-09 17:08:07,475 [phygnn.py:819] : Epoch 178 train loss: 6.93e-01 val loss: 6.81e-01 for "phygnn"
+INFO - 2021-03-09 17:08:19,123 [phygnn.py:819] : Epoch 179 train loss: 6.94e-01 val loss: 6.83e-01 for "phygnn"
+INFO - 2021-03-09 17:08:31,315 [phygnn.py:819] : Epoch 180 train loss: 6.91e-01 val loss: 6.82e-01 for "phygnn"
+INFO - 2021-03-09 17:08:43,201 [phygnn.py:819] : Epoch 181 train loss: 6.93e-01 val loss: 6.81e-01 for "phygnn"
+INFO - 2021-03-09 17:08:55,380 [phygnn.py:819] : Epoch 182 train loss: 6.95e-01 val loss: 6.82e-01 for "phygnn"
+INFO - 2021-03-09 17:09:07,018 [phygnn.py:819] : Epoch 183 train loss: 6.93e-01 val loss: 6.83e-01 for "phygnn"
+INFO - 2021-03-09 17:09:19,160 [phygnn.py:819] : Epoch 184 train loss: 6.84e-01 val loss: 6.86e-01 for "phygnn"
+INFO - 2021-03-09 17:09:30,991 [phygnn.py:819] : Epoch 185 train loss: 6.90e-01 val loss: 6.81e-01 for "phygnn"
+INFO - 2021-03-09 17:09:42,625 [phygnn.py:819] : Epoch 186 train loss: 6.90e-01 val loss: 6.82e-01 for "phygnn"
+INFO - 2021-03-09 17:09:54,012 [phygnn.py:819] : Epoch 187 train loss: 6.91e-01 val loss: 6.83e-01 for "phygnn"
+INFO - 2021-03-09 17:10:05,563 [phygnn.py:819] : Epoch 188 train loss: 6.83e-01 val loss: 6.81e-01 for "phygnn"
+INFO - 2021-03-09 17:10:17,541 [phygnn.py:819] : Epoch 189 train loss: 7.01e-01 val loss: 6.85e-01 for "phygnn"
+INFO - 2021-03-09 17:10:29,123 [phygnn.py:819] : Epoch 190 train loss: 6.92e-01 val loss: 6.80e-01 for "phygnn"
+INFO - 2021-03-09 17:10:41,035 [phygnn.py:819] : Epoch 191 train loss: 6.91e-01 val loss: 6.83e-01 for "phygnn"
+INFO - 2021-03-09 17:10:52,756 [phygnn.py:819] : Epoch 192 train loss: 6.94e-01 val loss: 6.82e-01 for "phygnn"
+INFO - 2021-03-09 17:11:04,541 [phygnn.py:819] : Epoch 193 train loss: 6.87e-01 val loss: 6.88e-01 for "phygnn"
+INFO - 2021-03-09 17:11:16,503 [phygnn.py:819] : Epoch 194 train loss: 6.94e-01 val loss: 6.81e-01 for "phygnn"
+INFO - 2021-03-09 17:11:28,470 [phygnn.py:819] : Epoch 195 train loss: 6.81e-01 val loss: 6.81e-01 for "phygnn"
+INFO - 2021-03-09 17:11:40,149 [phygnn.py:819] : Epoch 196 train loss: 6.89e-01 val loss: 6.81e-01 for "phygnn"
+INFO - 2021-03-09 17:11:51,841 [phygnn.py:819] : Epoch 197 train loss: 6.87e-01 val loss: 6.80e-01 for "phygnn"
+INFO - 2021-03-09 17:12:03,736 [phygnn.py:819] : Epoch 198 train loss: 6.82e-01 val loss: 6.85e-01 for "phygnn"
+INFO - 2021-03-09 17:12:15,815 [phygnn.py:819] : Epoch 199 train loss: 6.88e-01 val loss: 6.81e-01 for "phygnn"
+INFO - 2021-03-09 17:12:16,916 [trainer.py:96] : Training complete
+DEBUG - 2021-03-09 17:12:16,954 [data_handlers.py:327] : Loading validation data
+DEBUG - 2021-03-09 17:12:16,954 [data_handlers.py:333] : Loading vars ['solar_zenith_angle', 'cloud_type', 'refl_0_65um_nom', 'refl_0_65um_nom_stddev_3x3', 'refl_3_75um_nom', 'temp_3_75um_nom', 'temp_11_0um_nom', 'temp_11_0um_nom_stddev_3x3', 'cloud_probability', 'cloud_fraction', 'air_temperature', 'dew_point', 'relative_humidity', 'total_precipitable_water', 'surface_albedo', 'cld_opd_dcomp', 'cld_reff_dcomp']
+DEBUG - 2021-03-09 17:12:16,959 [data_handlers.py:338] : Loading validation data from /projects/mlclouds/data_surfrad_9/2016_east_adj/mlclouds_surfrad_2016.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 17:12:18,048 [data_handlers.py:356] : 	Shape temp_raw=(158112, 19), temp_all_sky=(158112, 14), & tstep=30 minutes
+DEBUG - 2021-03-09 17:12:18,048 [data_handlers.py:338] : Loading validation data from /projects/mlclouds/data_surfrad_9/2016_west_adj/mlclouds_surfrad_2016.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 17:12:19,167 [data_handlers.py:356] : 	Shape temp_raw=(158112, 19), temp_all_sky=(158112, 14), & tstep=30 minutes
+DEBUG - 2021-03-09 17:12:19,167 [data_handlers.py:338] : Loading validation data from /projects/mlclouds/data_surfrad_9/2017_east_adj/mlclouds_surfrad_2017.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 17:12:20,285 [data_handlers.py:356] : 	Shape temp_raw=(157680, 19), temp_all_sky=(157680, 14), & tstep=30 minutes
+DEBUG - 2021-03-09 17:12:20,286 [data_handlers.py:338] : Loading validation data from /projects/mlclouds/data_surfrad_9/2017_west_adj/mlclouds_surfrad_2017.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 17:12:21,370 [data_handlers.py:356] : 	Shape temp_raw=(157680, 19), temp_all_sky=(157680, 14), & tstep=30 minutes
+DEBUG - 2021-03-09 17:12:21,370 [data_handlers.py:338] : Loading validation data from /projects/mlclouds/data_surfrad_9/2018_east_adj/mlclouds_surfrad_2018.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 17:12:27,497 [data_handlers.py:356] : 	Shape temp_raw=(946080, 19), temp_all_sky=(946080, 14), & tstep=5 minutes
+DEBUG - 2021-03-09 17:12:27,497 [data_handlers.py:338] : Loading validation data from /projects/mlclouds/data_surfrad_9/2018_west_adj/mlclouds_surfrad_2018.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 17:12:28,629 [data_handlers.py:356] : 	Shape temp_raw=(157680, 19), temp_all_sky=(157680, 14), & tstep=30 minutes
+DEBUG - 2021-03-09 17:12:28,629 [data_handlers.py:338] : Loading validation data from /projects/mlclouds/data_surfrad_9/2019_east_adj/mlclouds_surfrad_2019.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 17:12:34,852 [data_handlers.py:356] : 	Shape temp_raw=(946080, 19), temp_all_sky=(946080, 14), & tstep=5 minutes
+DEBUG - 2021-03-09 17:12:34,853 [data_handlers.py:338] : Loading validation data from /projects/mlclouds/data_surfrad_9/2019_west_adj/mlclouds_surfrad_2019.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 17:12:38,056 [data_handlers.py:356] : 	Shape temp_raw=(473040, 19), temp_all_sky=(473040, 14), & tstep=10 minutes
+DEBUG - 2021-03-09 17:12:38,056 [data_handlers.py:359] : Shape df_raw=(3154464, 19), df_all_sky=(3154464, 14)
+DEBUG - 2021-03-09 17:12:38,056 [data_handlers.py:366] : Shape after reset_index: df_raw=(3154464, 19), df_all_sky=(3154464, 14)
+INFO - 2021-03-09 17:12:38,338 [data_cleaners.py:36] : 49.69% of timesteps are daylight
+INFO - 2021-03-09 17:12:38,344 [data_cleaners.py:38] : 56.17% of daylight timesteps are cloudy
+INFO - 2021-03-09 17:12:38,349 [data_cleaners.py:40] : 0.63% of daylight timesteps are missing cloud type
+INFO - 2021-03-09 17:12:38,354 [data_cleaners.py:42] : 34.64% of cloudy daylight timesteps are missing cloud opd
+INFO - 2021-03-09 17:12:38,360 [data_cleaners.py:44] : 34.83% of cloudy daylight timesteps are missing cloud reff
+DEBUG - 2021-03-09 17:12:38,360 [data_cleaners.py:47] : Column NaN values:
+DEBUG - 2021-03-09 17:12:38,363 [data_cleaners.py:50] : 	"gid" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:38,368 [data_cleaners.py:50] : 	"time_index" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:38,372 [data_cleaners.py:50] : 	"solar_zenith_angle" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:38,375 [data_cleaners.py:50] : 	"cloud_type" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:38,379 [data_cleaners.py:50] : 	"refl_0_65um_nom" has 49.78% NaN values
+DEBUG - 2021-03-09 17:12:38,383 [data_cleaners.py:50] : 	"refl_0_65um_nom_stddev_3x3" has 49.78% NaN values
+DEBUG - 2021-03-09 17:12:38,387 [data_cleaners.py:50] : 	"refl_3_75um_nom" has 0.63% NaN values
+DEBUG - 2021-03-09 17:12:38,390 [data_cleaners.py:50] : 	"temp_3_75um_nom" has 0.54% NaN values
+DEBUG - 2021-03-09 17:12:38,394 [data_cleaners.py:50] : 	"temp_11_0um_nom" has 0.54% NaN values
+DEBUG - 2021-03-09 17:12:38,398 [data_cleaners.py:50] : 	"temp_11_0um_nom_stddev_3x3" has 0.61% NaN values
+DEBUG - 2021-03-09 17:12:38,402 [data_cleaners.py:50] : 	"cloud_probability" has 0.61% NaN values
+DEBUG - 2021-03-09 17:12:38,406 [data_cleaners.py:50] : 	"cloud_fraction" has 0.61% NaN values
+DEBUG - 2021-03-09 17:12:38,409 [data_cleaners.py:50] : 	"air_temperature" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:38,413 [data_cleaners.py:50] : 	"dew_point" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:38,417 [data_cleaners.py:50] : 	"relative_humidity" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:38,421 [data_cleaners.py:50] : 	"total_precipitable_water" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:38,424 [data_cleaners.py:50] : 	"surface_albedo" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:38,428 [data_cleaners.py:50] : 	"cld_opd_dcomp" has 81.76% NaN values
+DEBUG - 2021-03-09 17:12:38,432 [data_cleaners.py:50] : 	"cld_reff_dcomp" has 81.81% NaN values
+DEBUG - 2021-03-09 17:12:38,432 [data_cleaners.py:53] : Interpolating opd and reff
+DEBUG - 2021-03-09 17:12:41,838 [data_cleaners.py:79] : Adding feature flag
+DEBUG - 2021-03-09 17:12:42,414 [data_cleaners.py:104] : Feature flag column has these values: ['ice_cloud' 'water_cloud' 'night' 'clear' 'bad_cloud']
+INFO - 2021-03-09 17:12:42,414 [data_cleaners.py:106] : Cleaning took 4.4 seconds
+INFO - 2021-03-09 17:12:42,669 [data_cleaners.py:36] : 49.69% of timesteps are daylight
+INFO - 2021-03-09 17:12:42,674 [data_cleaners.py:38] : 56.17% of daylight timesteps are cloudy
+INFO - 2021-03-09 17:12:42,679 [data_cleaners.py:40] : 0.63% of daylight timesteps are missing cloud type
+INFO - 2021-03-09 17:12:42,685 [data_cleaners.py:42] : 34.64% of cloudy daylight timesteps are missing cloud opd
+INFO - 2021-03-09 17:12:42,690 [data_cleaners.py:44] : 34.83% of cloudy daylight timesteps are missing cloud reff
+DEBUG - 2021-03-09 17:12:42,690 [data_cleaners.py:47] : Column NaN values:
+DEBUG - 2021-03-09 17:12:42,693 [data_cleaners.py:50] : 	"gid" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:42,698 [data_cleaners.py:50] : 	"time_index" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:42,702 [data_cleaners.py:50] : 	"alpha" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:42,706 [data_cleaners.py:50] : 	"aod" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:42,709 [data_cleaners.py:50] : 	"asymmetry" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:42,713 [data_cleaners.py:50] : 	"cloud_type" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:42,717 [data_cleaners.py:50] : 	"cld_opd_dcomp" has 81.76% NaN values
+DEBUG - 2021-03-09 17:12:42,721 [data_cleaners.py:50] : 	"cld_reff_dcomp" has 81.81% NaN values
+DEBUG - 2021-03-09 17:12:42,724 [data_cleaners.py:50] : 	"ozone" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:42,728 [data_cleaners.py:50] : 	"solar_zenith_angle" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:42,732 [data_cleaners.py:50] : 	"ssa" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:42,736 [data_cleaners.py:50] : 	"surface_albedo" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:42,739 [data_cleaners.py:50] : 	"surface_pressure" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:42,743 [data_cleaners.py:50] : 	"total_precipitable_water" has 0.00% NaN values
+DEBUG - 2021-03-09 17:12:42,743 [data_cleaners.py:53] : Interpolating opd and reff
+DEBUG - 2021-03-09 17:12:44,762 [data_cleaners.py:79] : Adding feature flag
+DEBUG - 2021-03-09 17:12:45,331 [data_cleaners.py:104] : Feature flag column has these values: ['ice_cloud' 'water_cloud' 'night' 'clear' 'bad_cloud']
+INFO - 2021-03-09 17:12:45,331 [data_cleaners.py:106] : Cleaning took 2.9 seconds
+DEBUG - 2021-03-09 17:12:45,332 [data_handlers.py:396] : Prepping validation data
+DEBUG - 2021-03-09 17:12:45,366 [data_handlers.py:406] : Mask: shape=(3154464,), sum=1567353
+DEBUG - 2021-03-09 17:12:45,485 [data_handlers.py:415] : Validation features: ['solar_zenith_angle', 'refl_0_65um_nom', 'refl_0_65um_nom_stddev_3x3', 'refl_3_75um_nom', 'temp_3_75um_nom', 'temp_11_0um_nom', 'temp_11_0um_nom_stddev_3x3', 'cloud_probability', 'cloud_fraction', 'air_temperature', 'dew_point', 'relative_humidity', 'total_precipitable_water', 'surface_albedo', 'flag']
+INFO - 2021-03-09 17:12:45,485 [validator.py:106] : Predicting opd and reff
+DEBUG - 2021-03-09 17:12:48,701 [validator.py:109] : Predicted data shape is (1567353, 2)
+DEBUG - 2021-03-09 17:12:49,277 [validator.py:157] : shapes: df_feature_val=(3154464, 20), df_all_sky_val=(3154464, 15)
+INFO - 2021-03-09 17:12:49,556 [validator.py:179] : Calculating statistics
+DEBUG - 2021-03-09 17:12:49,560 [validator.py:182] : Calcing stats for gids: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2021-03-09 17:12:49,560 [validator.py:372] : Loading data for 2016 / east
+DEBUG - 2021-03-09 17:12:49,560 [validator.py:452] : 	Getting gid 0 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:12:49,601 [validator.py:452] : 	Getting gid 0 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:12:49,642 [validator.py:419] : 	Getting surfrad data for 0 from bon_2016.h5
+DEBUG - 2021-03-09 17:12:50,315 [validator.py:452] : 	Getting gid 1 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:12:50,343 [validator.py:452] : 	Getting gid 1 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:12:50,372 [validator.py:419] : 	Getting surfrad data for 1 from tbl_2016.h5
+DEBUG - 2021-03-09 17:12:51,039 [validator.py:452] : 	Getting gid 2 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:12:51,067 [validator.py:452] : 	Getting gid 2 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:12:51,096 [validator.py:419] : 	Getting surfrad data for 2 from dra_2016.h5
+DEBUG - 2021-03-09 17:12:51,763 [validator.py:452] : 	Getting gid 3 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:12:51,791 [validator.py:452] : 	Getting gid 3 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:12:51,821 [validator.py:419] : 	Getting surfrad data for 3 from fpk_2016.h5
+DEBUG - 2021-03-09 17:12:52,498 [validator.py:452] : 	Getting gid 4 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:12:52,525 [validator.py:452] : 	Getting gid 4 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:12:52,556 [validator.py:419] : 	Getting surfrad data for 4 from gwn_2016.h5
+DEBUG - 2021-03-09 17:12:53,223 [validator.py:452] : 	Getting gid 5 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:12:53,251 [validator.py:452] : 	Getting gid 5 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:12:53,281 [validator.py:419] : 	Getting surfrad data for 5 from psu_2016.h5
+DEBUG - 2021-03-09 17:12:53,949 [validator.py:452] : 	Getting gid 6 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:12:53,977 [validator.py:452] : 	Getting gid 6 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:12:54,006 [validator.py:419] : 	Getting surfrad data for 6 from sxf_2016.h5
+DEBUG - 2021-03-09 17:12:54,679 [validator.py:452] : 	Getting gid 7 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:12:54,708 [validator.py:452] : 	Getting gid 7 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:12:54,739 [validator.py:419] : 	Getting surfrad data for 7 from sgp_2016.h5
+DEBUG - 2021-03-09 17:12:55,412 [validator.py:452] : 	Getting gid 8 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:12:55,440 [validator.py:452] : 	Getting gid 8 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:12:55,469 [validator.py:419] : 	Getting surfrad data for 8 from srrl_2016.h5
+DEBUG - 2021-03-09 17:12:56,151 [validator.py:372] : Loading data for 2016 / west
+DEBUG - 2021-03-09 17:12:56,151 [validator.py:452] : 	Getting gid 0 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:12:56,191 [validator.py:452] : 	Getting gid 0 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:12:56,231 [validator.py:419] : 	Getting surfrad data for 0 from bon_2016.h5
+DEBUG - 2021-03-09 17:12:56,904 [validator.py:452] : 	Getting gid 1 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:12:56,932 [validator.py:452] : 	Getting gid 1 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:12:56,961 [validator.py:419] : 	Getting surfrad data for 1 from tbl_2016.h5
+DEBUG - 2021-03-09 17:12:57,621 [validator.py:452] : 	Getting gid 2 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:12:57,648 [validator.py:452] : 	Getting gid 2 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:12:57,678 [validator.py:419] : 	Getting surfrad data for 2 from dra_2016.h5
+DEBUG - 2021-03-09 17:12:58,340 [validator.py:452] : 	Getting gid 3 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:12:58,367 [validator.py:452] : 	Getting gid 3 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:12:58,396 [validator.py:419] : 	Getting surfrad data for 3 from fpk_2016.h5
+DEBUG - 2021-03-09 17:12:59,071 [validator.py:452] : 	Getting gid 4 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:12:59,098 [validator.py:452] : 	Getting gid 4 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:12:59,127 [validator.py:419] : 	Getting surfrad data for 4 from gwn_2016.h5
+DEBUG - 2021-03-09 17:12:59,785 [validator.py:452] : 	Getting gid 5 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:12:59,812 [validator.py:452] : 	Getting gid 5 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:12:59,841 [validator.py:419] : 	Getting surfrad data for 5 from psu_2016.h5
+DEBUG - 2021-03-09 17:13:00,504 [validator.py:452] : 	Getting gid 6 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:13:00,532 [validator.py:452] : 	Getting gid 6 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:13:00,560 [validator.py:419] : 	Getting surfrad data for 6 from sxf_2016.h5
+DEBUG - 2021-03-09 17:13:01,220 [validator.py:452] : 	Getting gid 7 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:13:01,247 [validator.py:452] : 	Getting gid 7 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:13:01,276 [validator.py:419] : 	Getting surfrad data for 7 from sgp_2016.h5
+DEBUG - 2021-03-09 17:13:01,936 [validator.py:452] : 	Getting gid 8 from srf16_*_2016.h5
+DEBUG - 2021-03-09 17:13:01,964 [validator.py:452] : 	Getting gid 8 from srf16a_*_2016.h5
+DEBUG - 2021-03-09 17:13:01,992 [validator.py:419] : 	Getting surfrad data for 8 from srrl_2016.h5
+DEBUG - 2021-03-09 17:13:02,656 [validator.py:372] : Loading data for 2017 / east
+DEBUG - 2021-03-09 17:13:02,656 [validator.py:452] : 	Getting gid 0 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:02,696 [validator.py:452] : 	Getting gid 0 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:02,736 [validator.py:419] : 	Getting surfrad data for 0 from bon_2017.h5
+DEBUG - 2021-03-09 17:13:03,424 [validator.py:452] : 	Getting gid 1 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:03,451 [validator.py:452] : 	Getting gid 1 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:03,479 [validator.py:419] : 	Getting surfrad data for 1 from tbl_2017.h5
+DEBUG - 2021-03-09 17:13:04,148 [validator.py:452] : 	Getting gid 2 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:04,175 [validator.py:452] : 	Getting gid 2 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:04,204 [validator.py:419] : 	Getting surfrad data for 2 from dra_2017.h5
+DEBUG - 2021-03-09 17:13:04,882 [validator.py:452] : 	Getting gid 3 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:04,909 [validator.py:452] : 	Getting gid 3 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:04,937 [validator.py:419] : 	Getting surfrad data for 3 from fpk_2017.h5
+DEBUG - 2021-03-09 17:13:05,610 [validator.py:452] : 	Getting gid 4 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:05,638 [validator.py:452] : 	Getting gid 4 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:05,667 [validator.py:419] : 	Getting surfrad data for 4 from gwn_2017.h5
+DEBUG - 2021-03-09 17:13:06,340 [validator.py:452] : 	Getting gid 5 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:06,367 [validator.py:452] : 	Getting gid 5 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:06,395 [validator.py:419] : 	Getting surfrad data for 5 from psu_2017.h5
+DEBUG - 2021-03-09 17:13:07,087 [validator.py:452] : 	Getting gid 6 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:07,114 [validator.py:452] : 	Getting gid 6 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:07,142 [validator.py:419] : 	Getting surfrad data for 6 from sxf_2017.h5
+DEBUG - 2021-03-09 17:13:07,815 [validator.py:452] : 	Getting gid 7 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:07,842 [validator.py:452] : 	Getting gid 7 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:07,870 [validator.py:419] : 	Getting surfrad data for 7 from sgp_2017.h5
+DEBUG - 2021-03-09 17:13:08,558 [validator.py:452] : 	Getting gid 8 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:08,584 [validator.py:452] : 	Getting gid 8 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:08,613 [validator.py:419] : 	Getting surfrad data for 8 from srrl_2017.h5
+DEBUG - 2021-03-09 17:13:09,296 [validator.py:372] : Loading data for 2017 / west
+DEBUG - 2021-03-09 17:13:09,296 [validator.py:452] : 	Getting gid 0 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:09,335 [validator.py:452] : 	Getting gid 0 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:09,375 [validator.py:419] : 	Getting surfrad data for 0 from bon_2017.h5
+DEBUG - 2021-03-09 17:13:10,052 [validator.py:452] : 	Getting gid 1 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:10,080 [validator.py:452] : 	Getting gid 1 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:10,109 [validator.py:419] : 	Getting surfrad data for 1 from tbl_2017.h5
+DEBUG - 2021-03-09 17:13:10,770 [validator.py:452] : 	Getting gid 2 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:10,797 [validator.py:452] : 	Getting gid 2 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:10,826 [validator.py:419] : 	Getting surfrad data for 2 from dra_2017.h5
+DEBUG - 2021-03-09 17:13:11,489 [validator.py:452] : 	Getting gid 3 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:11,516 [validator.py:452] : 	Getting gid 3 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:11,544 [validator.py:419] : 	Getting surfrad data for 3 from fpk_2017.h5
+DEBUG - 2021-03-09 17:13:12,206 [validator.py:452] : 	Getting gid 4 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:12,233 [validator.py:452] : 	Getting gid 4 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:12,261 [validator.py:419] : 	Getting surfrad data for 4 from gwn_2017.h5
+DEBUG - 2021-03-09 17:13:12,924 [validator.py:452] : 	Getting gid 5 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:12,951 [validator.py:452] : 	Getting gid 5 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:12,979 [validator.py:419] : 	Getting surfrad data for 5 from psu_2017.h5
+DEBUG - 2021-03-09 17:13:13,655 [validator.py:452] : 	Getting gid 6 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:13,682 [validator.py:452] : 	Getting gid 6 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:13,710 [validator.py:419] : 	Getting surfrad data for 6 from sxf_2017.h5
+DEBUG - 2021-03-09 17:13:14,378 [validator.py:452] : 	Getting gid 7 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:14,406 [validator.py:452] : 	Getting gid 7 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:14,436 [validator.py:419] : 	Getting surfrad data for 7 from sgp_2017.h5
+DEBUG - 2021-03-09 17:13:15,111 [validator.py:452] : 	Getting gid 8 from srf17_*_2017.h5
+DEBUG - 2021-03-09 17:13:15,138 [validator.py:452] : 	Getting gid 8 from srf17a_*_2017.h5
+DEBUG - 2021-03-09 17:13:15,167 [validator.py:419] : 	Getting surfrad data for 8 from srrl_2017.h5
+DEBUG - 2021-03-09 17:13:15,833 [validator.py:372] : Loading data for 2018 / east
+DEBUG - 2021-03-09 17:13:15,833 [validator.py:452] : 	Getting gid 0 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:15,959 [validator.py:452] : 	Getting gid 0 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:16,086 [validator.py:419] : 	Getting surfrad data for 0 from bon_2018.h5
+DEBUG - 2021-03-09 17:13:16,775 [validator.py:452] : 	Getting gid 1 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:16,842 [validator.py:452] : 	Getting gid 1 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:16,910 [validator.py:419] : 	Getting surfrad data for 1 from tbl_2018.h5
+DEBUG - 2021-03-09 17:13:17,603 [validator.py:452] : 	Getting gid 2 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:17,669 [validator.py:452] : 	Getting gid 2 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:17,736 [validator.py:419] : 	Getting surfrad data for 2 from dra_2018.h5
+DEBUG - 2021-03-09 17:13:18,435 [validator.py:452] : 	Getting gid 3 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:18,500 [validator.py:452] : 	Getting gid 3 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:18,568 [validator.py:419] : 	Getting surfrad data for 3 from fpk_2018.h5
+DEBUG - 2021-03-09 17:13:19,269 [validator.py:452] : 	Getting gid 4 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:19,334 [validator.py:452] : 	Getting gid 4 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:19,403 [validator.py:419] : 	Getting surfrad data for 4 from gwn_2018.h5
+DEBUG - 2021-03-09 17:13:20,114 [validator.py:452] : 	Getting gid 5 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:20,181 [validator.py:452] : 	Getting gid 5 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:20,249 [validator.py:419] : 	Getting surfrad data for 5 from psu_2018.h5
+DEBUG - 2021-03-09 17:13:20,956 [validator.py:452] : 	Getting gid 6 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:21,022 [validator.py:452] : 	Getting gid 6 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:21,089 [validator.py:419] : 	Getting surfrad data for 6 from sxf_2018.h5
+DEBUG - 2021-03-09 17:13:21,798 [validator.py:452] : 	Getting gid 7 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:21,864 [validator.py:452] : 	Getting gid 7 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:21,932 [validator.py:419] : 	Getting surfrad data for 7 from sgp_2018.h5
+DEBUG - 2021-03-09 17:13:22,648 [validator.py:452] : 	Getting gid 8 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:22,713 [validator.py:452] : 	Getting gid 8 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:22,781 [validator.py:419] : 	Getting surfrad data for 8 from srrl_2018.h5
+DEBUG - 2021-03-09 17:13:23,506 [validator.py:372] : Loading data for 2018 / west
+DEBUG - 2021-03-09 17:13:23,506 [validator.py:452] : 	Getting gid 0 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:23,545 [validator.py:452] : 	Getting gid 0 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:23,585 [validator.py:419] : 	Getting surfrad data for 0 from bon_2018.h5
+DEBUG - 2021-03-09 17:13:24,276 [validator.py:452] : 	Getting gid 1 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:24,303 [validator.py:452] : 	Getting gid 1 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:24,331 [validator.py:419] : 	Getting surfrad data for 1 from tbl_2018.h5
+DEBUG - 2021-03-09 17:13:25,021 [validator.py:452] : 	Getting gid 2 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:25,048 [validator.py:452] : 	Getting gid 2 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:25,077 [validator.py:419] : 	Getting surfrad data for 2 from dra_2018.h5
+DEBUG - 2021-03-09 17:13:25,768 [validator.py:452] : 	Getting gid 3 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:25,794 [validator.py:452] : 	Getting gid 3 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:25,823 [validator.py:419] : 	Getting surfrad data for 3 from fpk_2018.h5
+DEBUG - 2021-03-09 17:13:26,509 [validator.py:452] : 	Getting gid 4 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:26,536 [validator.py:452] : 	Getting gid 4 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:26,564 [validator.py:419] : 	Getting surfrad data for 4 from gwn_2018.h5
+DEBUG - 2021-03-09 17:13:27,255 [validator.py:452] : 	Getting gid 5 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:27,282 [validator.py:452] : 	Getting gid 5 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:27,310 [validator.py:419] : 	Getting surfrad data for 5 from psu_2018.h5
+DEBUG - 2021-03-09 17:13:28,000 [validator.py:452] : 	Getting gid 6 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:28,027 [validator.py:452] : 	Getting gid 6 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:28,056 [validator.py:419] : 	Getting surfrad data for 6 from sxf_2018.h5
+DEBUG - 2021-03-09 17:13:28,743 [validator.py:452] : 	Getting gid 7 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:28,770 [validator.py:452] : 	Getting gid 7 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:28,798 [validator.py:419] : 	Getting surfrad data for 7 from sgp_2018.h5
+DEBUG - 2021-03-09 17:13:29,503 [validator.py:452] : 	Getting gid 8 from srf18_*_2018.h5
+DEBUG - 2021-03-09 17:13:29,530 [validator.py:452] : 	Getting gid 8 from srf18a_*_2018.h5
+DEBUG - 2021-03-09 17:13:29,559 [validator.py:419] : 	Getting surfrad data for 8 from srrl_2018.h5
+DEBUG - 2021-03-09 17:13:30,251 [validator.py:372] : Loading data for 2019 / east
+DEBUG - 2021-03-09 17:13:30,251 [validator.py:452] : 	Getting gid 0 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:30,376 [validator.py:452] : 	Getting gid 0 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:30,504 [validator.py:419] : 	Getting surfrad data for 0 from bon_2019.h5
+DEBUG - 2021-03-09 17:13:31,240 [validator.py:452] : 	Getting gid 1 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:31,306 [validator.py:452] : 	Getting gid 1 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:31,374 [validator.py:419] : 	Getting surfrad data for 1 from tbl_2019.h5
+DEBUG - 2021-03-09 17:13:32,107 [validator.py:452] : 	Getting gid 2 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:32,173 [validator.py:452] : 	Getting gid 2 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:32,241 [validator.py:419] : 	Getting surfrad data for 2 from dra_2019.h5
+DEBUG - 2021-03-09 17:13:32,990 [validator.py:452] : 	Getting gid 3 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:33,057 [validator.py:452] : 	Getting gid 3 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:33,125 [validator.py:419] : 	Getting surfrad data for 3 from fpk_2019.h5
+DEBUG - 2021-03-09 17:13:33,861 [validator.py:452] : 	Getting gid 4 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:33,927 [validator.py:452] : 	Getting gid 4 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:33,995 [validator.py:419] : 	Getting surfrad data for 4 from gwn_2019.h5
+DEBUG - 2021-03-09 17:13:34,764 [validator.py:452] : 	Getting gid 5 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:34,831 [validator.py:452] : 	Getting gid 5 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:34,900 [validator.py:419] : 	Getting surfrad data for 5 from psu_2019.h5
+DEBUG - 2021-03-09 17:13:35,657 [validator.py:452] : 	Getting gid 6 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:35,724 [validator.py:452] : 	Getting gid 6 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:35,793 [validator.py:419] : 	Getting surfrad data for 6 from sxf_2019.h5
+DEBUG - 2021-03-09 17:13:36,549 [validator.py:452] : 	Getting gid 7 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:36,616 [validator.py:452] : 	Getting gid 7 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:36,685 [validator.py:419] : 	Getting surfrad data for 7 from sgp_2019.h5
+DEBUG - 2021-03-09 17:13:37,467 [validator.py:452] : 	Getting gid 8 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:37,534 [validator.py:452] : 	Getting gid 8 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:37,603 [validator.py:419] : 	Getting surfrad data for 8 from srrl_2019.h5
+DEBUG - 2021-03-09 17:13:38,375 [validator.py:372] : Loading data for 2019 / west
+DEBUG - 2021-03-09 17:13:38,375 [validator.py:452] : 	Getting gid 0 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:38,445 [validator.py:452] : 	Getting gid 0 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:38,517 [validator.py:419] : 	Getting surfrad data for 0 from bon_2019.h5
+DEBUG - 2021-03-09 17:13:39,265 [validator.py:452] : 	Getting gid 1 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:39,308 [validator.py:452] : 	Getting gid 1 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:39,352 [validator.py:419] : 	Getting surfrad data for 1 from tbl_2019.h5
+DEBUG - 2021-03-09 17:13:40,098 [validator.py:452] : 	Getting gid 2 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:40,142 [validator.py:452] : 	Getting gid 2 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:40,186 [validator.py:419] : 	Getting surfrad data for 2 from dra_2019.h5
+DEBUG - 2021-03-09 17:13:40,951 [validator.py:452] : 	Getting gid 3 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:40,994 [validator.py:452] : 	Getting gid 3 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:41,038 [validator.py:419] : 	Getting surfrad data for 3 from fpk_2019.h5
+DEBUG - 2021-03-09 17:13:41,787 [validator.py:452] : 	Getting gid 4 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:41,830 [validator.py:452] : 	Getting gid 4 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:41,874 [validator.py:419] : 	Getting surfrad data for 4 from gwn_2019.h5
+DEBUG - 2021-03-09 17:13:42,628 [validator.py:452] : 	Getting gid 5 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:42,670 [validator.py:452] : 	Getting gid 5 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:42,714 [validator.py:419] : 	Getting surfrad data for 5 from psu_2019.h5
+DEBUG - 2021-03-09 17:13:43,488 [validator.py:452] : 	Getting gid 6 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:43,531 [validator.py:452] : 	Getting gid 6 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:43,574 [validator.py:419] : 	Getting surfrad data for 6 from sxf_2019.h5
+DEBUG - 2021-03-09 17:13:44,330 [validator.py:452] : 	Getting gid 7 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:44,373 [validator.py:452] : 	Getting gid 7 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:44,417 [validator.py:419] : 	Getting surfrad data for 7 from sgp_2019.h5
+DEBUG - 2021-03-09 17:13:45,184 [validator.py:452] : 	Getting gid 8 from srf19_*_2019.h5
+DEBUG - 2021-03-09 17:13:45,227 [validator.py:452] : 	Getting gid 8 from srf19a_*_2019.h5
+DEBUG - 2021-03-09 17:13:45,271 [validator.py:419] : 	Getting surfrad data for 8 from srrl_2019.h5
+DEBUG - 2021-03-09 17:13:46,067 [validator.py:190] : Shapes: df_base_full=(3154464, 6), df_base_adj_full=(3154464, 6), df_surf_full=(3154464, 4)
+DEBUG - 2021-03-09 17:13:46,072 [validator.py:209] : Computing stats for gid: 0 bon
+DEBUG - 2021-03-09 17:13:46,117 [validator.py:216] : Shapes: df_baseline=(350496, 6), df_baseline_adj=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2021-03-09 17:14:02,770 [validator.py:209] : Computing stats for gid: 1 tbl
+DEBUG - 2021-03-09 17:14:02,816 [validator.py:216] : Shapes: df_baseline=(350496, 6), df_baseline_adj=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2021-03-09 17:14:19,350 [validator.py:209] : Computing stats for gid: 2 dra
+DEBUG - 2021-03-09 17:14:19,396 [validator.py:216] : Shapes: df_baseline=(350496, 6), df_baseline_adj=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2021-03-09 17:14:35,823 [validator.py:209] : Computing stats for gid: 3 fpk
+DEBUG - 2021-03-09 17:14:35,869 [validator.py:216] : Shapes: df_baseline=(350496, 6), df_baseline_adj=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2021-03-09 17:14:52,415 [validator.py:209] : Computing stats for gid: 4 gwn
+DEBUG - 2021-03-09 17:14:52,461 [validator.py:216] : Shapes: df_baseline=(350496, 6), df_baseline_adj=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2021-03-09 17:15:09,301 [validator.py:209] : Computing stats for gid: 5 psu
+DEBUG - 2021-03-09 17:15:09,346 [validator.py:216] : Shapes: df_baseline=(350496, 6), df_baseline_adj=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2021-03-09 17:15:25,996 [validator.py:209] : Computing stats for gid: 6 sxf
+DEBUG - 2021-03-09 17:15:26,040 [validator.py:216] : Shapes: df_baseline=(350496, 6), df_baseline_adj=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2021-03-09 17:15:42,649 [validator.py:209] : Computing stats for gid: 7 sgp
+DEBUG - 2021-03-09 17:15:42,695 [validator.py:216] : Shapes: df_baseline=(350496, 6), df_baseline_adj=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2021-03-09 17:15:59,292 [validator.py:209] : Computing stats for gid: 8 srrl
+DEBUG - 2021-03-09 17:15:59,338 [validator.py:216] : Shapes: df_baseline=(350496, 6), df_baseline_adj=(350496, 6), df_surf=(350496, 4)
+INFO - 2021-03-09 17:16:15,879 [validator.py:309] : Finished computing stats.
