@@ -71,10 +71,7 @@
   "p_fun": "p_fun_all_sky",
   "p_kwargs": {
     "loss_terms": [
-      "mae_ghi",
-      "mae_dni",
-      "mbe_ghi",
-      "mbe_dni"
+      "mae_ghi"
     ]
   },
   "phygnn_seed": 0,

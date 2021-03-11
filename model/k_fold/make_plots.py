@@ -10,6 +10,8 @@ from rex import Resource
 
 plot_dir = './plots'
 feature_data_fp = '/projects/mlclouds/data_surfrad_9/2016_east_adj/mlclouds_surfrad_2016.h5'
+west_sites = ['TBL', 'DRA', 'FPK', 'SRRL']
+east_sites = ['BON', 'GWN', 'PSU', 'SXF', 'SGP']
 
 if not os.path.exists(plot_dir):
     os.makedirs(plot_dir)
@@ -21,7 +23,10 @@ with Resource(feature_data_fp) as res:
 # extract data from all available stats files for only the xval site
 df = None
 for i, sid in enumerate(surfrad_ids):
-    fp = './outputs/stats_k_fold_{}.csv'.format(i)
+    if sid.upper() in east_sites:
+        fp = './outputs/validation_stats_east_{}.csv'.format(i)
+    else:
+        fp = './outputs/validation_stats_west_{}.csv'.format(i)
     if os.path.exists(fp):
         temp = pd.read_csv(fp, index_col=0)
         mask = (temp['Site'] == sid.upper())

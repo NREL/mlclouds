@@ -11,7 +11,14 @@ plot_dir = './plots'
 if not os.path.exists(plot_dir):
     os.makedirs(plot_dir)
 
-df = pd.read_csv('./outputs/validation_stats.csv')
+west_sites = ['TBL', 'DRA', 'FPK', 'SRRL']
+east_sites = ['BON', 'GWN', 'PSU', 'SXF', 'SGP']
+df_east = pd.read_csv('./outputs/validation_stats_east.csv')
+df_west = pd.read_csv('./outputs/validation_stats_west.csv')
+df_east = df_east[df_east.Site.isin(east_sites)]
+df_west = df_west[df_west.Site.isin(west_sites)]
+df = df_east.append(df_west, ignore_index=True)
+df = df.sort_values(['Site', 'Model'])
 
 variables = df.Variable.unique()
 conditions = df.Condition.unique()
