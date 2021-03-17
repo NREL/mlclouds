@@ -8,9 +8,7 @@ import sys
 
 py_version = sys.version_info
 if py_version.major < 3:
-    raise RuntimeError("MLClouds is only compatible with python 3.7!")
-elif py_version.minor != 7:
-    raise RuntimeError("MLClouds is only compatible with python 3.7!")
+    raise RuntimeError("MLClouds is only compatible with python 3!")
 
 try:
     from pypandoc import convert_text
@@ -45,20 +43,5 @@ setup(
     ],
     test_suite="tests",
     install_requires=["nsrdb>=3.0",
-                      "numpy>=1.16",
-                      "pandas>=0.25",
-                      "scipy>=1.3",
-                      "matplotlib>=3.1",
-                      "pytest>=5.2",
-                      "scikit-learn>=0.22",
-                      "tensorflow>=2.0",
-                      "ipython",
-                      "notebook",
-                      "psutil",
-                      "pre-commit",
-                      "flake8",
-                      "pylint",
-                      "NREL-reV",
-                      "NREL-rex",
                       ],
 )

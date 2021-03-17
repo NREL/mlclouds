@@ -142,3 +142,6 @@ dmypy.json
 examples/*.csv
 examples/output/*
 examples/models/*
+
+model/*/output/*.txt
+model/*/stats/*.csv
