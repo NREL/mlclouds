@@ -37,16 +37,19 @@ class TrainData:
             0 to 1. The test set is randomly selected and dropped from the
             training set. If None, do not reserve a test set.
         """
+
         self.fp_surfrad_data = FP_SURFRAD_DATA
         self.fp_surfrad_meta = FP_SURFRAD_META
         if train_sites == 'all':
             train_sites = [k for k, v in
-                           surf_meta().to_dict()['surfrad_id'].items() if v not
-                           in ['srrl', 'sgp']]
+                           surf_meta().to_dict()['surfrad_id'].items()]
         self.train_sites = train_sites
         self._config = config
+        self.test_set_mask = None
+        self.train_set_mask = None
 
-        self.test_set_mask = None  # Rows of full set reserved for testing
+        # keep a record of data sources with length equal to n observations
+        self.observation_sources = []
 
         if not isinstance(train_files, list):
             train_files = [train_files]
@@ -85,6 +88,8 @@ class TrainData:
                     self.train_sites,
                     self._config.get('all_sky_vars', ALL_SKY_VARS))
 
+                self.observation_sources += len(temp_raw) * [train_file]
+
                 if df_raw is None:
                     df_raw = temp_raw
                     df_all_sky = temp_all_sky
@@ -97,7 +102,6 @@ class TrainData:
                          ''.format(temp_raw.shape, temp_all_sky.shape))
             time_step = calc_time_step(temp_raw.time_index)
             logger.debug('\tTime step is {} minutes'.format(time_step))
-            assert df_raw.shape[0] == df_all_sky.shape[0]
 
             # ------ Grab surface data
             year, _ = extract_file_meta(train_file)
@@ -108,6 +112,8 @@ class TrainData:
                 w_minutes = self._config.get('surfrad_window_minutes', 15)
                 surfrad_file = self.fp_surfrad_data.format(year=year,
                                                            code=code)
+                logger.debug('\t\tGrabbing surface data for {} from {}'
+                            .format(code, surfrad_file))
                 with Surfrad(surfrad_file) as surf:
                     temp_surf = surf.get_df(dt_out='{}min'.format(time_step),
                                             window_minutes=w_minutes)
@@ -119,12 +125,19 @@ class TrainData:
                     df_surf = df_surf.append(temp_surf, ignore_index=True)
 
                 logger.debug('\tShape: temp_surf={}'.format(temp_surf.shape))
-        logger.debug('Shape df_raw={}, df_all_sky={}, df_surf={}'
-                     ''.format(df_raw.shape, df_all_sky.shape, df_surf.shape))
 
+        logger.debug('Data load complete. Shape df_raw={}, df_all_sky={}, '
+                     'df_surf={}'.format(df_raw.shape, df_all_sky.shape,
+                                         df_surf.shape))
+
+        self.observation_sources = np.array(self.observation_sources)
+        assert df_raw.shape[0] == df_all_sky.shape[0]
+        assert df_raw.shape[0] == df_surf.shape[0]
+        assert len(self.observation_sources) == len(df_raw)
         assert all(df_all_sky.gid.values == df_surf.gid.values)
         assert all(df_all_sky.time_index.values == df_surf.time_index.values)
 
+        time_index_full = df_all_sky.time_index
         df_surf = df_surf.reset_index(drop=True)
         df_surf = df_surf.drop(['gid', 'time_index'], axis=1)
         df_all_sky = df_all_sky.join(df_surf)
@@ -133,6 +146,7 @@ class TrainData:
             np.random.seed(self._config['phygnn_seed'])
 
             df_raw, df_all_sky = self._test_train_split(df_raw, df_all_sky,
+                                                        time_index_full,
                                                         test_fraction)
 
         logger.debug('Extracting 2D arrays to run rest2 for '
@@ -229,7 +243,8 @@ class TrainData:
         logger.debug('Training features: {}'.format(features))
         assert self.y.shape[0] == self.x.shape[0] == self.p.shape[0]
 
-    def _test_train_split(self, df_raw_orig, df_all_sky_orig, test_fraction):
+    def _test_train_split(self, df_raw_orig, df_all_sky_orig, time_index_full,
+                          test_fraction):
         """
         Split data into test and train sets. Return train data.
 
@@ -239,6 +254,8 @@ class TrainData:
             Satellite data for model training
         df_all_sky_orig: pandas.DataFrame
             All_sky inputs
+        time_index_full : pd.DatetimeIndex
+            Time index corresponding to the df_all_sky_orig input.
         test_fraction: None | float
             Fraction of full data set to reserve for testing. Should be between
             0 to 1. The test set is randomly selected and dropped from the
@@ -254,6 +271,7 @@ class TrainData:
         logger.debug('Creating test set; {}% of full data set'
                      ''.format(test_fraction*100))
         assert 0 < test_fraction < 1
+        assert len(time_index_full) == len(df_all_sky_orig)
 
         df_raw = df_raw_orig.sample(frac=(1-test_fraction)).sort_index()
         self.train_set_mask = df_raw_orig.index.isin(df_raw.index)
@@ -331,8 +349,7 @@ class ValidationData:
         var_names += self.y_labels
         logger.debug('Loading vars {}'.format(var_names))
 
-        gids = [k for k, v in surf_meta().to_dict()['surfrad_id'].items() if v
-                not in ['srrl', 'sgp']]
+        gids = [k for k, v in surf_meta().to_dict()['surfrad_id'].items()]
 
         for val_file in self.val_files:
             logger.debug('Loading validation data from {} for gids {}'
@@ -362,6 +379,9 @@ class ValidationData:
         assert df_raw.shape[0] == df_all_sky.shape[0]
         df_raw.reset_index(drop=True, inplace=True)
         df_all_sky.reset_index(drop=True, inplace=True)
+
+        logger.debug('Shape after reset_index: df_raw={}, df_all_sky={}'
+                     ''.format(df_raw.shape, df_all_sky.shape))
 
         if test_set_mask is not None:
             assert (len(df_raw) == len(df_all_sky) == len(test_set_mask)), \
