@@ -1,0 +1,96 @@
+{
+  "feature_names": [
+    "solar_zenith_angle",
+    "refl_0_65um_nom",
+    "refl_0_65um_nom_stddev_3x3",
+    "refl_3_75um_nom",
+    "temp_3_75um_nom",
+    "temp_11_0um_nom",
+    "temp_11_0um_nom_stddev_3x3",
+    "cloud_probability",
+    "cloud_fraction",
+    "air_temperature",
+    "dew_point",
+    "relative_humidity",
+    "total_precipitable_water",
+    "surface_albedo",
+    "clear",
+    "ice_cloud",
+    "water_cloud",
+    "bad_cloud"
+  ],
+  "label_names": [
+    "cld_opd_dcomp",
+    "cld_reff_dcomp"
+  ],
+  "norm_params": {
+    "air_temperature": {
+      "mean": 16.73508644104004,
+      "stdev": 11.584755897521973
+    },
+    "cloud_fraction": {
+      "mean": 0.5590936541557312,
+      "stdev": 0.45430222153663635
+    },
+    "cloud_probability": {
+      "mean": 0.5569144487380981,
+      "stdev": 0.46788546442985535
+    },
+    "dew_point": {
+      "mean": 4.739161491394043,
+      "stdev": 10.98433780670166
+    },
+    "refl_0_65um_nom": {
+      "mean": 37.063232421875,
+      "stdev": 24.137126922607422
+    },
+    "refl_0_65um_nom_stddev_3x3": {
+      "mean": 4.3675360679626465,
+      "stdev": 4.492710590362549
+    },
+    "refl_3_75um_nom": {
+      "mean": 11.583476066589355,
+      "stdev": 12.998008728027344
+    },
+    "relative_humidity": {
+      "mean": 52.15144729614258,
+      "stdev": 24.320255279541016
+    },
+    "solar_zenith_angle": {
+      "mean": 58.510013580322266,
+      "stdev": 19.018163681030273
+    },
+    "surface_albedo": {
+      "mean": 0.25717753171920776,
+      "stdev": 0.211551234126091
+    },
+    "temp_11_0um_nom": {
+      "mean": 272.1919250488281,
+      "stdev": 22.802446365356445
+    },
+    "temp_11_0um_nom_stddev_3x3": {
+      "mean": 2.0624706745147705,
+      "stdev": 2.4837353229522705
+    },
+    "temp_3_75um_nom": {
+      "mean": 285.0393981933594,
+      "stdev": 17.680288314819336
+    },
+    "total_precipitable_water": {
+      "mean": 1.855941891670227,
+      "stdev": 1.3091232776641846
+    }
+  },
+  "normalize": [
+    true,
+    false
+  ],
+  "one_hot_categories": {
+    "flag": [
+      "clear",
+      "ice_cloud",
+      "water_cloud",
+      "bad_cloud"
+    ]
+  }
+}
