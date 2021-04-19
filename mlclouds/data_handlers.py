@@ -3,9 +3,11 @@ import copy
 import pandas as pd
 import numpy as np
 
-from nsrdb.all_sky.rest2 import rest2, rest2_tuuclr
-from nsrdb.all_sky.utilities import ti_to_radius, calc_beta
-from nsrdb.all_sky import ICE_TYPES, WATER_TYPES
+from rest2.rest2 import rest2, rest2_tuuclr
+
+from farms.utilities import ti_to_radius, calc_beta
+from farms import ICE_TYPES, WATER_TYPES
+
 from nsrdb.file_handlers.surfrad import Surfrad
 
 from mlclouds.data_cleaners import clean_cloud_df

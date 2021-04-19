@@ -11,8 +11,9 @@ from rex.multi_file_resource import MultiFileResource
 
 from nsrdb.file_handlers.surfrad import Surfrad
 from nsrdb.all_sky.all_sky import all_sky
-from nsrdb.all_sky import ICE_TYPES, WATER_TYPES, CLEAR_TYPES
 from nsrdb.utilities.statistics import mae_perc, mbe_perc, rmse_perc
+
+from farms import ICE_TYPES, WATER_TYPES, CLEAR_TYPES
 
 from mlclouds.data_handlers import ValidationData
 from mlclouds.utilities import FP_BASELINE, ALL_SKY_VARS, FP_BASELINE_ADJ

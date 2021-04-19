@@ -20,8 +20,8 @@ Literature
 import tensorflow as tf
 import numpy as np
 import collections
-from nsrdb.all_sky import WATER_TYPES, SOLAR_CONSTANT
-import nsrdb.all_sky.utilities as ut
+from farms import WATER_TYPES, SOLAR_CONSTANT
+from farms.utilities import check_range
 from phygnn.utilities import tf_isin, tf_log10
 
 
@@ -161,10 +161,10 @@ def tfarms(tau, cloud_type, cloud_effective_radius, solar_zenith_angle,
     # disable divide by zero warnings
     np.seterr(divide='ignore')
 
-    ut.check_range(Tddclr, 'Tddclr')
-    ut.check_range(Tduclr, 'Tduclr')
-    ut.check_range(Ruuclr, 'Ruuclr')
-    ut.check_range(Tuuclr, 'Tuuclr')
+    check_range(Tddclr, 'Tddclr')
+    check_range(Tduclr, 'Tduclr')
+    check_range(Ruuclr, 'Ruuclr')
+    check_range(Tuuclr, 'Tuuclr')
 
     # do not allow for negative cld optical depth
     tau = tf.where(tau < 0, 0.001, tau)
