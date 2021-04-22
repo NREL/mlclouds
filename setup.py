@@ -42,6 +42,5 @@ setup(
         "Programming Language :: Python :: 3.7",
     ],
     test_suite="tests",
-    install_requires=["nsrdb>=3.0",
-                      ],
+    install_requires=["NREL-nsrdb>=3.0"],
 )
