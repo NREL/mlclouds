@@ -34,13 +34,17 @@ setup(
     license="BSD license",
     zip_safe=False,
     keywords="mlclouds",
+    python_requires='>=3.7',
     classifiers=[
         "Development Status :: Beta",
         "Intended Audience :: Modelers",
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     test_suite="tests",
-    install_requires=["NREL-nsrdb>=3.0"],
+    install_requires=["NREL-nsrdb>=3.0",
+                      "NREL-phygnn>=0.0.11"],
 )
