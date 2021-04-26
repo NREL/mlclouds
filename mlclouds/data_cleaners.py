@@ -9,7 +9,7 @@ import numpy as np
 import time
 import logging
 
-from nsrdb.all_sky import ICE_TYPES, WATER_TYPES
+from farms import ICE_TYPES, WATER_TYPES
 
 logger = logging.getLogger(__name__)
 

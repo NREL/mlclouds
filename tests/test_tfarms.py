@@ -3,7 +3,7 @@ Test the tensor implementation of FARMS.
 """
 import tensorflow as tf
 import numpy as np
-from nsrdb.all_sky.farms import farms
+from farms.farms import farms
 from mlclouds.tfarms import tfarms
 
 

@@ -15,7 +15,7 @@ There were four main changes from the original code
 
 import tensorflow as tf
 import numpy as np
-from nsrdb.all_sky import SOLAR_CONSTANT, SZA_LIM
+from farms import SOLAR_CONSTANT, SZA_LIM
 
 
 def tdisc(ghi, sza, doy, pressure=101325, sza_lim=SZA_LIM):

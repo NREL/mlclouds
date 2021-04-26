@@ -5,7 +5,7 @@ Test the tensor implementation of disc
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-from nsrdb.all_sky.disc import disc
+from farms.disc import disc
 from mlclouds.tdisc import tdisc
 
 
