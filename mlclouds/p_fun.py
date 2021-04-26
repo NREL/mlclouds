@@ -24,7 +24,7 @@ def p_fun_dummy(model, y_true, y_predicted, p, labels=None, loss_terms=None):
 
 
 def p_fun_all_sky(model, y_true, y_predicted, p, labels=None,
-                  loss_terms=('mae_ghi', 'mae_dni', 'mbe_ghi', 'mbe_dni')):
+                  loss_terms=('mae_ghi', )):
     """Physics loss function """
     # pylint: disable-msg=W0613
     n = len(y_true)
