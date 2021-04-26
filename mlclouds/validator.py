@@ -425,7 +425,6 @@ class Validator:
             df_surf = surf.get_df(dt_out='{}min'.format(tstep),
                                   window_minutes=w)
         df_surf['gid'] = gid
-        df_surf.index = df_surf.index.tz_localize('utc')
         return df_surf
 
     @staticmethod
