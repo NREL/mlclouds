@@ -22,8 +22,10 @@ with open(fp_config, 'r') as f:
 if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
-if val_site in (0, 7):
+if val_site in (0, 2, 7):
     config['learning_rate'] *= 0.5
+elif val_site in (5,):
+    config['learning_rate'] *= 0.25
 
 fp_base = ('/projects/mlclouds/data_surfrad_9/{y}_{ew}_adj/'
            'mlclouds_surfrad_{y}.h5')

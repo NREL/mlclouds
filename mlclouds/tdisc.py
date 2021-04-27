@@ -36,7 +36,7 @@ def tdisc(ghi, sza, doy, pressure=101325, sza_lim=SZA_LIM):
     doy : np.ndarray
         Day of year (array of integers).
     pressure : np.ndarray
-        Pressure in Pascals.
+        Pressure in mbar (same as hPa).
     sza_lim : float | int
         Upper limit for solar zenith angle in degrees. SZA values greater than
         this will be truncated at this value.
@@ -46,10 +46,6 @@ def tdisc(ghi, sza, doy, pressure=101325, sza_lim=SZA_LIM):
     DNI : np.ndarray
         Estimated direct normal irradiance in W/m2.
     """
-
-    # convert pressure from mbar if necessary
-    if np.max(pressure) < 10000:
-        pressure *= 100
 
     if len(doy.shape) < len(sza.shape):
         doy = np.tile(doy.reshape((len(doy), 1)), sza.shape[1])
@@ -85,7 +81,7 @@ def tdisc(ghi, sza, doy, pressure=101325, sza_lim=SZA_LIM):
     I0h = I0 * np.cos(sza_rad)
 
     AM = (1. / (tf.cos(sza_rad) + 0.15 * ((93.885 - sza)**-1.253))
-          * pressure / 101325)
+          * 100 * pressure / 101325)
 
     Kt = ghi / I0h
     Kt = tf.where(Kt < 0, 0, Kt)
