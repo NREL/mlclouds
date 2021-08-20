@@ -4,11 +4,6 @@ setup.py
 import os
 from codecs import open
 from setuptools import setup, find_packages
-import sys
-
-py_version = sys.version_info
-if py_version.major < 3:
-    raise RuntimeError("MLClouds is only compatible with python 3!")
 
 try:
     from pypandoc import convert_text
@@ -30,6 +25,8 @@ setup(
     url="https://github.nrel.gov/PXS/mlclouds",
     packages=find_packages(),
     package_dir={"mlclouds": "mlclouds"},
+    package_data={'mlclouds':
+                  ['model/production_model/outputs/mlclouds_model.pkl']},
     include_package_data=True,
     license="BSD license",
     zip_safe=False,

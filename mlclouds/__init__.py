@@ -4,6 +4,6 @@ import os
 
 MLCLOUDSDIR = os.path.dirname(os.path.realpath(__file__))
 TESTDATADIR = os.path.join(os.path.dirname(MLCLOUDSDIR), 'tests', 'data')
-MODEL_FPATH = os.path.join(os.path.dirname(MLCLOUDSDIR),
+MODEL_FPATH = os.path.join(MLCLOUDSDIR,
                            'model/production_model/outputs',
                            'mlclouds_model.pkl')
