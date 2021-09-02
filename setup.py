@@ -26,7 +26,8 @@ setup(
     packages=find_packages(),
     package_dir={"mlclouds": "mlclouds"},
     package_data={'mlclouds':
-                  ['model/production_model/outputs/mlclouds_model.pkl']},
+                  ['model/production_model/outputs/mlclouds_model.pkl',
+                   'model/production_model/outputs/mlclouds_model.json']},
     include_package_data=True,
     license="BSD license",
     zip_safe=False,
