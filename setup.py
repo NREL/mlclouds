@@ -44,5 +44,5 @@ setup(
     ],
     test_suite="tests",
     install_requires=["NREL-nsrdb>=3.0",
-                      "NREL-phygnn>=0.0.11,<0.0.13"],
+                      "NREL-phygnn>=0.0.14"],
 )

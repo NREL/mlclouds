@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from rex import Resource
 
 plot_dir = './plots'
-feature_data_fp = '/projects/mlclouds/data_surfrad_9/2016_east_adj/mlclouds_surfrad_2016.h5'
+feature_data_fp = '/projects/pxs/mlclouds/training_data/2016_east_v321/mlclouds_surfrad_east_2016.h5'
 west_sites = ['TBL', 'DRA', 'FPK', 'SRRL']
 east_sites = ['BON', 'GWN', 'PSU', 'SXF', 'SGP']
 

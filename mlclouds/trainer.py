@@ -16,7 +16,7 @@ class Trainer:
     """Class to handle the training of the mlclouds phygnn model"""
 
     def __init__(self, train_sites='all', train_files=FP_DATA, config=CONFIG,
-                 test_fraction=None):
+                 test_fraction=None, fp_save_data=None):
         """
         Train PHYGNN model
 
@@ -33,7 +33,10 @@ class Trainer:
             Fraction of full data set to reserve for testing. Should be between
             0 to 1. The test set is randomly selected and dropped from the
             training set. If None, do not reserve a test set.
+        fp_save_data : str
+            Optional .csv filepath to save training data to
         """
+
         logger.info('Trainer: Training on sites {} from files {}'
                     ''.format(train_sites, train_files))
         if train_sites == 'all':
@@ -53,6 +56,9 @@ class Trainer:
         self.y = self.train_data.y
         self.p = self.train_data.p
         self.test_set_mask = self.train_data.test_set_mask
+
+        if fp_save_data is not None:
+            self.train_data.save_all_data(fp_save_data)
 
         self.p_kwargs = {'labels':
                          self.train_data.df_all_sky.columns.values.tolist()}
