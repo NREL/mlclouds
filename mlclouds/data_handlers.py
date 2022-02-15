@@ -119,6 +119,11 @@ class TrainData:
                 with Surfrad(surfrad_file) as surf:
                     temp_surf = surf.get_df(dt_out='{}min'.format(time_step),
                                             window_minutes=w_minutes)
+
+                # add prefix to avoid confusion
+                temp_surf = temp_surf.rename({'ghi': 'surfrad_ghi',
+                                              'dni': 'surfrad_dni',
+                                              'dhi': 'surfrad_dhi'}, axis=1)
                 temp_surf['gid'] = gid
                 temp_surf['time_index'] = temp_surf.index.values
                 if df_surf is None:
@@ -286,6 +291,33 @@ class TrainData:
                      ''.format(df_raw_orig[self.test_set_mask].shape,
                                df_all_sky_orig[self.test_set_mask].shape))
         return df_raw, df_all_sky
+
+    @property
+    def all_data(self):
+        """Get a joined dataframe of training data (x), physical feature data
+        (p), and output label data (y).
+
+        Returns
+        -------
+        pd.DataFrame
+        """
+        cols_p = [c for c in self.p.columns if c not in self.x]
+        out = self.x.join(self.p[cols_p])
+        cols_y = [c for c in self.y.columns if c not in out]
+        out = out.join(self.y[cols_y])
+        return out
+
+    def save_all_data(self, fp):
+        """Save all x/y/p data to disk
+
+        Parameters
+        ----------
+        fp : str
+            .csv filepath to save data to.
+        """
+        if fp is not None:
+            logger.info('Saving training data to: {}'.format(fp))
+            self.all_data.to_csv(fp)
 
 
 class ValidationData:

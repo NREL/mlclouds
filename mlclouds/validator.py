@@ -16,7 +16,7 @@ from nsrdb.utilities.statistics import mae_perc, mbe_perc, rmse_perc
 from farms import ICE_TYPES, WATER_TYPES, CLEAR_TYPES
 
 from mlclouds.data_handlers import ValidationData
-from mlclouds.utilities import FP_BASELINE, ALL_SKY_VARS, FP_BASELINE_ADJ
+from mlclouds.utilities import FP_BASELINE, ALL_SKY_VARS
 from mlclouds.utilities import FP_SURFRAD_DATA, CONFIG
 from mlclouds.utilities import surf_meta, calc_time_step
 
@@ -175,32 +175,25 @@ class Validator:
             Save time series data to disk
         """
         fp_baseline = FP_BASELINE
-        fp_baseline_adj = FP_BASELINE_ADJ
 
         logger.info('Calculating statistics')
 
         gids = [k for k, v in surf_meta().to_dict()['surfrad_id'].items()]
         logger.debug('Calcing stats for gids: {}'.format(gids))
 
-        s_data = self._get_stats_data(self.files_meta, gids, fp_baseline,
-                                      fp_baseline_adj)
-        df_base_full = s_data[0]
-        df_base_adj_full = s_data[1]
-        df_surf_full = s_data[2]
+        s_data = self._get_stats_data(self.files_meta, gids, fp_baseline)
+        df_base_full, df_surf_full = s_data
 
-        logger.debug('Shapes: df_base_full={}, df_base_adj_full={}, '
+        logger.debug('Shapes: df_base_full={}, '
                      'df_surf_full={}'.format(df_base_full.shape,
-                                              df_base_adj_full.shape,
                                               df_surf_full.shape))
 
         if test_set_mask is not None:
             df_base_full = df_base_full[test_set_mask]
-            df_base_adj_full = df_base_adj_full[test_set_mask]
             df_surf_full = df_surf_full[test_set_mask]
-            logger.debug('Test set shapes: df_base_full={}, df_base_adj_full='
-                         '{}, df_surf_full={}'.format(df_base_full.shape,
-                                                      df_base_adj_full.shape,
-                                                      df_surf_full.shape))
+            logger.debug('Test set shapes: df_base_full={}, '
+                         'df_surf_full={}'.format(df_base_full.shape,
+                                                  df_surf_full.shape))
 
         i = 0
         stats = pd.DataFrame(columns=['Model', 'Site', 'Variable',
@@ -211,12 +204,10 @@ class Validator:
 
             idx = df_base_full.gid == gid
             df_baseline = df_base_full[idx]
-            df_baseline_adj = df_base_adj_full[idx]
             df_surf = df_surf_full[idx]
 
-            logger.debug('Shapes: df_baseline={}, df_baseline_adj={}, '
+            logger.debug('Shapes: df_baseline={}, '
                          'df_surf={}'.format(df_baseline.shape,
-                                             df_baseline_adj.shape,
                                              df_surf.shape))
 
             # Run all_sky for current gid
@@ -253,24 +244,18 @@ class Validator:
                 for var in ['dni', 'ghi']:
                     self._timeseries_to_csv(gid, var,
                                             df_baseline[var],
-                                            df_baseline_adj[var],
                                             all_sky_out[var],
-                                            df_surf[var])
+                                            df_surf['surfrad_' + var])
 
             for mask, condition in m_iter:
                 for var in ['dni', 'ghi']:
                     baseline = df_baseline.loc[mask, var].values
-                    adjusted = df_baseline_adj.loc[mask, var].values
-                    surf = df_surf.loc[mask, var].values
+                    surf = df_surf.loc[mask, 'surfrad_' + var].values
                     mlclouds = all_sky_out.loc[mask, var].values
 
                     mae_baseline = mae_perc(baseline, surf)
                     mbe_baseline = mbe_perc(baseline, surf)
                     rmse_baseline = rmse_perc(baseline, surf)
-
-                    mae_adj = mae_perc(adjusted, surf)
-                    mbe_adj = mbe_perc(adjusted, surf)
-                    rmse_adj = rmse_perc(adjusted, surf)
 
                     mae_ml = mae_perc(mlclouds, surf)
                     mbe_ml = mbe_perc(mlclouds, surf)
@@ -290,9 +275,6 @@ class Validator:
                     stats.at[i, 'Site'] = code.upper()
                     stats.at[i, 'Variable'] = var.upper()
                     stats.at[i, 'Condition'] = condition
-                    stats.at[i, 'MAE (%)'] = mae_adj
-                    stats.at[i, 'MBE (%)'] = mbe_adj
-                    stats.at[i, 'RMSE (%)'] = rmse_adj
                     stats.at[i, 'N'] = mask.sum()
                     i += 1
 
@@ -309,7 +291,7 @@ class Validator:
         self.stats = stats
         logger.info('Finished computing stats.')
 
-    def _timeseries_to_csv(self, gid, var, baseline, adjusted, mlclouds, surf):
+    def _timeseries_to_csv(self, gid, var, baseline, mlclouds, surf):
         """
         Save irradiance timseries data to disk for later analysis
 
@@ -321,15 +303,12 @@ class Validator:
             Irradiance type of data: dni or ghi
         baseline: pd.Series
             Baseline NSRDB irradiance
-        adjusted: pd.Series
-            NSRDB irradiance, adjusted for solar position
         mlclouds: pd.Series
             Irradiance as predicted by PHYGNN
         surf: pd.Series
             Ground measured irradiance
         """
         df = pd.DataFrame({'Baseline': baseline,
-                           'Adjusted': adjusted,
                            'PHYGNN': mlclouds,
                            'Surfrad': surf})
         tdir = self._config.get('timeseries_dir', 'timeseries/')
@@ -337,9 +316,9 @@ class Validator:
             os.makedirs(tdir)
         df.to_csv(os.path.join(tdir, 'timeseries_{}_{}.csv'.format(var, gid)))
 
-    def _get_stats_data(self, files_meta, gids, fp_baseline, fp_baseline_adj):
+    def _get_stats_data(self, files_meta, gids, fp_baseline):
         """
-        Grab baseline, baseline_adjusted, and surfrad for stats. Adjust time
+        Grab baseline and surfrad for stats. Adjust time
         steps as necessary to match validation satellite data.
 
         Parameters
@@ -350,21 +329,15 @@ class Validator:
             Gids of desired surfrad site
         fp_baseline: str
             Full path of NSRDB baseline irradiance
-        fp_baseline_adj: str
-            Full path of NSRDB baseline irradiance, adjusted for cloud position
-            relative to the sun
 
         Returns
         -------
         df_base: pd.Dataframe
             NSRDB irradiance
-        df_base_adj: pd.Dataframe
-            NSRDB irradiance, adjusted for cload position and sza
         df_surf: pd.Dataframe
             Ground measured irradiance
         """
         df_base = None
-        df_base_adj = None
         df_surf = None
         for year_meta in files_meta:
             year = year_meta['year']
@@ -373,27 +346,20 @@ class Validator:
             logger.debug('Loading data for {} / {}'.format(year, area))
             for gid in gids:
                 tmp_base = self._get_baseline_df(fp_baseline, gid, year, area)
-                tmp_base_adj = self._get_baseline_df(fp_baseline_adj, gid,
-                                                     year, area)
                 tmp_surf = self._get_surfrad_df(gid, year,
                                                 tstep=year_meta['time_step'])
 
                 tstep_base = calc_time_step(pd.Series(tmp_base.index))
-                tstep_base_adj = calc_time_step(pd.Series(tmp_base_adj.index))
-                assert tstep_base == tstep_base_adj == year_meta['time_step']
 
                 if df_base is None:
                     df_base = tmp_base
-                    df_base_adj = tmp_base_adj
                     df_surf = tmp_surf
                 else:
                     df_base = df_base.append(tmp_base)
-                    df_base_adj = df_base_adj.append(tmp_base_adj)
                     df_surf = df_surf.append(tmp_surf)
 
-        assert (df_base.gid == df_base_adj.gid).all()
         assert (df_base.gid == df_surf.gid).all()
-        return df_base, df_base_adj, df_surf
+        return df_base, df_surf
 
     def _get_surfrad_df(self, gid, year, tstep=5, window_default=15):
         """
@@ -424,6 +390,11 @@ class Validator:
         with Surfrad(fp_surf) as surf:
             df_surf = surf.get_df(dt_out='{}min'.format(tstep),
                                   window_minutes=w)
+
+        # add prefix to avoid confusion
+        df_surf = df_surf.rename({'ghi': 'surfrad_ghi',
+                                  'dni': 'surfrad_dni',
+                                  'dhi': 'surfrad_dhi'}, axis=1)
         df_surf['gid'] = gid
         return df_surf
 

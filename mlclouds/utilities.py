@@ -24,20 +24,16 @@ ALL_SKY_VARS = ('alpha',
 #   year - four digit year, e.g. 2017
 #   yy - two digit eyar, e.g. 17
 #   area - east or west
-FP_BASELINE = '/lustre/eaglefs/projects/mlclouds/' +\
-              'data_surfrad_9/{year}_{area}/final/srf{yy}_*_{year}.h5'
-FP_BASELINE_ADJ = '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/' +\
-                  '{year}_{area}_adj/final/srf{yy}a_*_{year}.h5'
+FP_BASELINE = ('/projects/pxs/mlclouds/training_data/{year}_{area}_v311/'
+               'final/*.h5')
 
 # Default satellite data for model training and validation
-FP_DATA = '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/2018' +\
-          '_east_adj/mlclouds_surfrad_2018_adj.h5'
+FP_DATA = ('/projects/pxs/mlclouds/training_data/{year}_{area}_v321/'
+           'mlclouds_surfrad_{area}_{year}.h5')
 
 # Ground measurement data
-FP_SURFRAD_DATA = '/lustre/eaglefs/projects/mlclouds/ground_measurement/' +\
-                  'surfrad/{code}_{year}.h5'
-FP_SURFRAD_META = '/lustre/eaglefs/projects/mlclouds/ground_measurement/' +\
-                   'surfrad_meta.csv'
+FP_SURFRAD_DATA = '/projects/pxs/surfrad/h5/{code}_{year}.h5'
+FP_SURFRAD_META = '/projects/pxs/reference_grids/surfrad_meta.csv'
 
 # Training data prep options for clean_cloud_df()
 TRAINING_PREP_KWARGS = {'filter_daylight': True,

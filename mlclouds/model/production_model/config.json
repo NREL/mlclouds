@@ -4,7 +4,7 @@
     "nan_option": "interp"
   },
   "epochs_a": 100,
-  "epochs_b": 100,
+  "epochs_b": 90,
   "features": [
     "solar_zenith_angle",
     "cloud_type",
