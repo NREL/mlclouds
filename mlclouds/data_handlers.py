@@ -229,7 +229,10 @@ class TrainData:
         # Inspecting features would go here
 
         # Final cleaning
-        drop_list = ('gid', 'time_index', 'cloud_type')
+        drop_list = ['gid', 'time_index', 'cloud_type']
+        if self._config.get('one_hot_categories', None) is None:
+            drop_list.append('flag')
+
         for name in drop_list:
             if name in self.df_train:
                 self.df_train = self.df_train.drop(name, axis=1)
@@ -237,7 +240,7 @@ class TrainData:
         logger.debug('**Shape: df_train={}'.format(self.df_train.shape))
         features = self.df_train.columns.values.tolist()
 
-        not_features = drop_list + tuple(self._config['y_labels'])
+        not_features = drop_list + list(self._config['y_labels'])
         features = [f for f in features if f not in not_features]
 
         self.y = self.df_train[self._config['y_labels']]
@@ -427,12 +430,15 @@ class ValidationData:
             logger.debug('Test set shape: df_raw={}, df_all_sky={}'
                          ''.format(df_raw.shape, df_all_sky.shape))
 
+        # we filter daylight and clear later
         self.df_feature_val = clean_cloud_df(df_raw, filter_daylight=False,
                                              filter_clear=False,
-                                             add_feature_flag=True, sza_lim=89)
+                                             add_cloud_flag=True,
+                                             sza_lim=89)
         self.df_all_sky_val = clean_cloud_df(df_all_sky, filter_daylight=False,
                                              filter_clear=False,
-                                             add_feature_flag=True, sza_lim=89)
+                                             add_cloud_flag=True,
+                                             sza_lim=89)
 
     def _prep_data(self, predict_clearsky):
         """
@@ -457,8 +463,10 @@ class ValidationData:
         logger.debug('Mask: shape={}, sum={}'.format(self.mask.shape,
                                                      self.mask.sum()))
 
-        drop_list = ('gid', 'time_index', 'cloud_type')
-        not_features = drop_list + tuple(self.y_labels)
+        drop_list = ['gid', 'time_index', 'cloud_type']
+        not_features = drop_list + list(self.y_labels)
+        if self.one_hot_cats is None:
+            not_features.append('flag')
 
         features = [c for c in self.df_feature_val.columns if
                     c not in not_features]
