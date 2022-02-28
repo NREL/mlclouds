@@ -62,7 +62,9 @@ class CloudClassificationModel:
                 'cld_opd_mlclouds_water',
                 'cld_opd_mlclouds_ice',
                 'cloud_type',
-                'flag']
+                'flag',
+                'cld_opd_dcomp',
+                'cld_opd_mlclouds']
 
         self.cloud_encoding = {'clearsky': 0, 'water': 1, 'ice': 2}
         self.flag_encoding = {'clear': 0, 'water_cloud': 1,
