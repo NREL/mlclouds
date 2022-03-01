@@ -129,6 +129,7 @@ class CloudClassificationModel:
         """
         if one_hot_encoding:
             y = pd.get_dummies(self.df['nom_cloud_id'])
+            self.cloud_encoding = {k: v for v, k in enumerate(y.columns)}
         else:
             y = self.df['nom_cloud_id'].replace(self.cloud_encoding)
         return y
@@ -465,6 +466,7 @@ class CloudClassificationNN(CloudClassificationModel):
         self.check_features(X)
         X = self.convert_flags(X)
         y = self.model.predict(X[self.features])
+        y = pd.DataFrame(y)
         y = y.idxmax(axis=1)
 
         inverse_cloud_encoding = {v: k for k, v in self.cloud_encoding.items()}
