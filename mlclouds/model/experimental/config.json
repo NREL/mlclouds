@@ -51,12 +51,12 @@
   ],
   "learning_rate": 0.0005,
   "loss_weights_a": [
-    0,
-    1
+    1,
+    0
   ],
   "loss_weights_b": [
-    0,
-    1
+    1,
+    2
   ],
   "metric": "relative_mae",
   "n_batch": 64,

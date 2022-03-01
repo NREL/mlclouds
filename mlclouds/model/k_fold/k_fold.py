@@ -22,13 +22,8 @@ with open(fp_config, 'r') as f:
 if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
-#if val_site in (0, 2, 7):
-#    config['learning_rate'] *= 0.5
-#elif val_site in (5,):
-#    config['learning_rate'] *= 0.25
-
 years = range(2016, 2020)
-fp_base = ('/projects/pxs/mlclouds/training_data/{y}_{ew}_v321/'
+fp_base = ('/projects/pxs/mlclouds/training_data/{y}_{ew}_v322/'
            'mlclouds_surfrad_{ew}_{y}.h5')
 files = [fp_base.format(y=y, ew=ew) for y in years for ew in ('east', 'west')]
 files_e = [fp_base.format(y=y, ew=ew) for y in years for ew in ('east', )]

@@ -20,7 +20,7 @@ if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
 years = range(2016, 2020)
-fp_base = ('/projects/pxs/mlclouds/training_data/{y}_{ew}_v321/'
+fp_base = ('/projects/pxs/mlclouds/training_data/{y}_{ew}_v322/'
            'mlclouds_surfrad_{ew}_{y}.h5')
 files = [fp_base.format(y=y, ew=ew) for y in years for ew in ('east', 'west')]
 files_e = [fp_base.format(y=y, ew=ew) for y in years for ew in ('east', )]
@@ -46,7 +46,7 @@ fp_iter = (fp_stats, fp_stats_e, fp_stats_w)
 
 if __name__ == '__main__':
     t = Trainer(train_sites='all', train_files=files, config=config,
-                test_fraction=0.2)
+                test_fraction=0.2, fp_save_data='./mlclouds_training_data.csv')
 
     t.model.history.to_csv(fp_history)
     t.model.save_model(fp_model)
