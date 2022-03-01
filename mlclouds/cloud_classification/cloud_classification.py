@@ -9,6 +9,7 @@ from sklearn.metrics import log_loss
 from sklearn.pipeline import Pipeline
 import numpy as np
 import joblib
+import tensorflow as tf
 
 logger = logging.getLogger(__name__)
 
@@ -115,19 +116,31 @@ class CloudClassificationModel:
         X = self.df[self.features]
         return X
 
-    def _select_targets(self):
+    def _select_targets(self, one_hot_encoding=True):
         """Extract targets from loaded dataframe
 
         Returns
         -------
         y : pd.DataFrame
             dataframe of targets to use for training
+        one_hot_coding : bool
+            Whether to one hot encode targets or to just
+            integer encode
         """
-        self.df['nom_cloud_id'].replace(self.cloud_encoding, inplace=True)
-        return self.df['nom_cloud_id']
+        if one_hot_encoding:
+            y = pd.get_dummies(self.df['nom_cloud_id'])
+        else:
+            y = self.df['nom_cloud_id'].replace(self.cloud_encoding)
+        return y
 
-    def _split_data(self):
+    def _split_data(self, one_hot_encoding=True):
         """Split data into training and validation
+
+        Parameters
+        ----------
+        one_hot_coding : bool
+            Whether to one hot encode targets or to just
+            integer encode
 
         Returns
         -------
@@ -141,7 +154,7 @@ class CloudClassificationModel:
             Fraction of full target dataframe to use for validation
         """
         X = self._select_features()
-        y = self._select_targets()
+        y = self._select_targets(one_hot_encoding)
         return train_test_split(X, y, np.arange(X.shape[0]),
                                 test_size=self.test_size)
 
@@ -211,7 +224,7 @@ class CloudClassificationModel:
             self._split_data()
         self.train(self.X_train, self.y_train)
 
-    def train(self, X_train, y_train):
+    def train(self, X_train, y_train, epochs=None):
         """Train model using provided features and targets
 
         Parameters
@@ -221,7 +234,10 @@ class CloudClassificationModel:
         y_train : pd.DataFrame
             Training split of full target dataframe
         """
-        self.model.fit(X_train, y_train)
+        if epochs is not None:
+            self.model.fit(X_train, y_train, clf__epochs=epochs)
+        else:
+            self.model.fit(X_train, y_train)
 
     def save(self, model_file):
         """Save training model
@@ -271,6 +287,7 @@ class CloudClassificationModel:
         self.check_features(X)
         X = self.convert_flags(X)
         y = self.model.predict(X[self.features])
+
         inverse_cloud_encoding = {v: k for k, v in self.cloud_encoding.items()}
         y = [inverse_cloud_encoding[v] for v in y]
         inverse_flag_encoding = {v: k for k, v in self.flag_encoding.items()}
@@ -337,3 +354,123 @@ class CloudClassificationModel:
             predictions and targets
         """
         return log_loss(y, self.model.predict_proba(X))
+
+
+class CloudClassificationNN(CloudClassificationModel):
+    """Cloud Classification Model class using
+    TensorFlow Classifier to classify conditions into
+    clear, water_cloud, and ice_cloud
+    """
+    def __init__(self, model_file=None, test_size=0.2,
+                 features=None, learning_rate=0.01,
+                 epochs=100):
+        """Initialize cloud classification model
+
+        Parameters
+        ----------
+        model_file : str, optional
+            file containing previously trained and saved model, by default None
+        test_size : float, optional
+            fraction of full data set to reserve for validation, by default 0.2
+        features : list, optional
+            list of features to use for training and for predictions,
+            by default features
+        learning_rate : float
+            learning rate for classifier
+        epochs : int
+            number of epochs for classifier training
+        """
+        super().__init__()
+
+        if features is None:
+            features = self.DEF_FEATURES
+
+        self.cloud_encoding = {'clearsky': 0, 'water': 1, 'ice': 2}
+        self.flag_encoding = {'clear': 0, 'water_cloud': 1,
+                              'ice_cloud': 2, 'bad_cloud': 3}
+        self.learning_rate = learning_rate
+        self.epochs = epochs
+
+        # UWisc cloud types
+        self.cloud_type_encoding = {'clearsky': 0, 'water': 2, 'ice': 6}
+
+        if model_file is not None:
+            try:
+                self.model = self.load(model_file)
+            except FileNotFoundError:
+                logger.error(f'Model file not found: {model_file}')
+        else:
+            clf = tf.keras.Sequential([
+                tf.keras.layers.Dense(128, activation='relu'),
+                tf.keras.layers.Dense(256, activation='relu'),
+                tf.keras.layers.Dense(256, activation='relu'),
+                tf.keras.layers.Dense(3, activation='sigmoid'),
+            ])
+            clf.compile(
+                loss=tf.keras.losses.binary_crossentropy,
+                optimizer=tf.keras.optimizers.Adam(
+                    learning_rate=self.learning_rate),
+                metrics=[
+                    tf.keras.metrics.BinaryAccuracy(name='accuracy'),
+                    tf.keras.metrics.Precision(name='precision'),
+                    tf.keras.metrics.Recall(name='recall')
+                ]
+            )
+            self.model = Pipeline([('scaler', StandardScaler()),
+                                   ('clf', clf)])
+        self.features = features
+        self.test_size = test_size
+        self.df = None
+        self.X_train = None
+        self.y_train = None
+        self.X_test = None
+        self.y_test = None
+
+    def train(self, X, y):
+        super().train(X, y, self.epochs)
+
+    def load_data_and_train(self, data_file):
+        """Load data and train model using features selected
+        during initialization
+
+        Parameters
+        ----------
+        data_file : str
+            csv file containing features and targets for training
+        """
+        self._load_data(data_file=data_file)
+        self.X_train, self.X_test, self.y_train, self.y_test = \
+            self._split_data(one_hot_encoding=True)
+        self.train(self.X_train, self.y_train)
+
+    def predict(self, X, to_cloud_type=False):
+        """Predict cloud type
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            dataframe of features to use for cloud
+            type prediction
+        to_cloud_type : bool
+            Flag to convert to UWisc numeric cloud types
+
+        Returns
+        -------
+        y : np.ndarray
+            array of cloud type predictions for each
+            observation in X
+        """
+
+        self.check_features(X)
+        X = self.convert_flags(X)
+        y = self.model.predict(X[self.features])
+        y = y.idxmax(axis=1)
+
+        inverse_cloud_encoding = {v: k for k, v in self.cloud_encoding.items()}
+        y = [inverse_cloud_encoding[v] for v in y]
+        inverse_flag_encoding = {v: k for k, v in self.flag_encoding.items()}
+        X['flag'].replace(inverse_flag_encoding, inplace=True)
+        if to_cloud_type:
+            y = pd.Series(y).map(self.cloud_type_encoding)
+            y = y.astype(np.uint16).values
+        return y
