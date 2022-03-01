@@ -38,7 +38,7 @@ FP_SURFRAD_META = '/projects/pxs/reference_grids/surfrad_meta.csv'
 # Training data prep options for clean_cloud_df()
 TRAINING_PREP_KWARGS = {'filter_daylight': True,
                         'filter_clear': False,
-                        'add_feature_flag': True,
+                        'add_cloud_flag': True,
                         'sza_lim': 89,
                         'nan_option': 'interp'}
 

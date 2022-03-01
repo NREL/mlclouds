@@ -14,8 +14,8 @@ from farms import ICE_TYPES, WATER_TYPES
 logger = logging.getLogger(__name__)
 
 
-def clean_cloud_df(cloud_df_raw, filter_daylight=True, filter_clear=True,
-                   add_feature_flag=True, sza_lim=89, nan_option='interp'):
+def clean_cloud_df(cloud_df_raw, filter_daylight=True, filter_clear=False,
+                   add_cloud_flag=True, sza_lim=89, nan_option='interp'):
     """ Clean up cloud data """
     t0 = time.time()
     cloud_df = cloud_df_raw.copy()
@@ -75,8 +75,9 @@ def clean_cloud_df(cloud_df_raw, filter_daylight=True, filter_clear=True,
     assert ~any(pd.isna(cloud_df))
     assert ~any(cloudy & (cloud_df['cld_opd_dcomp'] <= 0))
 
-    if add_feature_flag:
-        logger.debug('Adding feature flag')
+    if add_cloud_flag:
+        logger.debug('Adding cloud type flag (e.g. flag=[night, clear, '
+                     'ice_cloud, water_cloud, bad_cloud])')
         ice_clouds = cloud_df['cloud_type'].isin(ICE_TYPES)
         water_clouds = cloud_df['cloud_type'].isin(WATER_TYPES)
         cloud_df['flag'] = 'night'

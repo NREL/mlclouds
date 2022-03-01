@@ -75,7 +75,7 @@ class Validator:
                                 y_labels=config['y_labels'],
                                 all_sky_vars=all_sky_vars,
                                 one_hot_cats=config['one_hot_categories'],
-                                test_set_mask=test_set_mask
+                                test_set_mask=test_set_mask,
                                 )
             val_data = vd
 
