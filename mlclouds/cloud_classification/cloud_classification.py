@@ -427,7 +427,8 @@ class CloudClassificationNN(CloudClassificationModel):
         self.y_test = None
 
     def train(self, X, y):
-        super().train(X, y, self.epochs)
+        history = super().train(X, y, self.epochs)
+        return history
 
     def load_data_and_train(self, data_file):
         """Load data and train model using features selected
