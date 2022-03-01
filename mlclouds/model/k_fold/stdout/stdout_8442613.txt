@@ -1,0 +1,1071 @@
+Starting scenario 4, validation against site 4
+2022-03-01 13:17:48.725343: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /nopt/slurm/current/lib:/nopt/slurm/current/lib:
+2022-03-01 13:17:48.725376: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+Cross validation site: 4
+Training sites: [0, 1, 2, 3, 5, 6, 7, 8]
+Number of files: 8
+Number of east files: 4
+Number of west files: 4
+Source files: ['/projects/pxs/mlclouds/training_data/2016_east_v322/mlclouds_surfrad_east_2016.h5', '/projects/pxs/mlclouds/training_data/2016_west_v322/mlclouds_surfrad_west_2016.h5', '/projects/pxs/mlclouds/training_data/2017_east_v322/mlclouds_surfrad_east_2017.h5', '/projects/pxs/mlclouds/training_data/2017_west_v322/mlclouds_surfrad_west_2017.h5', '/projects/pxs/mlclouds/training_data/2018_east_v322/mlclouds_surfrad_east_2018.h5', '/projects/pxs/mlclouds/training_data/2018_west_v322/mlclouds_surfrad_west_2018.h5', '/projects/pxs/mlclouds/training_data/2019_east_v322/mlclouds_surfrad_east_2019.h5', '/projects/pxs/mlclouds/training_data/2019_west_v322/mlclouds_surfrad_west_2019.h5']
+Full config: {'clean_training_data_kwargs': {'filter_clear': False, 'nan_option': 'interp'}, 'epochs_a': 100, 'epochs_b': 100, 'features': ['solar_zenith_angle', 'cloud_type', 'refl_0_65um_nom', 'refl_0_65um_nom_stddev_3x3', 'refl_3_75um_nom', 'temp_3_75um_nom', 'temp_11_0um_nom', 'temp_11_0um_nom_stddev_3x3', 'cloud_probability', 'cloud_fraction', 'air_temperature', 'dew_point', 'relative_humidity', 'total_precipitable_water', 'surface_albedo'], 'hidden_layers': [{'activation': 'relu', 'dropout': 0.1, 'units': 256}, {'activation': 'relu', 'dropout': 0.1, 'units': 256}, {'activation': 'relu', 'dropout': 0.1, 'units': 256}, {'activation': 'relu', 'dropout': 0.1, 'units': 256}, {'activation': 'relu', 'dropout': 0.1, 'units': 256}], 'learning_rate': 0.0005, 'loss_weights_a': [1, 0], 'loss_weights_b': [0.5, 0.5], 'metric': 'relative_mae', 'n_batch': 32, 'one_hot_categories': {'flag': ['clear', 'ice_cloud', 'water_cloud', 'bad_cloud']}, 'p_fun': 'p_fun_all_sky', 'p_kwargs': {'loss_terms': ['mae_ghi']}, 'phygnn_seed': 0, 'surfrad_window_minutes': 15, 'y_labels': ['cld_opd_dcomp', 'cld_reff_dcomp']}
+INFO - 2022-03-01 13:17:56,102 [trainer.py:40] : Trainer: Training on sites [0, 1, 2, 3, 5, 6, 7, 8] from files ['/projects/pxs/mlclouds/training_data/2016_east_v322/mlclouds_surfrad_east_2016.h5', '/projects/pxs/mlclouds/training_data/2016_west_v322/mlclouds_surfrad_west_2016.h5', '/projects/pxs/mlclouds/training_data/2017_east_v322/mlclouds_surfrad_east_2017.h5', '/projects/pxs/mlclouds/training_data/2017_west_v322/mlclouds_surfrad_west_2017.h5', '/projects/pxs/mlclouds/training_data/2018_east_v322/mlclouds_surfrad_east_2018.h5', '/projects/pxs/mlclouds/training_data/2018_west_v322/mlclouds_surfrad_west_2018.h5', '/projects/pxs/mlclouds/training_data/2019_east_v322/mlclouds_surfrad_east_2019.h5', '/projects/pxs/mlclouds/training_data/2019_west_v322/mlclouds_surfrad_west_2019.h5']
+INFO - 2022-03-01 13:17:56,103 [trainer.py:49] : Trainer: Training on sites [0, 1, 2, 3, 5, 6, 7, 8] from files ['/projects/pxs/mlclouds/training_data/2016_east_v322/mlclouds_surfrad_east_2016.h5', '/projects/pxs/mlclouds/training_data/2016_west_v322/mlclouds_surfrad_west_2016.h5', '/projects/pxs/mlclouds/training_data/2017_east_v322/mlclouds_surfrad_east_2017.h5', '/projects/pxs/mlclouds/training_data/2017_west_v322/mlclouds_surfrad_west_2017.h5', '/projects/pxs/mlclouds/training_data/2018_east_v322/mlclouds_surfrad_east_2018.h5', '/projects/pxs/mlclouds/training_data/2018_west_v322/mlclouds_surfrad_west_2018.h5', '/projects/pxs/mlclouds/training_data/2019_east_v322/mlclouds_surfrad_east_2019.h5', '/projects/pxs/mlclouds/training_data/2019_west_v322/mlclouds_surfrad_west_2019.h5']
+INFO - 2022-03-01 13:17:56,103 [data_handlers.py:60] : Loading training data
+DEBUG - 2022-03-01 13:17:56,103 [data_handlers.py:78] : Loading vars ['solar_zenith_angle', 'cloud_type', 'refl_0_65um_nom', 'refl_0_65um_nom_stddev_3x3', 'refl_3_75um_nom', 'temp_3_75um_nom', 'temp_11_0um_nom', 'temp_11_0um_nom_stddev_3x3', 'cloud_probability', 'cloud_fraction', 'air_temperature', 'dew_point', 'relative_humidity', 'total_precipitable_water', 'surface_albedo', 'cld_opd_dcomp', 'cld_reff_dcomp']
+DEBUG - 2022-03-01 13:17:56,103 [data_handlers.py:85] : Loading data for site(s) [0, 1, 2, 3, 5, 6, 7, 8], from /projects/pxs/mlclouds/training_data/2016_east_v322/mlclouds_surfrad_east_2016.h5
+DEBUG - 2022-03-01 13:17:57,252 [data_handlers.py:103] : 	Shape temp_raw=(140544, 19), temp_all_sky=(140544, 14)
+DEBUG - 2022-03-01 13:17:57,256 [data_handlers.py:106] : 	Time step is 30 minutes
+DEBUG - 2022-03-01 13:17:57,256 [data_handlers.py:110] : 	Grabbing surface data for 2016 and [0, 1, 2, 3, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:17:57,262 [data_handlers.py:117] : 		Grabbing surface data for bon from /projects/pxs/surfrad/h5/bon_2016.h5
+DEBUG - 2022-03-01 13:17:57,970 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:17:57,974 [data_handlers.py:117] : 		Grabbing surface data for tbl from /projects/pxs/surfrad/h5/tbl_2016.h5
+DEBUG - 2022-03-01 13:17:58,657 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:17:58,660 [data_handlers.py:117] : 		Grabbing surface data for dra from /projects/pxs/surfrad/h5/dra_2016.h5
+DEBUG - 2022-03-01 13:17:59,348 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:17:59,352 [data_handlers.py:117] : 		Grabbing surface data for fpk from /projects/pxs/surfrad/h5/fpk_2016.h5
+DEBUG - 2022-03-01 13:18:00,048 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:18:00,052 [data_handlers.py:117] : 		Grabbing surface data for psu from /projects/pxs/surfrad/h5/psu_2016.h5
+DEBUG - 2022-03-01 13:18:00,735 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:18:00,738 [data_handlers.py:117] : 		Grabbing surface data for sxf from /projects/pxs/surfrad/h5/sxf_2016.h5
+DEBUG - 2022-03-01 13:18:01,421 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:18:01,424 [data_handlers.py:117] : 		Grabbing surface data for sgp from /projects/pxs/surfrad/h5/sgp_2016.h5
+DEBUG - 2022-03-01 13:18:02,135 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:18:02,139 [data_handlers.py:117] : 		Grabbing surface data for srrl from /projects/pxs/surfrad/h5/srrl_2016.h5
+DEBUG - 2022-03-01 13:18:02,842 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:18:02,842 [data_handlers.py:85] : Loading data for site(s) [0, 1, 2, 3, 5, 6, 7, 8], from /projects/pxs/mlclouds/training_data/2016_west_v322/mlclouds_surfrad_west_2016.h5
+DEBUG - 2022-03-01 13:18:03,852 [data_handlers.py:103] : 	Shape temp_raw=(140544, 19), temp_all_sky=(140544, 14)
+DEBUG - 2022-03-01 13:18:03,856 [data_handlers.py:106] : 	Time step is 30 minutes
+DEBUG - 2022-03-01 13:18:03,856 [data_handlers.py:110] : 	Grabbing surface data for 2016 and [0, 1, 2, 3, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:18:03,860 [data_handlers.py:117] : 		Grabbing surface data for bon from /projects/pxs/surfrad/h5/bon_2016.h5
+DEBUG - 2022-03-01 13:18:04,520 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:18:04,523 [data_handlers.py:117] : 		Grabbing surface data for tbl from /projects/pxs/surfrad/h5/tbl_2016.h5
+DEBUG - 2022-03-01 13:18:05,176 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:18:05,179 [data_handlers.py:117] : 		Grabbing surface data for dra from /projects/pxs/surfrad/h5/dra_2016.h5
+DEBUG - 2022-03-01 13:18:05,832 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:18:05,836 [data_handlers.py:117] : 		Grabbing surface data for fpk from /projects/pxs/surfrad/h5/fpk_2016.h5
+DEBUG - 2022-03-01 13:18:06,498 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:18:06,502 [data_handlers.py:117] : 		Grabbing surface data for psu from /projects/pxs/surfrad/h5/psu_2016.h5
+DEBUG - 2022-03-01 13:18:07,153 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:18:07,157 [data_handlers.py:117] : 		Grabbing surface data for sxf from /projects/pxs/surfrad/h5/sxf_2016.h5
+DEBUG - 2022-03-01 13:18:07,822 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:18:07,825 [data_handlers.py:117] : 		Grabbing surface data for sgp from /projects/pxs/surfrad/h5/sgp_2016.h5
+DEBUG - 2022-03-01 13:18:08,490 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:18:08,493 [data_handlers.py:117] : 		Grabbing surface data for srrl from /projects/pxs/surfrad/h5/srrl_2016.h5
+DEBUG - 2022-03-01 13:18:09,168 [data_handlers.py:134] : 	Shape: temp_surf=(17568, 5)
+DEBUG - 2022-03-01 13:18:09,168 [data_handlers.py:85] : Loading data for site(s) [0, 1, 2, 3, 5, 6, 7, 8], from /projects/pxs/mlclouds/training_data/2017_east_v322/mlclouds_surfrad_east_2017.h5
+DEBUG - 2022-03-01 13:18:10,322 [data_handlers.py:103] : 	Shape temp_raw=(140160, 19), temp_all_sky=(140160, 14)
+DEBUG - 2022-03-01 13:18:10,327 [data_handlers.py:106] : 	Time step is 30 minutes
+DEBUG - 2022-03-01 13:18:10,328 [data_handlers.py:110] : 	Grabbing surface data for 2017 and [0, 1, 2, 3, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:18:10,331 [data_handlers.py:117] : 		Grabbing surface data for bon from /projects/pxs/surfrad/h5/bon_2017.h5
+DEBUG - 2022-03-01 13:18:11,014 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:11,017 [data_handlers.py:117] : 		Grabbing surface data for tbl from /projects/pxs/surfrad/h5/tbl_2017.h5
+DEBUG - 2022-03-01 13:18:11,695 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:11,698 [data_handlers.py:117] : 		Grabbing surface data for dra from /projects/pxs/surfrad/h5/dra_2017.h5
+DEBUG - 2022-03-01 13:18:12,373 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:12,376 [data_handlers.py:117] : 		Grabbing surface data for fpk from /projects/pxs/surfrad/h5/fpk_2017.h5
+DEBUG - 2022-03-01 13:18:13,056 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:13,059 [data_handlers.py:117] : 		Grabbing surface data for psu from /projects/pxs/surfrad/h5/psu_2017.h5
+DEBUG - 2022-03-01 13:18:13,740 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:13,743 [data_handlers.py:117] : 		Grabbing surface data for sxf from /projects/pxs/surfrad/h5/sxf_2017.h5
+DEBUG - 2022-03-01 13:18:14,414 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:14,417 [data_handlers.py:117] : 		Grabbing surface data for sgp from /projects/pxs/surfrad/h5/sgp_2017.h5
+DEBUG - 2022-03-01 13:18:15,097 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:15,100 [data_handlers.py:117] : 		Grabbing surface data for srrl from /projects/pxs/surfrad/h5/srrl_2017.h5
+DEBUG - 2022-03-01 13:18:15,777 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:15,777 [data_handlers.py:85] : Loading data for site(s) [0, 1, 2, 3, 5, 6, 7, 8], from /projects/pxs/mlclouds/training_data/2017_west_v322/mlclouds_surfrad_west_2017.h5
+DEBUG - 2022-03-01 13:18:16,844 [data_handlers.py:103] : 	Shape temp_raw=(140160, 19), temp_all_sky=(140160, 14)
+DEBUG - 2022-03-01 13:18:16,849 [data_handlers.py:106] : 	Time step is 30 minutes
+DEBUG - 2022-03-01 13:18:16,849 [data_handlers.py:110] : 	Grabbing surface data for 2017 and [0, 1, 2, 3, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:18:16,852 [data_handlers.py:117] : 		Grabbing surface data for bon from /projects/pxs/surfrad/h5/bon_2017.h5
+DEBUG - 2022-03-01 13:18:17,511 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:17,514 [data_handlers.py:117] : 		Grabbing surface data for tbl from /projects/pxs/surfrad/h5/tbl_2017.h5
+DEBUG - 2022-03-01 13:18:18,157 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:18,160 [data_handlers.py:117] : 		Grabbing surface data for dra from /projects/pxs/surfrad/h5/dra_2017.h5
+DEBUG - 2022-03-01 13:18:18,799 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:18,802 [data_handlers.py:117] : 		Grabbing surface data for fpk from /projects/pxs/surfrad/h5/fpk_2017.h5
+DEBUG - 2022-03-01 13:18:19,446 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:19,449 [data_handlers.py:117] : 		Grabbing surface data for psu from /projects/pxs/surfrad/h5/psu_2017.h5
+DEBUG - 2022-03-01 13:18:20,097 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:20,100 [data_handlers.py:117] : 		Grabbing surface data for sxf from /projects/pxs/surfrad/h5/sxf_2017.h5
+DEBUG - 2022-03-01 13:18:20,743 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:20,747 [data_handlers.py:117] : 		Grabbing surface data for sgp from /projects/pxs/surfrad/h5/sgp_2017.h5
+DEBUG - 2022-03-01 13:18:21,399 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:21,402 [data_handlers.py:117] : 		Grabbing surface data for srrl from /projects/pxs/surfrad/h5/srrl_2017.h5
+DEBUG - 2022-03-01 13:18:22,051 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:22,051 [data_handlers.py:85] : Loading data for site(s) [0, 1, 2, 3, 5, 6, 7, 8], from /projects/pxs/mlclouds/training_data/2018_east_v322/mlclouds_surfrad_east_2018.h5
+DEBUG - 2022-03-01 13:18:28,319 [data_handlers.py:103] : 	Shape temp_raw=(840960, 19), temp_all_sky=(840960, 14)
+DEBUG - 2022-03-01 13:18:28,339 [data_handlers.py:106] : 	Time step is 5 minutes
+DEBUG - 2022-03-01 13:18:28,339 [data_handlers.py:110] : 	Grabbing surface data for 2018 and [0, 1, 2, 3, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:18:28,343 [data_handlers.py:117] : 		Grabbing surface data for bon from /projects/pxs/surfrad/h5/bon_2018.h5
+DEBUG - 2022-03-01 13:18:29,011 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:29,015 [data_handlers.py:117] : 		Grabbing surface data for tbl from /projects/pxs/surfrad/h5/tbl_2018.h5
+DEBUG - 2022-03-01 13:18:29,682 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:29,685 [data_handlers.py:117] : 		Grabbing surface data for dra from /projects/pxs/surfrad/h5/dra_2018.h5
+DEBUG - 2022-03-01 13:18:30,355 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:30,359 [data_handlers.py:117] : 		Grabbing surface data for fpk from /projects/pxs/surfrad/h5/fpk_2018.h5
+DEBUG - 2022-03-01 13:18:31,036 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:31,040 [data_handlers.py:117] : 		Grabbing surface data for psu from /projects/pxs/surfrad/h5/psu_2018.h5
+DEBUG - 2022-03-01 13:18:31,734 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:31,738 [data_handlers.py:117] : 		Grabbing surface data for sxf from /projects/pxs/surfrad/h5/sxf_2018.h5
+DEBUG - 2022-03-01 13:18:32,431 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:32,434 [data_handlers.py:117] : 		Grabbing surface data for sgp from /projects/pxs/surfrad/h5/sgp_2018.h5
+DEBUG - 2022-03-01 13:18:33,113 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:33,117 [data_handlers.py:117] : 		Grabbing surface data for srrl from /projects/pxs/surfrad/h5/srrl_2018.h5
+DEBUG - 2022-03-01 13:18:33,810 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:33,810 [data_handlers.py:85] : Loading data for site(s) [0, 1, 2, 3, 5, 6, 7, 8], from /projects/pxs/mlclouds/training_data/2018_west_v322/mlclouds_surfrad_west_2018.h5
+DEBUG - 2022-03-01 13:18:35,029 [data_handlers.py:103] : 	Shape temp_raw=(140160, 19), temp_all_sky=(140160, 14)
+DEBUG - 2022-03-01 13:18:35,033 [data_handlers.py:106] : 	Time step is 30 minutes
+DEBUG - 2022-03-01 13:18:35,033 [data_handlers.py:110] : 	Grabbing surface data for 2018 and [0, 1, 2, 3, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:18:35,036 [data_handlers.py:117] : 		Grabbing surface data for bon from /projects/pxs/surfrad/h5/bon_2018.h5
+DEBUG - 2022-03-01 13:18:35,693 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:35,696 [data_handlers.py:117] : 		Grabbing surface data for tbl from /projects/pxs/surfrad/h5/tbl_2018.h5
+DEBUG - 2022-03-01 13:18:36,354 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:36,357 [data_handlers.py:117] : 		Grabbing surface data for dra from /projects/pxs/surfrad/h5/dra_2018.h5
+DEBUG - 2022-03-01 13:18:37,015 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:37,019 [data_handlers.py:117] : 		Grabbing surface data for fpk from /projects/pxs/surfrad/h5/fpk_2018.h5
+DEBUG - 2022-03-01 13:18:37,677 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:37,680 [data_handlers.py:117] : 		Grabbing surface data for psu from /projects/pxs/surfrad/h5/psu_2018.h5
+DEBUG - 2022-03-01 13:18:38,341 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:38,345 [data_handlers.py:117] : 		Grabbing surface data for sxf from /projects/pxs/surfrad/h5/sxf_2018.h5
+DEBUG - 2022-03-01 13:18:39,002 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:39,006 [data_handlers.py:117] : 		Grabbing surface data for sgp from /projects/pxs/surfrad/h5/sgp_2018.h5
+DEBUG - 2022-03-01 13:18:39,671 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:39,675 [data_handlers.py:117] : 		Grabbing surface data for srrl from /projects/pxs/surfrad/h5/srrl_2018.h5
+DEBUG - 2022-03-01 13:18:40,337 [data_handlers.py:134] : 	Shape: temp_surf=(17520, 5)
+DEBUG - 2022-03-01 13:18:40,337 [data_handlers.py:85] : Loading data for site(s) [0, 1, 2, 3, 5, 6, 7, 8], from /projects/pxs/mlclouds/training_data/2019_east_v322/mlclouds_surfrad_east_2019.h5
+DEBUG - 2022-03-01 13:18:46,779 [data_handlers.py:103] : 	Shape temp_raw=(840960, 19), temp_all_sky=(840960, 14)
+DEBUG - 2022-03-01 13:18:46,800 [data_handlers.py:106] : 	Time step is 5 minutes
+DEBUG - 2022-03-01 13:18:46,800 [data_handlers.py:110] : 	Grabbing surface data for 2019 and [0, 1, 2, 3, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:18:46,804 [data_handlers.py:117] : 		Grabbing surface data for bon from /projects/pxs/surfrad/h5/bon_2019.h5
+DEBUG - 2022-03-01 13:18:47,478 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:47,482 [data_handlers.py:117] : 		Grabbing surface data for tbl from /projects/pxs/surfrad/h5/tbl_2019.h5
+DEBUG - 2022-03-01 13:18:48,155 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:48,158 [data_handlers.py:117] : 		Grabbing surface data for dra from /projects/pxs/surfrad/h5/dra_2019.h5
+DEBUG - 2022-03-01 13:18:48,848 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:48,852 [data_handlers.py:117] : 		Grabbing surface data for fpk from /projects/pxs/surfrad/h5/fpk_2019.h5
+DEBUG - 2022-03-01 13:18:49,529 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:49,533 [data_handlers.py:117] : 		Grabbing surface data for psu from /projects/pxs/surfrad/h5/psu_2019.h5
+DEBUG - 2022-03-01 13:18:50,239 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:50,243 [data_handlers.py:117] : 		Grabbing surface data for sxf from /projects/pxs/surfrad/h5/sxf_2019.h5
+DEBUG - 2022-03-01 13:18:50,922 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:50,925 [data_handlers.py:117] : 		Grabbing surface data for sgp from /projects/pxs/surfrad/h5/sgp_2019.h5
+DEBUG - 2022-03-01 13:18:51,627 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:51,631 [data_handlers.py:117] : 		Grabbing surface data for srrl from /projects/pxs/surfrad/h5/srrl_2019.h5
+DEBUG - 2022-03-01 13:18:52,332 [data_handlers.py:134] : 	Shape: temp_surf=(105120, 5)
+DEBUG - 2022-03-01 13:18:52,332 [data_handlers.py:85] : Loading data for site(s) [0, 1, 2, 3, 5, 6, 7, 8], from /projects/pxs/mlclouds/training_data/2019_west_v322/mlclouds_surfrad_west_2019.h5
+DEBUG - 2022-03-01 13:18:55,628 [data_handlers.py:103] : 	Shape temp_raw=(420480, 19), temp_all_sky=(420480, 14)
+DEBUG - 2022-03-01 13:18:55,638 [data_handlers.py:106] : 	Time step is 10 minutes
+DEBUG - 2022-03-01 13:18:55,638 [data_handlers.py:110] : 	Grabbing surface data for 2019 and [0, 1, 2, 3, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:18:55,642 [data_handlers.py:117] : 		Grabbing surface data for bon from /projects/pxs/surfrad/h5/bon_2019.h5
+DEBUG - 2022-03-01 13:18:56,301 [data_handlers.py:134] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2022-03-01 13:18:56,305 [data_handlers.py:117] : 		Grabbing surface data for tbl from /projects/pxs/surfrad/h5/tbl_2019.h5
+DEBUG - 2022-03-01 13:18:56,966 [data_handlers.py:134] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2022-03-01 13:18:56,970 [data_handlers.py:117] : 		Grabbing surface data for dra from /projects/pxs/surfrad/h5/dra_2019.h5
+DEBUG - 2022-03-01 13:18:57,632 [data_handlers.py:134] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2022-03-01 13:18:57,635 [data_handlers.py:117] : 		Grabbing surface data for fpk from /projects/pxs/surfrad/h5/fpk_2019.h5
+DEBUG - 2022-03-01 13:18:58,295 [data_handlers.py:134] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2022-03-01 13:18:58,298 [data_handlers.py:117] : 		Grabbing surface data for psu from /projects/pxs/surfrad/h5/psu_2019.h5
+DEBUG - 2022-03-01 13:18:58,971 [data_handlers.py:134] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2022-03-01 13:18:58,975 [data_handlers.py:117] : 		Grabbing surface data for sxf from /projects/pxs/surfrad/h5/sxf_2019.h5
+DEBUG - 2022-03-01 13:18:59,633 [data_handlers.py:134] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2022-03-01 13:18:59,636 [data_handlers.py:117] : 		Grabbing surface data for sgp from /projects/pxs/surfrad/h5/sgp_2019.h5
+DEBUG - 2022-03-01 13:19:00,318 [data_handlers.py:134] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2022-03-01 13:19:00,322 [data_handlers.py:117] : 		Grabbing surface data for srrl from /projects/pxs/surfrad/h5/srrl_2019.h5
+DEBUG - 2022-03-01 13:19:00,989 [data_handlers.py:134] : 	Shape: temp_surf=(52560, 5)
+DEBUG - 2022-03-01 13:19:00,989 [data_handlers.py:136] : Data load complete. Shape df_raw=(2803968, 19), df_all_sky=(2803968, 14), df_surf=(2803968, 5)
+DEBUG - 2022-03-01 13:19:01,852 [data_handlers.py:159] : Extracting 2D arrays to run rest2 for clearsky PhyGNN inputs.
+DEBUG - 2022-03-01 13:19:13,920 [data_handlers.py:176] : Running rest2 for clearsky PhyGNN inputs.
+DEBUG - 2022-03-01 13:21:08,239 [data_handlers.py:194] : Completed rest2 run for clearsky PhyGNN inputs.
+INFO - 2022-03-01 13:21:09,949 [data_handlers.py:62] : Prepping training data
+DEBUG - 2022-03-01 13:21:09,949 [data_handlers.py:214] : Training data clean kwargs: {'filter_daylight': True, 'filter_clear': False, 'add_cloud_flag': True, 'sza_lim': 89, 'nan_option': 'interp'}
+DEBUG - 2022-03-01 13:21:09,949 [data_handlers.py:215] : Shape before cleaning: df_raw=(2803968, 19)
+INFO - 2022-03-01 13:21:10,216 [data_cleaners.py:36] : 49.68% of timesteps are daylight
+INFO - 2022-03-01 13:21:10,220 [data_cleaners.py:38] : 52.80% of daylight timesteps are cloudy
+INFO - 2022-03-01 13:21:10,225 [data_cleaners.py:40] : 2.05% of daylight timesteps are missing cloud type
+INFO - 2022-03-01 13:21:10,230 [data_cleaners.py:42] : 33.95% of cloudy daylight timesteps are missing cloud opd
+INFO - 2022-03-01 13:21:10,234 [data_cleaners.py:44] : 34.16% of cloudy daylight timesteps are missing cloud reff
+DEBUG - 2022-03-01 13:21:10,235 [data_cleaners.py:47] : Column NaN values:
+DEBUG - 2022-03-01 13:21:10,237 [data_cleaners.py:50] : 	"gid" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:10,243 [data_cleaners.py:50] : 	"time_index" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:10,247 [data_cleaners.py:50] : 	"solar_zenith_angle" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:10,252 [data_cleaners.py:50] : 	"cloud_type" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:10,256 [data_cleaners.py:50] : 	"refl_0_65um_nom" has 50.84% NaN values
+DEBUG - 2022-03-01 13:21:10,260 [data_cleaners.py:50] : 	"refl_0_65um_nom_stddev_3x3" has 50.84% NaN values
+DEBUG - 2022-03-01 13:21:10,264 [data_cleaners.py:50] : 	"refl_3_75um_nom" has 2.09% NaN values
+DEBUG - 2022-03-01 13:21:10,268 [data_cleaners.py:50] : 	"temp_3_75um_nom" has 1.99% NaN values
+DEBUG - 2022-03-01 13:21:10,272 [data_cleaners.py:50] : 	"temp_11_0um_nom" has 1.99% NaN values
+DEBUG - 2022-03-01 13:21:10,275 [data_cleaners.py:50] : 	"temp_11_0um_nom_stddev_3x3" has 2.07% NaN values
+DEBUG - 2022-03-01 13:21:10,279 [data_cleaners.py:50] : 	"cloud_probability" has 2.07% NaN values
+DEBUG - 2022-03-01 13:21:10,283 [data_cleaners.py:50] : 	"cloud_fraction" has 2.07% NaN values
+DEBUG - 2022-03-01 13:21:10,287 [data_cleaners.py:50] : 	"air_temperature" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:10,291 [data_cleaners.py:50] : 	"dew_point" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:10,295 [data_cleaners.py:50] : 	"relative_humidity" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:10,299 [data_cleaners.py:50] : 	"total_precipitable_water" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:10,303 [data_cleaners.py:50] : 	"surface_albedo" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:10,307 [data_cleaners.py:50] : 	"cld_opd_dcomp" has 82.67% NaN values
+DEBUG - 2022-03-01 13:21:10,311 [data_cleaners.py:50] : 	"cld_reff_dcomp" has 82.73% NaN values
+DEBUG - 2022-03-01 13:21:10,311 [data_cleaners.py:53] : Interpolating opd and reff
+DEBUG - 2022-03-01 13:21:13,371 [data_cleaners.py:79] : Adding cloud type flag (e.g. flag=[night, clear, ice_cloud, water_cloud, bad_cloud])
+INFO - 2022-03-01 13:21:13,661 [data_cleaners.py:99] : Data reduced from 2803968 rows to 1393069 after filters (49.68% of original)
+DEBUG - 2022-03-01 13:21:13,788 [data_cleaners.py:105] : Feature flag column has these values: ['clear' 'bad_cloud' 'water_cloud' 'ice_cloud']
+INFO - 2022-03-01 13:21:13,788 [data_cleaners.py:107] : Cleaning took 3.8 seconds
+DEBUG - 2022-03-01 13:21:13,788 [data_handlers.py:218] : Shape after cleaning: df_train=(1393069, 20)
+DEBUG - 2022-03-01 13:21:13,788 [data_handlers.py:221] : Cleaning df_all_sky training data (for pfun).
+DEBUG - 2022-03-01 13:21:13,788 [data_handlers.py:222] : Shape before cleaning: df_all_sky=(2803968, 25)
+INFO - 2022-03-01 13:21:14,087 [data_cleaners.py:36] : 49.68% of timesteps are daylight
+INFO - 2022-03-01 13:21:14,091 [data_cleaners.py:38] : 52.80% of daylight timesteps are cloudy
+INFO - 2022-03-01 13:21:14,096 [data_cleaners.py:40] : 2.05% of daylight timesteps are missing cloud type
+INFO - 2022-03-01 13:21:14,101 [data_cleaners.py:42] : 33.95% of cloudy daylight timesteps are missing cloud opd
+INFO - 2022-03-01 13:21:14,105 [data_cleaners.py:44] : 34.16% of cloudy daylight timesteps are missing cloud reff
+DEBUG - 2022-03-01 13:21:14,105 [data_cleaners.py:47] : Column NaN values:
+DEBUG - 2022-03-01 13:21:14,108 [data_cleaners.py:50] : 	"gid" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,112 [data_cleaners.py:50] : 	"alpha" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,116 [data_cleaners.py:50] : 	"aod" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,120 [data_cleaners.py:50] : 	"asymmetry" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,126 [data_cleaners.py:50] : 	"cloud_type" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,129 [data_cleaners.py:50] : 	"cld_opd_dcomp" has 82.67% NaN values
+DEBUG - 2022-03-01 13:21:14,133 [data_cleaners.py:50] : 	"cld_reff_dcomp" has 82.73% NaN values
+DEBUG - 2022-03-01 13:21:14,137 [data_cleaners.py:50] : 	"ozone" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,141 [data_cleaners.py:50] : 	"solar_zenith_angle" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,145 [data_cleaners.py:50] : 	"ssa" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,149 [data_cleaners.py:50] : 	"surface_albedo" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,152 [data_cleaners.py:50] : 	"surface_pressure" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,156 [data_cleaners.py:50] : 	"total_precipitable_water" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,161 [data_cleaners.py:50] : 	"surfrad_dhi" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,166 [data_cleaners.py:50] : 	"surfrad_dni" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,171 [data_cleaners.py:50] : 	"surfrad_ghi" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,174 [data_cleaners.py:50] : 	"doy" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,179 [data_cleaners.py:50] : 	"radius" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,184 [data_cleaners.py:50] : 	"Tuuclr" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,189 [data_cleaners.py:50] : 	"clearsky_ghi" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,195 [data_cleaners.py:50] : 	"clearsky_dni" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,200 [data_cleaners.py:50] : 	"Ruuclr" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,205 [data_cleaners.py:50] : 	"Tddclr" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,210 [data_cleaners.py:50] : 	"Tduclr" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,216 [data_cleaners.py:50] : 	"time_index" has 0.00% NaN values
+DEBUG - 2022-03-01 13:21:14,216 [data_cleaners.py:53] : Interpolating opd and reff
+DEBUG - 2022-03-01 13:21:16,756 [data_cleaners.py:79] : Adding cloud type flag (e.g. flag=[night, clear, ice_cloud, water_cloud, bad_cloud])
+INFO - 2022-03-01 13:21:17,036 [data_cleaners.py:99] : Data reduced from 2803968 rows to 1393069 after filters (49.68% of original)
+DEBUG - 2022-03-01 13:21:17,192 [data_cleaners.py:105] : Feature flag column has these values: ['clear' 'bad_cloud' 'water_cloud' 'ice_cloud']
+INFO - 2022-03-01 13:21:17,192 [data_cleaners.py:107] : Cleaning took 3.4 seconds
+DEBUG - 2022-03-01 13:21:17,194 [data_handlers.py:226] : Shape after cleaning: df_all_sky=(1393069, 26)
+DEBUG - 2022-03-01 13:21:17,290 [data_handlers.py:240] : **Shape: df_train=(1393069, 17)
+DEBUG - 2022-03-01 13:21:17,319 [data_handlers.py:250] : Shapes: x=(1393069, 15), y=(1393069, 2), p=(1393069, 26)
+DEBUG - 2022-03-01 13:21:17,319 [data_handlers.py:253] : Training features: ['solar_zenith_angle', 'refl_0_65um_nom', 'refl_0_65um_nom_stddev_3x3', 'refl_3_75um_nom', 'temp_3_75um_nom', 'temp_11_0um_nom', 'temp_11_0um_nom_stddev_3x3', 'cloud_probability', 'cloud_fraction', 'air_temperature', 'dew_point', 'relative_humidity', 'total_precipitable_water', 'surface_albedo', 'flag']
+DEBUG - 2022-03-01 13:21:17,319 [trainer.py:67] : Building PHYGNN model
+INFO - 2022-03-01 13:21:17,319 [trainer.py:70] : Using p_fun: <function p_fun_all_sky at 0x2b4d8bfaf820>
+INFO - 2022-03-01 13:21:17,320 [base.py:152] : Active python environment versions: 
+{   'numpy': '1.22.2',
+    'pandas': '1.2.4',
+    'phygnn': '0.0.14',
+    'python': '3.8.8 (default, Feb 24 2021, 21:46:12) \n[GCC 7.3.0]',
+    'sklearn': '0.24.1',
+    'tensorflow': '2.8.0'}
+INFO - 2022-03-01 13:21:17,337 [base.py:111] : Successfully initialized model with 17 layers
+INFO - 2022-03-01 13:21:17,337 [trainer.py:84] : Training part A - pure data. Loss is [1, 0]
+2022-03-01 13:21:26.776788: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /nopt/slurm/current/lib:/nopt/slurm/current/lib:
+2022-03-01 13:21:26.777760: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcublas.so.11'; dlerror: libcublas.so.11: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /nopt/slurm/current/lib:/nopt/slurm/current/lib:
+2022-03-01 13:21:26.778545: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcublasLt.so.11'; dlerror: libcublasLt.so.11: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /nopt/slurm/current/lib:/nopt/slurm/current/lib:
+2022-03-01 13:21:26.779269: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcufft.so.10'; dlerror: libcufft.so.10: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /nopt/slurm/current/lib:/nopt/slurm/current/lib:
+2022-03-01 13:21:26.779972: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcurand.so.10'; dlerror: libcurand.so.10: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /nopt/slurm/current/lib:/nopt/slurm/current/lib:
+2022-03-01 13:21:26.780809: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcusolver.so.11'; dlerror: libcusolver.so.11: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /nopt/slurm/current/lib:/nopt/slurm/current/lib:
+2022-03-01 13:21:26.781512: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcusparse.so.11'; dlerror: libcusparse.so.11: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /nopt/slurm/current/lib:/nopt/slurm/current/lib:
+2022-03-01 13:21:26.782291: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudnn.so.8'; dlerror: libcudnn.so.8: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /nopt/slurm/current/lib:/nopt/slurm/current/lib:
+2022-03-01 13:21:26.782311: W tensorflow/core/common_runtime/gpu/gpu_device.cc:1850] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.
+Skipping registering GPU devices...
+2022-03-01 13:21:26.782796: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+INFO - 2022-03-01 13:21:35,055 [phygnn.py:576] : Epoch 0 train loss: 6.81e-01 val loss: 6.70e-01 for "phygnn"
+INFO - 2022-03-01 13:21:43,578 [phygnn.py:576] : Epoch 1 train loss: 6.28e-01 val loss: 6.14e-01 for "phygnn"
+INFO - 2022-03-01 13:21:51,988 [phygnn.py:576] : Epoch 2 train loss: 5.56e-01 val loss: 5.41e-01 for "phygnn"
+INFO - 2022-03-01 13:22:00,743 [phygnn.py:576] : Epoch 3 train loss: 5.26e-01 val loss: 5.03e-01 for "phygnn"
+INFO - 2022-03-01 13:22:09,365 [phygnn.py:576] : Epoch 4 train loss: 5.04e-01 val loss: 4.78e-01 for "phygnn"
+INFO - 2022-03-01 13:22:17,898 [phygnn.py:576] : Epoch 5 train loss: 4.83e-01 val loss: 4.68e-01 for "phygnn"
+INFO - 2022-03-01 13:22:26,250 [phygnn.py:576] : Epoch 6 train loss: 4.79e-01 val loss: 4.60e-01 for "phygnn"
+INFO - 2022-03-01 13:22:34,774 [phygnn.py:576] : Epoch 7 train loss: 4.72e-01 val loss: 4.56e-01 for "phygnn"
+INFO - 2022-03-01 13:22:43,276 [phygnn.py:576] : Epoch 8 train loss: 4.74e-01 val loss: 4.52e-01 for "phygnn"
+INFO - 2022-03-01 13:22:51,728 [phygnn.py:576] : Epoch 9 train loss: 4.69e-01 val loss: 4.50e-01 for "phygnn"
+INFO - 2022-03-01 13:23:00,229 [phygnn.py:576] : Epoch 10 train loss: 4.58e-01 val loss: 4.45e-01 for "phygnn"
+INFO - 2022-03-01 13:23:08,815 [phygnn.py:576] : Epoch 11 train loss: 4.62e-01 val loss: 4.44e-01 for "phygnn"
+INFO - 2022-03-01 13:23:17,228 [phygnn.py:576] : Epoch 12 train loss: 4.59e-01 val loss: 4.41e-01 for "phygnn"
+INFO - 2022-03-01 13:23:25,894 [phygnn.py:576] : Epoch 13 train loss: 4.57e-01 val loss: 4.41e-01 for "phygnn"
+INFO - 2022-03-01 13:23:34,337 [phygnn.py:576] : Epoch 14 train loss: 4.50e-01 val loss: 4.40e-01 for "phygnn"
+INFO - 2022-03-01 13:23:42,988 [phygnn.py:576] : Epoch 15 train loss: 4.47e-01 val loss: 4.36e-01 for "phygnn"
+INFO - 2022-03-01 13:23:51,462 [phygnn.py:576] : Epoch 16 train loss: 4.46e-01 val loss: 4.36e-01 for "phygnn"
+INFO - 2022-03-01 13:23:59,825 [phygnn.py:576] : Epoch 17 train loss: 4.47e-01 val loss: 4.35e-01 for "phygnn"
+INFO - 2022-03-01 13:24:08,303 [phygnn.py:576] : Epoch 18 train loss: 4.45e-01 val loss: 4.33e-01 for "phygnn"
+INFO - 2022-03-01 13:24:16,570 [phygnn.py:576] : Epoch 19 train loss: 4.42e-01 val loss: 4.31e-01 for "phygnn"
+INFO - 2022-03-01 13:24:25,100 [phygnn.py:576] : Epoch 20 train loss: 4.49e-01 val loss: 4.32e-01 for "phygnn"
+INFO - 2022-03-01 13:24:33,539 [phygnn.py:576] : Epoch 21 train loss: 4.39e-01 val loss: 4.29e-01 for "phygnn"
+INFO - 2022-03-01 13:24:42,119 [phygnn.py:576] : Epoch 22 train loss: 4.44e-01 val loss: 4.29e-01 for "phygnn"
+INFO - 2022-03-01 13:24:50,739 [phygnn.py:576] : Epoch 23 train loss: 4.45e-01 val loss: 4.28e-01 for "phygnn"
+INFO - 2022-03-01 13:24:59,217 [phygnn.py:576] : Epoch 24 train loss: 4.36e-01 val loss: 4.25e-01 for "phygnn"
+INFO - 2022-03-01 13:25:07,873 [phygnn.py:576] : Epoch 25 train loss: 4.38e-01 val loss: 4.24e-01 for "phygnn"
+INFO - 2022-03-01 13:25:16,571 [phygnn.py:576] : Epoch 26 train loss: 4.30e-01 val loss: 4.25e-01 for "phygnn"
+INFO - 2022-03-01 13:25:25,013 [phygnn.py:576] : Epoch 27 train loss: 4.42e-01 val loss: 4.23e-01 for "phygnn"
+INFO - 2022-03-01 13:25:33,490 [phygnn.py:576] : Epoch 28 train loss: 4.36e-01 val loss: 4.24e-01 for "phygnn"
+INFO - 2022-03-01 13:25:42,091 [phygnn.py:576] : Epoch 29 train loss: 4.29e-01 val loss: 4.22e-01 for "phygnn"
+INFO - 2022-03-01 13:25:50,508 [phygnn.py:576] : Epoch 30 train loss: 4.37e-01 val loss: 4.21e-01 for "phygnn"
+INFO - 2022-03-01 13:25:59,090 [phygnn.py:576] : Epoch 31 train loss: 4.42e-01 val loss: 4.21e-01 for "phygnn"
+INFO - 2022-03-01 13:26:07,694 [phygnn.py:576] : Epoch 32 train loss: 4.33e-01 val loss: 4.19e-01 for "phygnn"
+INFO - 2022-03-01 13:26:16,281 [phygnn.py:576] : Epoch 33 train loss: 4.29e-01 val loss: 4.19e-01 for "phygnn"
+INFO - 2022-03-01 13:26:24,826 [phygnn.py:576] : Epoch 34 train loss: 4.35e-01 val loss: 4.18e-01 for "phygnn"
+INFO - 2022-03-01 13:26:33,398 [phygnn.py:576] : Epoch 35 train loss: 4.28e-01 val loss: 4.17e-01 for "phygnn"
+INFO - 2022-03-01 13:26:41,960 [phygnn.py:576] : Epoch 36 train loss: 4.38e-01 val loss: 4.18e-01 for "phygnn"
+INFO - 2022-03-01 13:26:50,616 [phygnn.py:576] : Epoch 37 train loss: 4.31e-01 val loss: 4.17e-01 for "phygnn"
+INFO - 2022-03-01 13:26:59,118 [phygnn.py:576] : Epoch 38 train loss: 4.31e-01 val loss: 4.17e-01 for "phygnn"
+INFO - 2022-03-01 13:27:07,539 [phygnn.py:576] : Epoch 39 train loss: 4.24e-01 val loss: 4.16e-01 for "phygnn"
+INFO - 2022-03-01 13:27:16,170 [phygnn.py:576] : Epoch 40 train loss: 4.28e-01 val loss: 4.16e-01 for "phygnn"
+INFO - 2022-03-01 13:27:24,996 [phygnn.py:576] : Epoch 41 train loss: 4.34e-01 val loss: 4.16e-01 for "phygnn"
+INFO - 2022-03-01 13:27:33,421 [phygnn.py:576] : Epoch 42 train loss: 4.27e-01 val loss: 4.14e-01 for "phygnn"
+INFO - 2022-03-01 13:27:41,930 [phygnn.py:576] : Epoch 43 train loss: 4.29e-01 val loss: 4.13e-01 for "phygnn"
+INFO - 2022-03-01 13:27:50,563 [phygnn.py:576] : Epoch 44 train loss: 4.27e-01 val loss: 4.14e-01 for "phygnn"
+INFO - 2022-03-01 13:27:59,149 [phygnn.py:576] : Epoch 45 train loss: 4.27e-01 val loss: 4.13e-01 for "phygnn"
+INFO - 2022-03-01 13:28:07,843 [phygnn.py:576] : Epoch 46 train loss: 4.22e-01 val loss: 4.13e-01 for "phygnn"
+INFO - 2022-03-01 13:28:16,534 [phygnn.py:576] : Epoch 47 train loss: 4.22e-01 val loss: 4.14e-01 for "phygnn"
+INFO - 2022-03-01 13:28:25,293 [phygnn.py:576] : Epoch 48 train loss: 4.21e-01 val loss: 4.11e-01 for "phygnn"
+INFO - 2022-03-01 13:28:34,030 [phygnn.py:576] : Epoch 49 train loss: 4.25e-01 val loss: 4.11e-01 for "phygnn"
+INFO - 2022-03-01 13:28:42,631 [phygnn.py:576] : Epoch 50 train loss: 4.28e-01 val loss: 4.11e-01 for "phygnn"
+INFO - 2022-03-01 13:28:51,165 [phygnn.py:576] : Epoch 51 train loss: 4.23e-01 val loss: 4.11e-01 for "phygnn"
+INFO - 2022-03-01 13:28:59,828 [phygnn.py:576] : Epoch 52 train loss: 4.19e-01 val loss: 4.11e-01 for "phygnn"
+INFO - 2022-03-01 13:29:08,543 [phygnn.py:576] : Epoch 53 train loss: 4.25e-01 val loss: 4.10e-01 for "phygnn"
+INFO - 2022-03-01 13:29:17,142 [phygnn.py:576] : Epoch 54 train loss: 4.12e-01 val loss: 4.10e-01 for "phygnn"
+INFO - 2022-03-01 13:29:25,946 [phygnn.py:576] : Epoch 55 train loss: 4.19e-01 val loss: 4.09e-01 for "phygnn"
+INFO - 2022-03-01 13:29:34,376 [phygnn.py:576] : Epoch 56 train loss: 4.22e-01 val loss: 4.10e-01 for "phygnn"
+INFO - 2022-03-01 13:29:42,991 [phygnn.py:576] : Epoch 57 train loss: 4.19e-01 val loss: 4.09e-01 for "phygnn"
+INFO - 2022-03-01 13:29:51,853 [phygnn.py:576] : Epoch 58 train loss: 4.19e-01 val loss: 4.08e-01 for "phygnn"
+INFO - 2022-03-01 13:30:00,391 [phygnn.py:576] : Epoch 59 train loss: 4.22e-01 val loss: 4.07e-01 for "phygnn"
+INFO - 2022-03-01 13:30:08,998 [phygnn.py:576] : Epoch 60 train loss: 4.17e-01 val loss: 4.07e-01 for "phygnn"
+INFO - 2022-03-01 13:30:17,485 [phygnn.py:576] : Epoch 61 train loss: 4.25e-01 val loss: 4.10e-01 for "phygnn"
+INFO - 2022-03-01 13:30:26,018 [phygnn.py:576] : Epoch 62 train loss: 4.18e-01 val loss: 4.06e-01 for "phygnn"
+INFO - 2022-03-01 13:30:34,795 [phygnn.py:576] : Epoch 63 train loss: 4.25e-01 val loss: 4.09e-01 for "phygnn"
+INFO - 2022-03-01 13:30:43,622 [phygnn.py:576] : Epoch 64 train loss: 4.16e-01 val loss: 4.07e-01 for "phygnn"
+INFO - 2022-03-01 13:30:52,378 [phygnn.py:576] : Epoch 65 train loss: 4.21e-01 val loss: 4.07e-01 for "phygnn"
+INFO - 2022-03-01 13:31:00,826 [phygnn.py:576] : Epoch 66 train loss: 4.27e-01 val loss: 4.07e-01 for "phygnn"
+INFO - 2022-03-01 13:31:09,384 [phygnn.py:576] : Epoch 67 train loss: 4.17e-01 val loss: 4.07e-01 for "phygnn"
+INFO - 2022-03-01 13:31:17,994 [phygnn.py:576] : Epoch 68 train loss: 4.15e-01 val loss: 4.05e-01 for "phygnn"
+INFO - 2022-03-01 13:31:26,674 [phygnn.py:576] : Epoch 69 train loss: 4.12e-01 val loss: 4.05e-01 for "phygnn"
+INFO - 2022-03-01 13:31:35,201 [phygnn.py:576] : Epoch 70 train loss: 4.21e-01 val loss: 4.04e-01 for "phygnn"
+INFO - 2022-03-01 13:31:43,612 [phygnn.py:576] : Epoch 71 train loss: 4.22e-01 val loss: 4.05e-01 for "phygnn"
+INFO - 2022-03-01 13:31:52,045 [phygnn.py:576] : Epoch 72 train loss: 4.18e-01 val loss: 4.05e-01 for "phygnn"
+INFO - 2022-03-01 13:32:00,427 [phygnn.py:576] : Epoch 73 train loss: 4.15e-01 val loss: 4.03e-01 for "phygnn"
+INFO - 2022-03-01 13:32:08,849 [phygnn.py:576] : Epoch 74 train loss: 4.11e-01 val loss: 4.03e-01 for "phygnn"
+INFO - 2022-03-01 13:32:17,740 [phygnn.py:576] : Epoch 75 train loss: 4.14e-01 val loss: 4.04e-01 for "phygnn"
+INFO - 2022-03-01 13:32:26,345 [phygnn.py:576] : Epoch 76 train loss: 4.12e-01 val loss: 4.04e-01 for "phygnn"
+INFO - 2022-03-01 13:32:35,053 [phygnn.py:576] : Epoch 77 train loss: 4.08e-01 val loss: 4.03e-01 for "phygnn"
+INFO - 2022-03-01 13:32:43,585 [phygnn.py:576] : Epoch 78 train loss: 4.14e-01 val loss: 4.03e-01 for "phygnn"
+INFO - 2022-03-01 13:32:52,185 [phygnn.py:576] : Epoch 79 train loss: 4.13e-01 val loss: 4.02e-01 for "phygnn"
+INFO - 2022-03-01 13:33:00,792 [phygnn.py:576] : Epoch 80 train loss: 4.20e-01 val loss: 4.03e-01 for "phygnn"
+INFO - 2022-03-01 13:33:09,337 [phygnn.py:576] : Epoch 81 train loss: 4.09e-01 val loss: 4.02e-01 for "phygnn"
+INFO - 2022-03-01 13:33:18,148 [phygnn.py:576] : Epoch 82 train loss: 4.15e-01 val loss: 4.02e-01 for "phygnn"
+INFO - 2022-03-01 13:33:26,611 [phygnn.py:576] : Epoch 83 train loss: 4.12e-01 val loss: 4.02e-01 for "phygnn"
+INFO - 2022-03-01 13:33:35,087 [phygnn.py:576] : Epoch 84 train loss: 4.10e-01 val loss: 4.03e-01 for "phygnn"
+INFO - 2022-03-01 13:33:43,889 [phygnn.py:576] : Epoch 85 train loss: 4.10e-01 val loss: 4.01e-01 for "phygnn"
+INFO - 2022-03-01 13:33:52,403 [phygnn.py:576] : Epoch 86 train loss: 4.11e-01 val loss: 4.01e-01 for "phygnn"
+INFO - 2022-03-01 13:34:01,116 [phygnn.py:576] : Epoch 87 train loss: 4.13e-01 val loss: 4.01e-01 for "phygnn"
+INFO - 2022-03-01 13:34:09,906 [phygnn.py:576] : Epoch 88 train loss: 4.14e-01 val loss: 4.01e-01 for "phygnn"
+INFO - 2022-03-01 13:34:18,768 [phygnn.py:576] : Epoch 89 train loss: 4.16e-01 val loss: 4.00e-01 for "phygnn"
+INFO - 2022-03-01 13:34:27,410 [phygnn.py:576] : Epoch 90 train loss: 4.13e-01 val loss: 4.00e-01 for "phygnn"
+INFO - 2022-03-01 13:34:36,071 [phygnn.py:576] : Epoch 91 train loss: 4.11e-01 val loss: 4.00e-01 for "phygnn"
+INFO - 2022-03-01 13:34:44,649 [phygnn.py:576] : Epoch 92 train loss: 4.11e-01 val loss: 4.00e-01 for "phygnn"
+INFO - 2022-03-01 13:34:53,440 [phygnn.py:576] : Epoch 93 train loss: 4.03e-01 val loss: 4.00e-01 for "phygnn"
+INFO - 2022-03-01 13:35:02,094 [phygnn.py:576] : Epoch 94 train loss: 4.05e-01 val loss: 3.98e-01 for "phygnn"
+INFO - 2022-03-01 13:35:10,806 [phygnn.py:576] : Epoch 95 train loss: 4.13e-01 val loss: 3.99e-01 for "phygnn"
+INFO - 2022-03-01 13:35:19,314 [phygnn.py:576] : Epoch 96 train loss: 4.07e-01 val loss: 3.98e-01 for "phygnn"
+INFO - 2022-03-01 13:35:27,770 [phygnn.py:576] : Epoch 97 train loss: 4.09e-01 val loss: 3.98e-01 for "phygnn"
+INFO - 2022-03-01 13:35:36,267 [phygnn.py:576] : Epoch 98 train loss: 4.13e-01 val loss: 3.99e-01 for "phygnn"
+INFO - 2022-03-01 13:35:44,808 [phygnn.py:576] : Epoch 99 train loss: 4.14e-01 val loss: 3.98e-01 for "phygnn"
+INFO - 2022-03-01 13:35:45,696 [trainer.py:92] : Training part B - data and phygnn. Loss is [0.5, 0.5]
+INFO - 2022-03-01 13:36:09,364 [phygnn.py:576] : Epoch 100 train loss: 2.82e-01 val loss: 2.74e-01 for "phygnn"
+INFO - 2022-03-01 13:36:23,127 [phygnn.py:576] : Epoch 101 train loss: 2.79e-01 val loss: 2.74e-01 for "phygnn"
+INFO - 2022-03-01 13:36:36,644 [phygnn.py:576] : Epoch 102 train loss: 2.81e-01 val loss: 2.75e-01 for "phygnn"
+INFO - 2022-03-01 13:36:50,965 [phygnn.py:576] : Epoch 103 train loss: 2.82e-01 val loss: 2.74e-01 for "phygnn"
+INFO - 2022-03-01 13:37:04,613 [phygnn.py:576] : Epoch 104 train loss: 2.81e-01 val loss: 2.74e-01 for "phygnn"
+INFO - 2022-03-01 13:37:18,263 [phygnn.py:576] : Epoch 105 train loss: 2.82e-01 val loss: 2.74e-01 for "phygnn"
+INFO - 2022-03-01 13:37:31,869 [phygnn.py:576] : Epoch 106 train loss: 2.82e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:37:45,470 [phygnn.py:576] : Epoch 107 train loss: 2.80e-01 val loss: 2.74e-01 for "phygnn"
+INFO - 2022-03-01 13:37:59,918 [phygnn.py:576] : Epoch 108 train loss: 2.82e-01 val loss: 2.74e-01 for "phygnn"
+INFO - 2022-03-01 13:38:13,688 [phygnn.py:576] : Epoch 109 train loss: 2.78e-01 val loss: 2.74e-01 for "phygnn"
+INFO - 2022-03-01 13:38:26,832 [phygnn.py:576] : Epoch 110 train loss: 2.80e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:38:40,404 [phygnn.py:576] : Epoch 111 train loss: 2.79e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:38:54,819 [phygnn.py:576] : Epoch 112 train loss: 2.80e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:39:08,907 [phygnn.py:576] : Epoch 113 train loss: 2.80e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:39:22,011 [phygnn.py:576] : Epoch 114 train loss: 2.81e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:39:35,499 [phygnn.py:576] : Epoch 115 train loss: 2.79e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:39:48,612 [phygnn.py:576] : Epoch 116 train loss: 2.80e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:40:02,248 [phygnn.py:576] : Epoch 117 train loss: 2.80e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:40:15,768 [phygnn.py:576] : Epoch 118 train loss: 2.75e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:40:28,778 [phygnn.py:576] : Epoch 119 train loss: 2.83e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:40:42,823 [phygnn.py:576] : Epoch 120 train loss: 2.80e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:40:56,341 [phygnn.py:576] : Epoch 121 train loss: 2.80e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:41:09,894 [phygnn.py:576] : Epoch 122 train loss: 2.78e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:41:23,606 [phygnn.py:576] : Epoch 123 train loss: 2.79e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:41:37,756 [phygnn.py:576] : Epoch 124 train loss: 2.77e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:41:51,581 [phygnn.py:576] : Epoch 125 train loss: 2.78e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:42:04,689 [phygnn.py:576] : Epoch 126 train loss: 2.77e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:42:18,495 [phygnn.py:576] : Epoch 127 train loss: 2.80e-01 val loss: 2.73e-01 for "phygnn"
+INFO - 2022-03-01 13:42:31,460 [phygnn.py:576] : Epoch 128 train loss: 2.79e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:42:44,557 [phygnn.py:576] : Epoch 129 train loss: 2.81e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:42:57,491 [phygnn.py:576] : Epoch 130 train loss: 2.80e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:43:11,254 [phygnn.py:576] : Epoch 131 train loss: 2.80e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:43:24,966 [phygnn.py:576] : Epoch 132 train loss: 2.79e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:43:38,209 [phygnn.py:576] : Epoch 133 train loss: 2.78e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:43:51,958 [phygnn.py:576] : Epoch 134 train loss: 2.75e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:44:05,395 [phygnn.py:576] : Epoch 135 train loss: 2.76e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:44:19,402 [phygnn.py:576] : Epoch 136 train loss: 2.76e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:44:32,889 [phygnn.py:576] : Epoch 137 train loss: 2.78e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:44:46,678 [phygnn.py:576] : Epoch 138 train loss: 2.75e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:45:00,603 [phygnn.py:576] : Epoch 139 train loss: 2.76e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:45:14,724 [phygnn.py:576] : Epoch 140 train loss: 2.81e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:45:28,778 [phygnn.py:576] : Epoch 141 train loss: 2.76e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:45:42,108 [phygnn.py:576] : Epoch 142 train loss: 2.80e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:45:55,310 [phygnn.py:576] : Epoch 143 train loss: 2.76e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:46:08,605 [phygnn.py:576] : Epoch 144 train loss: 2.81e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:46:22,504 [phygnn.py:576] : Epoch 145 train loss: 2.77e-01 val loss: 2.72e-01 for "phygnn"
+INFO - 2022-03-01 13:46:36,234 [phygnn.py:576] : Epoch 146 train loss: 2.76e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:46:49,909 [phygnn.py:576] : Epoch 147 train loss: 2.79e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:47:04,141 [phygnn.py:576] : Epoch 148 train loss: 2.74e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:47:17,173 [phygnn.py:576] : Epoch 149 train loss: 2.77e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:47:30,011 [phygnn.py:576] : Epoch 150 train loss: 2.78e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:47:43,113 [phygnn.py:576] : Epoch 151 train loss: 2.72e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:47:56,284 [phygnn.py:576] : Epoch 152 train loss: 2.76e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:48:09,597 [phygnn.py:576] : Epoch 153 train loss: 2.76e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:48:23,065 [phygnn.py:576] : Epoch 154 train loss: 2.78e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:48:35,975 [phygnn.py:576] : Epoch 155 train loss: 2.75e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:48:49,033 [phygnn.py:576] : Epoch 156 train loss: 2.80e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:49:02,302 [phygnn.py:576] : Epoch 157 train loss: 2.75e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:49:16,423 [phygnn.py:576] : Epoch 158 train loss: 2.74e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:49:30,251 [phygnn.py:576] : Epoch 159 train loss: 2.75e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:49:44,127 [phygnn.py:576] : Epoch 160 train loss: 2.76e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:49:57,285 [phygnn.py:576] : Epoch 161 train loss: 2.79e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:50:10,055 [phygnn.py:576] : Epoch 162 train loss: 2.76e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:50:22,820 [phygnn.py:576] : Epoch 163 train loss: 2.77e-01 val loss: 2.71e-01 for "phygnn"
+INFO - 2022-03-01 13:50:36,641 [phygnn.py:576] : Epoch 164 train loss: 2.73e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:50:49,346 [phygnn.py:576] : Epoch 165 train loss: 2.74e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:51:01,971 [phygnn.py:576] : Epoch 166 train loss: 2.76e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:51:14,560 [phygnn.py:576] : Epoch 167 train loss: 2.76e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:51:28,029 [phygnn.py:576] : Epoch 168 train loss: 2.79e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:51:41,705 [phygnn.py:576] : Epoch 169 train loss: 2.77e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:51:55,151 [phygnn.py:576] : Epoch 170 train loss: 2.74e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:52:08,438 [phygnn.py:576] : Epoch 171 train loss: 2.74e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:52:21,534 [phygnn.py:576] : Epoch 172 train loss: 2.76e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:52:33,990 [phygnn.py:576] : Epoch 173 train loss: 2.75e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:52:46,999 [phygnn.py:576] : Epoch 174 train loss: 2.75e-01 val loss: 2.69e-01 for "phygnn"
+INFO - 2022-03-01 13:52:59,667 [phygnn.py:576] : Epoch 175 train loss: 2.73e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:53:12,979 [phygnn.py:576] : Epoch 176 train loss: 2.73e-01 val loss: 2.69e-01 for "phygnn"
+INFO - 2022-03-01 13:53:26,103 [phygnn.py:576] : Epoch 177 train loss: 2.74e-01 val loss: 2.69e-01 for "phygnn"
+INFO - 2022-03-01 13:53:38,591 [phygnn.py:576] : Epoch 178 train loss: 2.74e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:53:51,019 [phygnn.py:576] : Epoch 179 train loss: 2.76e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:54:03,648 [phygnn.py:576] : Epoch 180 train loss: 2.76e-01 val loss: 2.69e-01 for "phygnn"
+INFO - 2022-03-01 13:54:16,214 [phygnn.py:576] : Epoch 181 train loss: 2.73e-01 val loss: 2.69e-01 for "phygnn"
+INFO - 2022-03-01 13:54:28,432 [phygnn.py:576] : Epoch 182 train loss: 2.76e-01 val loss: 2.69e-01 for "phygnn"
+INFO - 2022-03-01 13:54:41,133 [phygnn.py:576] : Epoch 183 train loss: 2.74e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:54:54,183 [phygnn.py:576] : Epoch 184 train loss: 2.76e-01 val loss: 2.69e-01 for "phygnn"
+INFO - 2022-03-01 13:55:07,144 [phygnn.py:576] : Epoch 185 train loss: 2.74e-01 val loss: 2.69e-01 for "phygnn"
+INFO - 2022-03-01 13:55:19,934 [phygnn.py:576] : Epoch 186 train loss: 2.77e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:55:32,826 [phygnn.py:576] : Epoch 187 train loss: 2.74e-01 val loss: 2.70e-01 for "phygnn"
+INFO - 2022-03-01 13:55:45,251 [phygnn.py:576] : Epoch 188 train loss: 2.76e-01 val loss: 2.69e-01 for "phygnn"
+INFO - 2022-03-01 13:55:57,743 [phygnn.py:576] : Epoch 189 train loss: 2.76e-01 val loss: 2.69e-01 for "phygnn"
+INFO - 2022-03-01 13:56:10,697 [phygnn.py:576] : Epoch 190 train loss: 2.76e-01 val loss: 2.69e-01 for "phygnn"
+INFO - 2022-03-01 13:56:23,151 [phygnn.py:576] : Epoch 191 train loss: 2.74e-01 val loss: 2.68e-01 for "phygnn"
+INFO - 2022-03-01 13:56:35,711 [phygnn.py:576] : Epoch 192 train loss: 2.73e-01 val loss: 2.69e-01 for "phygnn"
+INFO - 2022-03-01 13:56:48,676 [phygnn.py:576] : Epoch 193 train loss: 2.75e-01 val loss: 2.69e-01 for "phygnn"
+INFO - 2022-03-01 13:57:00,971 [phygnn.py:576] : Epoch 194 train loss: 2.74e-01 val loss: 2.68e-01 for "phygnn"
+INFO - 2022-03-01 13:57:14,160 [phygnn.py:576] : Epoch 195 train loss: 2.73e-01 val loss: 2.69e-01 for "phygnn"
+INFO - 2022-03-01 13:57:26,926 [phygnn.py:576] : Epoch 196 train loss: 2.75e-01 val loss: 2.68e-01 for "phygnn"
+INFO - 2022-03-01 13:57:39,505 [phygnn.py:576] : Epoch 197 train loss: 2.71e-01 val loss: 2.68e-01 for "phygnn"
+INFO - 2022-03-01 13:57:52,592 [phygnn.py:576] : Epoch 198 train loss: 2.75e-01 val loss: 2.69e-01 for "phygnn"
+INFO - 2022-03-01 13:58:05,021 [phygnn.py:576] : Epoch 199 train loss: 2.73e-01 val loss: 2.68e-01 for "phygnn"
+INFO - 2022-03-01 13:58:05,768 [trainer.py:102] : Training complete
+INFO - 2022-03-01 13:58:05,820 [base.py:496] : Saved model to: /home/gbuster/code/mlclouds/mlclouds/model/k_fold/outputs/model_4.pkl
+DEBUG - 2022-03-01 13:58:05,820 [data_handlers.py:381] : Loading validation data
+DEBUG - 2022-03-01 13:58:05,820 [data_handlers.py:387] : Loading vars ['solar_zenith_angle', 'cloud_type', 'refl_0_65um_nom', 'refl_0_65um_nom_stddev_3x3', 'refl_3_75um_nom', 'temp_3_75um_nom', 'temp_11_0um_nom', 'temp_11_0um_nom_stddev_3x3', 'cloud_probability', 'cloud_fraction', 'air_temperature', 'dew_point', 'relative_humidity', 'total_precipitable_water', 'surface_albedo', 'cld_opd_dcomp', 'cld_reff_dcomp']
+DEBUG - 2022-03-01 13:58:05,825 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2016_east_v322/mlclouds_surfrad_east_2016.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:58:06,934 [data_handlers.py:410] : 	Shape temp_raw=(158112, 19), temp_all_sky=(158112, 14), & tstep=30 minutes
+DEBUG - 2022-03-01 13:58:06,934 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2016_west_v322/mlclouds_surfrad_west_2016.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:58:08,044 [data_handlers.py:410] : 	Shape temp_raw=(158112, 19), temp_all_sky=(158112, 14), & tstep=30 minutes
+DEBUG - 2022-03-01 13:58:08,045 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2017_east_v322/mlclouds_surfrad_east_2017.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:58:09,183 [data_handlers.py:410] : 	Shape temp_raw=(157680, 19), temp_all_sky=(157680, 14), & tstep=30 minutes
+DEBUG - 2022-03-01 13:58:09,183 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2017_west_v322/mlclouds_surfrad_west_2017.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:58:10,332 [data_handlers.py:410] : 	Shape temp_raw=(157680, 19), temp_all_sky=(157680, 14), & tstep=30 minutes
+DEBUG - 2022-03-01 13:58:10,332 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2018_east_v322/mlclouds_surfrad_east_2018.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:58:16,979 [data_handlers.py:410] : 	Shape temp_raw=(946080, 19), temp_all_sky=(946080, 14), & tstep=5 minutes
+DEBUG - 2022-03-01 13:58:16,980 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2018_west_v322/mlclouds_surfrad_west_2018.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:58:18,353 [data_handlers.py:410] : 	Shape temp_raw=(157680, 19), temp_all_sky=(157680, 14), & tstep=30 minutes
+DEBUG - 2022-03-01 13:58:18,353 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2019_east_v322/mlclouds_surfrad_east_2019.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:58:25,495 [data_handlers.py:410] : 	Shape temp_raw=(946080, 19), temp_all_sky=(946080, 14), & tstep=5 minutes
+DEBUG - 2022-03-01 13:58:25,495 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2019_west_v322/mlclouds_surfrad_west_2019.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:58:29,139 [data_handlers.py:410] : 	Shape temp_raw=(473040, 19), temp_all_sky=(473040, 14), & tstep=10 minutes
+DEBUG - 2022-03-01 13:58:29,139 [data_handlers.py:413] : Shape df_raw=(3154464, 19), df_all_sky=(3154464, 14)
+DEBUG - 2022-03-01 13:58:29,139 [data_handlers.py:420] : Shape after reset_index: df_raw=(3154464, 19), df_all_sky=(3154464, 14)
+INFO - 2022-03-01 13:58:29,534 [data_cleaners.py:36] : 49.69% of timesteps are daylight
+INFO - 2022-03-01 13:58:29,539 [data_cleaners.py:38] : 52.32% of daylight timesteps are cloudy
+INFO - 2022-03-01 13:58:29,544 [data_cleaners.py:40] : 3.25% of daylight timesteps are missing cloud type
+INFO - 2022-03-01 13:58:29,549 [data_cleaners.py:42] : 34.00% of cloudy daylight timesteps are missing cloud opd
+INFO - 2022-03-01 13:58:29,554 [data_cleaners.py:44] : 34.22% of cloudy daylight timesteps are missing cloud reff
+DEBUG - 2022-03-01 13:58:29,555 [data_cleaners.py:47] : Column NaN values:
+DEBUG - 2022-03-01 13:58:29,558 [data_cleaners.py:50] : 	"gid" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:29,564 [data_cleaners.py:50] : 	"time_index" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:29,568 [data_cleaners.py:50] : 	"solar_zenith_angle" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:29,575 [data_cleaners.py:50] : 	"cloud_type" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:29,579 [data_cleaners.py:50] : 	"refl_0_65um_nom" has 51.45% NaN values
+DEBUG - 2022-03-01 13:58:29,583 [data_cleaners.py:50] : 	"refl_0_65um_nom_stddev_3x3" has 51.45% NaN values
+DEBUG - 2022-03-01 13:58:29,587 [data_cleaners.py:50] : 	"refl_3_75um_nom" has 3.28% NaN values
+DEBUG - 2022-03-01 13:58:29,592 [data_cleaners.py:50] : 	"temp_3_75um_nom" has 3.19% NaN values
+DEBUG - 2022-03-01 13:58:29,596 [data_cleaners.py:50] : 	"temp_11_0um_nom" has 3.19% NaN values
+DEBUG - 2022-03-01 13:58:29,600 [data_cleaners.py:50] : 	"temp_11_0um_nom_stddev_3x3" has 3.27% NaN values
+DEBUG - 2022-03-01 13:58:29,604 [data_cleaners.py:50] : 	"cloud_probability" has 3.27% NaN values
+DEBUG - 2022-03-01 13:58:29,609 [data_cleaners.py:50] : 	"cloud_fraction" has 3.27% NaN values
+DEBUG - 2022-03-01 13:58:29,613 [data_cleaners.py:50] : 	"air_temperature" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:29,617 [data_cleaners.py:50] : 	"dew_point" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:29,621 [data_cleaners.py:50] : 	"relative_humidity" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:29,626 [data_cleaners.py:50] : 	"total_precipitable_water" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:29,630 [data_cleaners.py:50] : 	"surface_albedo" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:29,634 [data_cleaners.py:50] : 	"cld_opd_dcomp" has 82.84% NaN values
+DEBUG - 2022-03-01 13:58:29,639 [data_cleaners.py:50] : 	"cld_reff_dcomp" has 82.90% NaN values
+DEBUG - 2022-03-01 13:58:29,639 [data_cleaners.py:53] : Interpolating opd and reff
+DEBUG - 2022-03-01 13:58:33,605 [data_cleaners.py:79] : Adding cloud type flag (e.g. flag=[night, clear, ice_cloud, water_cloud, bad_cloud])
+DEBUG - 2022-03-01 13:58:34,028 [data_cleaners.py:105] : Feature flag column has these values: ['ice_cloud' 'water_cloud' 'night' 'clear' 'bad_cloud']
+INFO - 2022-03-01 13:58:34,028 [data_cleaners.py:107] : Cleaning took 4.9 seconds
+INFO - 2022-03-01 13:58:34,396 [data_cleaners.py:36] : 49.69% of timesteps are daylight
+INFO - 2022-03-01 13:58:34,401 [data_cleaners.py:38] : 52.32% of daylight timesteps are cloudy
+INFO - 2022-03-01 13:58:34,406 [data_cleaners.py:40] : 3.25% of daylight timesteps are missing cloud type
+INFO - 2022-03-01 13:58:34,411 [data_cleaners.py:42] : 34.00% of cloudy daylight timesteps are missing cloud opd
+INFO - 2022-03-01 13:58:34,416 [data_cleaners.py:44] : 34.22% of cloudy daylight timesteps are missing cloud reff
+DEBUG - 2022-03-01 13:58:34,416 [data_cleaners.py:47] : Column NaN values:
+DEBUG - 2022-03-01 13:58:34,420 [data_cleaners.py:50] : 	"gid" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:34,426 [data_cleaners.py:50] : 	"time_index" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:34,430 [data_cleaners.py:50] : 	"alpha" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:34,434 [data_cleaners.py:50] : 	"aod" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:34,439 [data_cleaners.py:50] : 	"asymmetry" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:34,444 [data_cleaners.py:50] : 	"cloud_type" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:34,449 [data_cleaners.py:50] : 	"cld_opd_dcomp" has 82.84% NaN values
+DEBUG - 2022-03-01 13:58:34,453 [data_cleaners.py:50] : 	"cld_reff_dcomp" has 82.90% NaN values
+DEBUG - 2022-03-01 13:58:34,457 [data_cleaners.py:50] : 	"ozone" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:34,461 [data_cleaners.py:50] : 	"solar_zenith_angle" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:34,466 [data_cleaners.py:50] : 	"ssa" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:34,470 [data_cleaners.py:50] : 	"surface_albedo" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:34,473 [data_cleaners.py:50] : 	"surface_pressure" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:34,477 [data_cleaners.py:50] : 	"total_precipitable_water" has 0.00% NaN values
+DEBUG - 2022-03-01 13:58:34,477 [data_cleaners.py:53] : Interpolating opd and reff
+DEBUG - 2022-03-01 13:58:36,704 [data_cleaners.py:79] : Adding cloud type flag (e.g. flag=[night, clear, ice_cloud, water_cloud, bad_cloud])
+DEBUG - 2022-03-01 13:58:37,110 [data_cleaners.py:105] : Feature flag column has these values: ['ice_cloud' 'water_cloud' 'night' 'clear' 'bad_cloud']
+INFO - 2022-03-01 13:58:37,110 [data_cleaners.py:107] : Cleaning took 3.1 seconds
+DEBUG - 2022-03-01 13:58:37,111 [data_handlers.py:453] : Prepping validation data
+DEBUG - 2022-03-01 13:58:37,153 [data_handlers.py:463] : Mask: shape=(3154464,), sum=1567353
+DEBUG - 2022-03-01 13:58:37,299 [data_handlers.py:474] : Validation features: ['solar_zenith_angle', 'refl_0_65um_nom', 'refl_0_65um_nom_stddev_3x3', 'refl_3_75um_nom', 'temp_3_75um_nom', 'temp_11_0um_nom', 'temp_11_0um_nom_stddev_3x3', 'cloud_probability', 'cloud_fraction', 'air_temperature', 'dew_point', 'relative_humidity', 'total_precipitable_water', 'surface_albedo', 'flag']
+INFO - 2022-03-01 13:58:37,299 [validator.py:107] : Predicting opd and reff
+DEBUG - 2022-03-01 13:58:41,204 [validator.py:110] : Predicted data shape is (1567353, 2)
+DEBUG - 2022-03-01 13:58:41,695 [validator.py:158] : shapes: df_feature_val=(3154464, 20), df_all_sky_val=(3154464, 15)
+INFO - 2022-03-01 13:58:42,019 [validator.py:179] : Calculating statistics
+DEBUG - 2022-03-01 13:58:42,023 [validator.py:182] : Calcing stats for gids: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 13:58:42,023 [validator.py:346] : Loading data for 2016 / east
+DEBUG - 2022-03-01 13:58:42,023 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 13:58:42,076 [validator.py:386] : 	Getting surfrad data for 0 from bon_2016.h5
+DEBUG - 2022-03-01 13:58:42,770 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 13:58:42,810 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2016.h5
+DEBUG - 2022-03-01 13:58:43,473 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 13:58:43,513 [validator.py:386] : 	Getting surfrad data for 2 from dra_2016.h5
+DEBUG - 2022-03-01 13:58:44,225 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 13:58:44,264 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2016.h5
+DEBUG - 2022-03-01 13:58:44,939 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 13:58:44,979 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2016.h5
+DEBUG - 2022-03-01 13:58:45,645 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 13:58:45,684 [validator.py:386] : 	Getting surfrad data for 5 from psu_2016.h5
+DEBUG - 2022-03-01 13:58:46,350 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 13:58:46,389 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2016.h5
+DEBUG - 2022-03-01 13:58:47,048 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 13:58:47,088 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2016.h5
+DEBUG - 2022-03-01 13:58:47,746 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 13:58:47,786 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2016.h5
+DEBUG - 2022-03-01 13:58:48,492 [validator.py:346] : Loading data for 2016 / west
+DEBUG - 2022-03-01 13:58:48,492 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 13:58:48,544 [validator.py:386] : 	Getting surfrad data for 0 from bon_2016.h5
+DEBUG - 2022-03-01 13:58:49,195 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 13:58:49,231 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2016.h5
+DEBUG - 2022-03-01 13:58:49,879 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 13:58:49,915 [validator.py:386] : 	Getting surfrad data for 2 from dra_2016.h5
+DEBUG - 2022-03-01 13:58:50,560 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 13:58:50,599 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2016.h5
+DEBUG - 2022-03-01 13:58:51,254 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 13:58:51,289 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2016.h5
+DEBUG - 2022-03-01 13:58:51,937 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 13:58:51,973 [validator.py:386] : 	Getting surfrad data for 5 from psu_2016.h5
+DEBUG - 2022-03-01 13:58:52,621 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 13:58:52,657 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2016.h5
+DEBUG - 2022-03-01 13:58:53,301 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 13:58:53,336 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2016.h5
+DEBUG - 2022-03-01 13:58:53,980 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 13:58:54,015 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2016.h5
+DEBUG - 2022-03-01 13:58:54,661 [validator.py:346] : Loading data for 2017 / east
+DEBUG - 2022-03-01 13:58:54,661 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 13:58:54,710 [validator.py:386] : 	Getting surfrad data for 0 from bon_2017.h5
+DEBUG - 2022-03-01 13:58:55,414 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 13:58:55,450 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2017.h5
+DEBUG - 2022-03-01 13:58:56,105 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 13:58:56,141 [validator.py:386] : 	Getting surfrad data for 2 from dra_2017.h5
+DEBUG - 2022-03-01 13:58:56,798 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 13:58:56,834 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2017.h5
+DEBUG - 2022-03-01 13:58:57,493 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 13:58:57,529 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2017.h5
+DEBUG - 2022-03-01 13:58:58,184 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 13:58:58,220 [validator.py:386] : 	Getting surfrad data for 5 from psu_2017.h5
+DEBUG - 2022-03-01 13:58:58,889 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 13:58:58,925 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2017.h5
+DEBUG - 2022-03-01 13:58:59,583 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 13:58:59,618 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2017.h5
+DEBUG - 2022-03-01 13:59:00,280 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 13:59:00,316 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2017.h5
+DEBUG - 2022-03-01 13:59:01,014 [validator.py:346] : Loading data for 2017 / west
+DEBUG - 2022-03-01 13:59:01,015 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 13:59:01,064 [validator.py:386] : 	Getting surfrad data for 0 from bon_2017.h5
+DEBUG - 2022-03-01 13:59:01,716 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 13:59:01,752 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2017.h5
+DEBUG - 2022-03-01 13:59:02,394 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 13:59:02,429 [validator.py:386] : 	Getting surfrad data for 2 from dra_2017.h5
+DEBUG - 2022-03-01 13:59:03,072 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 13:59:03,107 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2017.h5
+DEBUG - 2022-03-01 13:59:03,752 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 13:59:03,787 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2017.h5
+DEBUG - 2022-03-01 13:59:04,429 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 13:59:04,464 [validator.py:386] : 	Getting surfrad data for 5 from psu_2017.h5
+DEBUG - 2022-03-01 13:59:05,112 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 13:59:05,148 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2017.h5
+DEBUG - 2022-03-01 13:59:05,791 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 13:59:05,827 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2017.h5
+DEBUG - 2022-03-01 13:59:06,475 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 13:59:06,511 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2017.h5
+DEBUG - 2022-03-01 13:59:07,159 [validator.py:346] : Loading data for 2018 / east
+DEBUG - 2022-03-01 13:59:07,159 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 13:59:07,339 [validator.py:386] : 	Getting surfrad data for 0 from bon_2018.h5
+DEBUG - 2022-03-01 13:59:08,014 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 13:59:08,127 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2018.h5
+DEBUG - 2022-03-01 13:59:08,836 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 13:59:08,949 [validator.py:386] : 	Getting surfrad data for 2 from dra_2018.h5
+DEBUG - 2022-03-01 13:59:09,623 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 13:59:09,737 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2018.h5
+DEBUG - 2022-03-01 13:59:10,420 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 13:59:10,533 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2018.h5
+DEBUG - 2022-03-01 13:59:11,216 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 13:59:11,329 [validator.py:386] : 	Getting surfrad data for 5 from psu_2018.h5
+DEBUG - 2022-03-01 13:59:12,017 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 13:59:12,130 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2018.h5
+DEBUG - 2022-03-01 13:59:12,817 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 13:59:12,930 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2018.h5
+DEBUG - 2022-03-01 13:59:13,612 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 13:59:13,725 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2018.h5
+DEBUG - 2022-03-01 13:59:14,424 [validator.py:346] : Loading data for 2018 / west
+DEBUG - 2022-03-01 13:59:14,424 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 13:59:14,472 [validator.py:386] : 	Getting surfrad data for 0 from bon_2018.h5
+DEBUG - 2022-03-01 13:59:15,132 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 13:59:15,168 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2018.h5
+DEBUG - 2022-03-01 13:59:15,829 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 13:59:15,866 [validator.py:386] : 	Getting surfrad data for 2 from dra_2018.h5
+DEBUG - 2022-03-01 13:59:16,527 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 13:59:16,565 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2018.h5
+DEBUG - 2022-03-01 13:59:17,236 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 13:59:17,272 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2018.h5
+DEBUG - 2022-03-01 13:59:17,938 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 13:59:17,974 [validator.py:386] : 	Getting surfrad data for 5 from psu_2018.h5
+DEBUG - 2022-03-01 13:59:18,646 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 13:59:18,682 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2018.h5
+DEBUG - 2022-03-01 13:59:19,340 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 13:59:19,377 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2018.h5
+DEBUG - 2022-03-01 13:59:20,046 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 13:59:20,082 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2018.h5
+DEBUG - 2022-03-01 13:59:20,746 [validator.py:346] : Loading data for 2019 / east
+DEBUG - 2022-03-01 13:59:20,746 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 13:59:20,925 [validator.py:386] : 	Getting surfrad data for 0 from bon_2019.h5
+DEBUG - 2022-03-01 13:59:21,610 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 13:59:21,726 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2019.h5
+DEBUG - 2022-03-01 13:59:22,417 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 13:59:22,530 [validator.py:386] : 	Getting surfrad data for 2 from dra_2019.h5
+DEBUG - 2022-03-01 13:59:23,229 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 13:59:23,343 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2019.h5
+DEBUG - 2022-03-01 13:59:24,051 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 13:59:24,164 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2019.h5
+DEBUG - 2022-03-01 13:59:24,874 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 13:59:24,986 [validator.py:386] : 	Getting surfrad data for 5 from psu_2019.h5
+DEBUG - 2022-03-01 13:59:25,755 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 13:59:25,869 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2019.h5
+DEBUG - 2022-03-01 13:59:26,585 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 13:59:26,700 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2019.h5
+DEBUG - 2022-03-01 13:59:27,446 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 13:59:27,561 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2019.h5
+DEBUG - 2022-03-01 13:59:28,327 [validator.py:346] : Loading data for 2019 / west
+DEBUG - 2022-03-01 13:59:28,327 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 13:59:28,426 [validator.py:386] : 	Getting surfrad data for 0 from bon_2019.h5
+DEBUG - 2022-03-01 13:59:29,120 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 13:59:29,187 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2019.h5
+DEBUG - 2022-03-01 13:59:29,881 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 13:59:29,947 [validator.py:386] : 	Getting surfrad data for 2 from dra_2019.h5
+DEBUG - 2022-03-01 13:59:30,646 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 13:59:30,717 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2019.h5
+DEBUG - 2022-03-01 13:59:31,416 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 13:59:31,483 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2019.h5
+DEBUG - 2022-03-01 13:59:32,195 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 13:59:32,262 [validator.py:386] : 	Getting surfrad data for 5 from psu_2019.h5
+DEBUG - 2022-03-01 13:59:32,963 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 13:59:33,030 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2019.h5
+DEBUG - 2022-03-01 13:59:33,736 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 13:59:33,803 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2019.h5
+DEBUG - 2022-03-01 13:59:34,512 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 13:59:34,579 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2019.h5
+DEBUG - 2022-03-01 13:59:35,292 [validator.py:187] : Shapes: df_base_full=(3154464, 6), df_surf_full=(3154464, 4)
+DEBUG - 2022-03-01 13:59:35,297 [validator.py:203] : Computing stats for gid: 0 bon
+DEBUG - 2022-03-01 13:59:35,335 [validator.py:209] : Shapes: df_baseline=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2022-03-01 13:59:51,460 [validator.py:203] : Computing stats for gid: 1 tbl
+DEBUG - 2022-03-01 13:59:51,498 [validator.py:209] : Shapes: df_baseline=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2022-03-01 14:00:07,580 [validator.py:203] : Computing stats for gid: 2 dra
+DEBUG - 2022-03-01 14:00:07,618 [validator.py:209] : Shapes: df_baseline=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2022-03-01 14:00:23,621 [validator.py:203] : Computing stats for gid: 3 fpk
+DEBUG - 2022-03-01 14:00:23,658 [validator.py:209] : Shapes: df_baseline=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2022-03-01 14:00:39,726 [validator.py:203] : Computing stats for gid: 4 gwn
+DEBUG - 2022-03-01 14:00:39,763 [validator.py:209] : Shapes: df_baseline=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2022-03-01 14:00:56,048 [validator.py:203] : Computing stats for gid: 5 psu
+DEBUG - 2022-03-01 14:00:56,087 [validator.py:209] : Shapes: df_baseline=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2022-03-01 14:01:12,390 [validator.py:203] : Computing stats for gid: 6 sxf
+DEBUG - 2022-03-01 14:01:12,429 [validator.py:209] : Shapes: df_baseline=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2022-03-01 14:01:28,605 [validator.py:203] : Computing stats for gid: 7 sgp
+DEBUG - 2022-03-01 14:01:28,643 [validator.py:209] : Shapes: df_baseline=(350496, 6), df_surf=(350496, 4)
+DEBUG - 2022-03-01 14:01:44,879 [validator.py:203] : Computing stats for gid: 8 srrl
+DEBUG - 2022-03-01 14:01:44,917 [validator.py:209] : Shapes: df_baseline=(350496, 6), df_surf=(350496, 4)
+INFO - 2022-03-01 14:02:01,075 [validator.py:292] : Finished computing stats.
+DEBUG - 2022-03-01 14:02:01,085 [data_handlers.py:381] : Loading validation data
+DEBUG - 2022-03-01 14:02:01,085 [data_handlers.py:387] : Loading vars ['solar_zenith_angle', 'cloud_type', 'refl_0_65um_nom', 'refl_0_65um_nom_stddev_3x3', 'refl_3_75um_nom', 'temp_3_75um_nom', 'temp_11_0um_nom', 'temp_11_0um_nom_stddev_3x3', 'cloud_probability', 'cloud_fraction', 'air_temperature', 'dew_point', 'relative_humidity', 'total_precipitable_water', 'surface_albedo', 'cld_opd_dcomp', 'cld_reff_dcomp']
+DEBUG - 2022-03-01 14:02:01,089 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2016_east_v322/mlclouds_surfrad_east_2016.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 14:02:02,147 [data_handlers.py:410] : 	Shape temp_raw=(158112, 19), temp_all_sky=(158112, 14), & tstep=30 minutes
+DEBUG - 2022-03-01 14:02:02,147 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2017_east_v322/mlclouds_surfrad_east_2017.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 14:02:03,233 [data_handlers.py:410] : 	Shape temp_raw=(157680, 19), temp_all_sky=(157680, 14), & tstep=30 minutes
+DEBUG - 2022-03-01 14:02:03,233 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2018_east_v322/mlclouds_surfrad_east_2018.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 14:02:10,123 [data_handlers.py:410] : 	Shape temp_raw=(946080, 19), temp_all_sky=(946080, 14), & tstep=5 minutes
+DEBUG - 2022-03-01 14:02:10,123 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2019_east_v322/mlclouds_surfrad_east_2019.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 14:02:17,115 [data_handlers.py:410] : 	Shape temp_raw=(946080, 19), temp_all_sky=(946080, 14), & tstep=5 minutes
+DEBUG - 2022-03-01 14:02:17,115 [data_handlers.py:413] : Shape df_raw=(2207952, 19), df_all_sky=(2207952, 14)
+DEBUG - 2022-03-01 14:02:17,115 [data_handlers.py:420] : Shape after reset_index: df_raw=(2207952, 19), df_all_sky=(2207952, 14)
+INFO - 2022-03-01 14:02:17,365 [data_cleaners.py:36] : 49.69% of timesteps are daylight
+INFO - 2022-03-01 14:02:17,369 [data_cleaners.py:38] : 50.87% of daylight timesteps are cloudy
+INFO - 2022-03-01 14:02:17,373 [data_cleaners.py:40] : 0.34% of daylight timesteps are missing cloud type
+INFO - 2022-03-01 14:02:17,377 [data_cleaners.py:42] : 26.92% of cloudy daylight timesteps are missing cloud opd
+INFO - 2022-03-01 14:02:17,380 [data_cleaners.py:44] : 27.19% of cloudy daylight timesteps are missing cloud reff
+DEBUG - 2022-03-01 14:02:17,380 [data_cleaners.py:47] : Column NaN values:
+DEBUG - 2022-03-01 14:02:17,383 [data_cleaners.py:50] : 	"gid" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:17,387 [data_cleaners.py:50] : 	"time_index" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:17,390 [data_cleaners.py:50] : 	"solar_zenith_angle" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:17,394 [data_cleaners.py:50] : 	"cloud_type" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:17,397 [data_cleaners.py:50] : 	"refl_0_65um_nom" has 49.99% NaN values
+DEBUG - 2022-03-01 14:02:17,401 [data_cleaners.py:50] : 	"refl_0_65um_nom_stddev_3x3" has 49.99% NaN values
+DEBUG - 2022-03-01 14:02:17,404 [data_cleaners.py:50] : 	"refl_3_75um_nom" has 0.35% NaN values
+DEBUG - 2022-03-01 14:02:17,407 [data_cleaners.py:50] : 	"temp_3_75um_nom" has 0.26% NaN values
+DEBUG - 2022-03-01 14:02:17,410 [data_cleaners.py:50] : 	"temp_11_0um_nom" has 0.26% NaN values
+DEBUG - 2022-03-01 14:02:17,413 [data_cleaners.py:50] : 	"temp_11_0um_nom_stddev_3x3" has 0.34% NaN values
+DEBUG - 2022-03-01 14:02:17,416 [data_cleaners.py:50] : 	"cloud_probability" has 0.34% NaN values
+DEBUG - 2022-03-01 14:02:17,420 [data_cleaners.py:50] : 	"cloud_fraction" has 0.34% NaN values
+DEBUG - 2022-03-01 14:02:17,423 [data_cleaners.py:50] : 	"air_temperature" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:17,426 [data_cleaners.py:50] : 	"dew_point" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:17,429 [data_cleaners.py:50] : 	"relative_humidity" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:17,432 [data_cleaners.py:50] : 	"total_precipitable_water" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:17,435 [data_cleaners.py:50] : 	"surface_albedo" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:17,438 [data_cleaners.py:50] : 	"cld_opd_dcomp" has 81.53% NaN values
+DEBUG - 2022-03-01 14:02:17,442 [data_cleaners.py:50] : 	"cld_reff_dcomp" has 81.60% NaN values
+DEBUG - 2022-03-01 14:02:17,442 [data_cleaners.py:53] : Interpolating opd and reff
+DEBUG - 2022-03-01 14:02:20,004 [data_cleaners.py:79] : Adding cloud type flag (e.g. flag=[night, clear, ice_cloud, water_cloud, bad_cloud])
+DEBUG - 2022-03-01 14:02:20,285 [data_cleaners.py:105] : Feature flag column has these values: ['ice_cloud' 'water_cloud' 'night' 'clear' 'bad_cloud']
+INFO - 2022-03-01 14:02:20,285 [data_cleaners.py:107] : Cleaning took 3.2 seconds
+INFO - 2022-03-01 14:02:20,520 [data_cleaners.py:36] : 49.69% of timesteps are daylight
+INFO - 2022-03-01 14:02:20,524 [data_cleaners.py:38] : 50.87% of daylight timesteps are cloudy
+INFO - 2022-03-01 14:02:20,528 [data_cleaners.py:40] : 0.34% of daylight timesteps are missing cloud type
+INFO - 2022-03-01 14:02:20,531 [data_cleaners.py:42] : 26.92% of cloudy daylight timesteps are missing cloud opd
+INFO - 2022-03-01 14:02:20,535 [data_cleaners.py:44] : 27.19% of cloudy daylight timesteps are missing cloud reff
+DEBUG - 2022-03-01 14:02:20,535 [data_cleaners.py:47] : Column NaN values:
+DEBUG - 2022-03-01 14:02:20,537 [data_cleaners.py:50] : 	"gid" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:20,542 [data_cleaners.py:50] : 	"time_index" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:20,545 [data_cleaners.py:50] : 	"alpha" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:20,548 [data_cleaners.py:50] : 	"aod" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:20,551 [data_cleaners.py:50] : 	"asymmetry" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:20,555 [data_cleaners.py:50] : 	"cloud_type" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:20,558 [data_cleaners.py:50] : 	"cld_opd_dcomp" has 81.53% NaN values
+DEBUG - 2022-03-01 14:02:20,561 [data_cleaners.py:50] : 	"cld_reff_dcomp" has 81.60% NaN values
+DEBUG - 2022-03-01 14:02:20,565 [data_cleaners.py:50] : 	"ozone" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:20,568 [data_cleaners.py:50] : 	"solar_zenith_angle" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:20,571 [data_cleaners.py:50] : 	"ssa" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:20,574 [data_cleaners.py:50] : 	"surface_albedo" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:20,576 [data_cleaners.py:50] : 	"surface_pressure" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:20,579 [data_cleaners.py:50] : 	"total_precipitable_water" has 0.00% NaN values
+DEBUG - 2022-03-01 14:02:20,579 [data_cleaners.py:53] : Interpolating opd and reff
+DEBUG - 2022-03-01 14:02:22,035 [data_cleaners.py:79] : Adding cloud type flag (e.g. flag=[night, clear, ice_cloud, water_cloud, bad_cloud])
+DEBUG - 2022-03-01 14:02:22,309 [data_cleaners.py:105] : Feature flag column has these values: ['ice_cloud' 'water_cloud' 'night' 'clear' 'bad_cloud']
+INFO - 2022-03-01 14:02:22,309 [data_cleaners.py:107] : Cleaning took 2.0 seconds
+DEBUG - 2022-03-01 14:02:22,310 [data_handlers.py:453] : Prepping validation data
+DEBUG - 2022-03-01 14:02:22,332 [data_handlers.py:463] : Mask: shape=(2207952,), sum=1097157
+DEBUG - 2022-03-01 14:02:22,416 [data_handlers.py:474] : Validation features: ['solar_zenith_angle', 'refl_0_65um_nom', 'refl_0_65um_nom_stddev_3x3', 'refl_3_75um_nom', 'temp_3_75um_nom', 'temp_11_0um_nom', 'temp_11_0um_nom_stddev_3x3', 'cloud_probability', 'cloud_fraction', 'air_temperature', 'dew_point', 'relative_humidity', 'total_precipitable_water', 'surface_albedo', 'flag']
+INFO - 2022-03-01 14:02:22,416 [validator.py:107] : Predicting opd and reff
+DEBUG - 2022-03-01 14:02:25,083 [validator.py:110] : Predicted data shape is (1097157, 2)
+DEBUG - 2022-03-01 14:02:25,422 [validator.py:158] : shapes: df_feature_val=(2207952, 20), df_all_sky_val=(2207952, 15)
+INFO - 2022-03-01 14:02:25,638 [validator.py:179] : Calculating statistics
+DEBUG - 2022-03-01 14:02:25,642 [validator.py:182] : Calcing stats for gids: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 14:02:25,642 [validator.py:346] : Loading data for 2016 / east
+DEBUG - 2022-03-01 14:02:25,642 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 14:02:25,677 [validator.py:386] : 	Getting surfrad data for 0 from bon_2016.h5
+DEBUG - 2022-03-01 14:02:26,327 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 14:02:26,365 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2016.h5
+DEBUG - 2022-03-01 14:02:27,006 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 14:02:27,044 [validator.py:386] : 	Getting surfrad data for 2 from dra_2016.h5
+DEBUG - 2022-03-01 14:02:27,685 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 14:02:27,723 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2016.h5
+DEBUG - 2022-03-01 14:02:28,377 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 14:02:28,414 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2016.h5
+DEBUG - 2022-03-01 14:02:29,056 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 14:02:29,093 [validator.py:386] : 	Getting surfrad data for 5 from psu_2016.h5
+DEBUG - 2022-03-01 14:02:29,736 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 14:02:29,774 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2016.h5
+DEBUG - 2022-03-01 14:02:30,415 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 14:02:30,453 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2016.h5
+DEBUG - 2022-03-01 14:02:31,097 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 14:02:31,134 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2016.h5
+DEBUG - 2022-03-01 14:02:31,780 [validator.py:346] : Loading data for 2017 / east
+DEBUG - 2022-03-01 14:02:31,780 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 14:02:31,815 [validator.py:386] : 	Getting surfrad data for 0 from bon_2017.h5
+DEBUG - 2022-03-01 14:02:32,466 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 14:02:32,501 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2017.h5
+DEBUG - 2022-03-01 14:02:33,141 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 14:02:33,176 [validator.py:386] : 	Getting surfrad data for 2 from dra_2017.h5
+DEBUG - 2022-03-01 14:02:33,817 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 14:02:33,853 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2017.h5
+DEBUG - 2022-03-01 14:02:34,496 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 14:02:34,531 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2017.h5
+DEBUG - 2022-03-01 14:02:35,171 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 14:02:35,207 [validator.py:386] : 	Getting surfrad data for 5 from psu_2017.h5
+DEBUG - 2022-03-01 14:02:35,856 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 14:02:35,892 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2017.h5
+DEBUG - 2022-03-01 14:02:36,533 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 14:02:36,570 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2017.h5
+DEBUG - 2022-03-01 14:02:37,218 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 14:02:37,253 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2017.h5
+DEBUG - 2022-03-01 14:02:37,897 [validator.py:346] : Loading data for 2018 / east
+DEBUG - 2022-03-01 14:02:37,897 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 14:02:38,010 [validator.py:386] : 	Getting surfrad data for 0 from bon_2018.h5
+DEBUG - 2022-03-01 14:02:38,661 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 14:02:38,774 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2018.h5
+DEBUG - 2022-03-01 14:02:39,427 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 14:02:39,543 [validator.py:386] : 	Getting surfrad data for 2 from dra_2018.h5
+DEBUG - 2022-03-01 14:02:40,202 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 14:02:40,315 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2018.h5
+DEBUG - 2022-03-01 14:02:40,972 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 14:02:41,086 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2018.h5
+DEBUG - 2022-03-01 14:02:41,744 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 14:02:41,856 [validator.py:386] : 	Getting surfrad data for 5 from psu_2018.h5
+DEBUG - 2022-03-01 14:02:42,515 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 14:02:42,628 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2018.h5
+DEBUG - 2022-03-01 14:02:43,289 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 14:02:43,401 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2018.h5
+DEBUG - 2022-03-01 14:02:44,068 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 14:02:44,180 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2018.h5
+DEBUG - 2022-03-01 14:02:44,848 [validator.py:346] : Loading data for 2019 / east
+DEBUG - 2022-03-01 14:02:44,848 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 14:02:44,963 [validator.py:386] : 	Getting surfrad data for 0 from bon_2019.h5
+DEBUG - 2022-03-01 14:02:45,631 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 14:02:45,744 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2019.h5
+DEBUG - 2022-03-01 14:02:46,415 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 14:02:46,527 [validator.py:386] : 	Getting surfrad data for 2 from dra_2019.h5
+DEBUG - 2022-03-01 14:02:47,199 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 14:02:47,311 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2019.h5
+DEBUG - 2022-03-01 14:02:47,982 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 14:02:48,095 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2019.h5
+DEBUG - 2022-03-01 14:02:48,778 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 14:02:48,893 [validator.py:386] : 	Getting surfrad data for 5 from psu_2019.h5
+DEBUG - 2022-03-01 14:02:49,567 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 14:02:49,680 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2019.h5
+DEBUG - 2022-03-01 14:02:50,365 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 14:02:50,479 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2019.h5
+DEBUG - 2022-03-01 14:02:51,172 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 14:02:51,284 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2019.h5
+DEBUG - 2022-03-01 14:02:51,989 [validator.py:187] : Shapes: df_base_full=(2207952, 6), df_surf_full=(2207952, 4)
+DEBUG - 2022-03-01 14:02:51,994 [validator.py:203] : Computing stats for gid: 0 bon
+DEBUG - 2022-03-01 14:02:52,020 [validator.py:209] : Shapes: df_baseline=(245328, 6), df_surf=(245328, 4)
+DEBUG - 2022-03-01 14:03:03,723 [validator.py:203] : Computing stats for gid: 1 tbl
+DEBUG - 2022-03-01 14:03:03,750 [validator.py:209] : Shapes: df_baseline=(245328, 6), df_surf=(245328, 4)
+DEBUG - 2022-03-01 14:03:15,399 [validator.py:203] : Computing stats for gid: 2 dra
+DEBUG - 2022-03-01 14:03:15,429 [validator.py:209] : Shapes: df_baseline=(245328, 6), df_surf=(245328, 4)
+DEBUG - 2022-03-01 14:03:27,120 [validator.py:203] : Computing stats for gid: 3 fpk
+DEBUG - 2022-03-01 14:03:27,150 [validator.py:209] : Shapes: df_baseline=(245328, 6), df_surf=(245328, 4)
+DEBUG - 2022-03-01 14:03:38,862 [validator.py:203] : Computing stats for gid: 4 gwn
+DEBUG - 2022-03-01 14:03:38,889 [validator.py:209] : Shapes: df_baseline=(245328, 6), df_surf=(245328, 4)
+DEBUG - 2022-03-01 14:03:50,647 [validator.py:203] : Computing stats for gid: 5 psu
+DEBUG - 2022-03-01 14:03:50,674 [validator.py:209] : Shapes: df_baseline=(245328, 6), df_surf=(245328, 4)
+DEBUG - 2022-03-01 14:04:02,513 [validator.py:203] : Computing stats for gid: 6 sxf
+DEBUG - 2022-03-01 14:04:02,540 [validator.py:209] : Shapes: df_baseline=(245328, 6), df_surf=(245328, 4)
+DEBUG - 2022-03-01 14:04:14,310 [validator.py:203] : Computing stats for gid: 7 sgp
+DEBUG - 2022-03-01 14:04:14,337 [validator.py:209] : Shapes: df_baseline=(245328, 6), df_surf=(245328, 4)
+DEBUG - 2022-03-01 14:04:26,087 [validator.py:203] : Computing stats for gid: 8 srrl
+DEBUG - 2022-03-01 14:04:26,114 [validator.py:209] : Shapes: df_baseline=(245328, 6), df_surf=(245328, 4)
+INFO - 2022-03-01 14:04:37,818 [validator.py:292] : Finished computing stats.
+DEBUG - 2022-03-01 14:04:37,843 [data_handlers.py:381] : Loading validation data
+DEBUG - 2022-03-01 14:04:37,843 [data_handlers.py:387] : Loading vars ['solar_zenith_angle', 'cloud_type', 'refl_0_65um_nom', 'refl_0_65um_nom_stddev_3x3', 'refl_3_75um_nom', 'temp_3_75um_nom', 'temp_11_0um_nom', 'temp_11_0um_nom_stddev_3x3', 'cloud_probability', 'cloud_fraction', 'air_temperature', 'dew_point', 'relative_humidity', 'total_precipitable_water', 'surface_albedo', 'cld_opd_dcomp', 'cld_reff_dcomp']
+DEBUG - 2022-03-01 14:04:37,847 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2016_west_v322/mlclouds_surfrad_west_2016.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 14:04:38,948 [data_handlers.py:410] : 	Shape temp_raw=(158112, 19), temp_all_sky=(158112, 14), & tstep=30 minutes
+DEBUG - 2022-03-01 14:04:38,948 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2017_west_v322/mlclouds_surfrad_west_2017.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 14:04:40,050 [data_handlers.py:410] : 	Shape temp_raw=(157680, 19), temp_all_sky=(157680, 14), & tstep=30 minutes
+DEBUG - 2022-03-01 14:04:40,050 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2018_west_v322/mlclouds_surfrad_west_2018.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 14:04:41,186 [data_handlers.py:410] : 	Shape temp_raw=(157680, 19), temp_all_sky=(157680, 14), & tstep=30 minutes
+DEBUG - 2022-03-01 14:04:41,186 [data_handlers.py:392] : Loading validation data from /projects/pxs/mlclouds/training_data/2019_west_v322/mlclouds_surfrad_west_2019.h5 for gids [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 14:04:44,421 [data_handlers.py:410] : 	Shape temp_raw=(473040, 19), temp_all_sky=(473040, 14), & tstep=10 minutes
+DEBUG - 2022-03-01 14:04:44,421 [data_handlers.py:413] : Shape df_raw=(946512, 19), df_all_sky=(946512, 14)
+DEBUG - 2022-03-01 14:04:44,421 [data_handlers.py:420] : Shape after reset_index: df_raw=(946512, 19), df_all_sky=(946512, 14)
+INFO - 2022-03-01 14:04:44,525 [data_cleaners.py:36] : 49.68% of timesteps are daylight
+INFO - 2022-03-01 14:04:44,527 [data_cleaners.py:38] : 55.72% of daylight timesteps are cloudy
+INFO - 2022-03-01 14:04:44,529 [data_cleaners.py:40] : 10.05% of daylight timesteps are missing cloud type
+INFO - 2022-03-01 14:04:44,530 [data_cleaners.py:42] : 49.09% of cloudy daylight timesteps are missing cloud opd
+INFO - 2022-03-01 14:04:44,532 [data_cleaners.py:44] : 49.21% of cloudy daylight timesteps are missing cloud reff
+DEBUG - 2022-03-01 14:04:44,532 [data_cleaners.py:47] : Column NaN values:
+DEBUG - 2022-03-01 14:04:44,533 [data_cleaners.py:50] : 	"gid" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:44,535 [data_cleaners.py:50] : 	"time_index" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:44,537 [data_cleaners.py:50] : 	"solar_zenith_angle" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:44,539 [data_cleaners.py:50] : 	"cloud_type" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:44,540 [data_cleaners.py:50] : 	"refl_0_65um_nom" has 54.84% NaN values
+DEBUG - 2022-03-01 14:04:44,542 [data_cleaners.py:50] : 	"refl_0_65um_nom_stddev_3x3" has 54.84% NaN values
+DEBUG - 2022-03-01 14:04:44,543 [data_cleaners.py:50] : 	"refl_3_75um_nom" has 10.12% NaN values
+DEBUG - 2022-03-01 14:04:44,545 [data_cleaners.py:50] : 	"temp_3_75um_nom" has 10.01% NaN values
+DEBUG - 2022-03-01 14:04:44,547 [data_cleaners.py:50] : 	"temp_11_0um_nom" has 10.01% NaN values
+DEBUG - 2022-03-01 14:04:44,548 [data_cleaners.py:50] : 	"temp_11_0um_nom_stddev_3x3" has 10.10% NaN values
+DEBUG - 2022-03-01 14:04:44,550 [data_cleaners.py:50] : 	"cloud_probability" has 10.10% NaN values
+DEBUG - 2022-03-01 14:04:44,551 [data_cleaners.py:50] : 	"cloud_fraction" has 10.10% NaN values
+DEBUG - 2022-03-01 14:04:44,553 [data_cleaners.py:50] : 	"air_temperature" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:44,554 [data_cleaners.py:50] : 	"dew_point" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:44,556 [data_cleaners.py:50] : 	"relative_humidity" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:44,557 [data_cleaners.py:50] : 	"total_precipitable_water" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:44,559 [data_cleaners.py:50] : 	"surface_albedo" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:44,561 [data_cleaners.py:50] : 	"cld_opd_dcomp" has 85.91% NaN values
+DEBUG - 2022-03-01 14:04:44,562 [data_cleaners.py:50] : 	"cld_reff_dcomp" has 85.94% NaN values
+DEBUG - 2022-03-01 14:04:44,562 [data_cleaners.py:53] : Interpolating opd and reff
+DEBUG - 2022-03-01 14:04:45,600 [data_cleaners.py:79] : Adding cloud type flag (e.g. flag=[night, clear, ice_cloud, water_cloud, bad_cloud])
+DEBUG - 2022-03-01 14:04:45,724 [data_cleaners.py:105] : Feature flag column has these values: ['ice_cloud' 'water_cloud' 'night' 'bad_cloud' 'clear']
+INFO - 2022-03-01 14:04:45,724 [data_cleaners.py:107] : Cleaning took 1.3 seconds
+INFO - 2022-03-01 14:04:45,827 [data_cleaners.py:36] : 49.68% of timesteps are daylight
+INFO - 2022-03-01 14:04:45,829 [data_cleaners.py:38] : 55.72% of daylight timesteps are cloudy
+INFO - 2022-03-01 14:04:45,831 [data_cleaners.py:40] : 10.05% of daylight timesteps are missing cloud type
+INFO - 2022-03-01 14:04:45,832 [data_cleaners.py:42] : 49.09% of cloudy daylight timesteps are missing cloud opd
+INFO - 2022-03-01 14:04:45,834 [data_cleaners.py:44] : 49.21% of cloudy daylight timesteps are missing cloud reff
+DEBUG - 2022-03-01 14:04:45,834 [data_cleaners.py:47] : Column NaN values:
+DEBUG - 2022-03-01 14:04:45,835 [data_cleaners.py:50] : 	"gid" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:45,837 [data_cleaners.py:50] : 	"time_index" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:45,839 [data_cleaners.py:50] : 	"alpha" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:45,841 [data_cleaners.py:50] : 	"aod" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:45,842 [data_cleaners.py:50] : 	"asymmetry" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:45,844 [data_cleaners.py:50] : 	"cloud_type" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:45,846 [data_cleaners.py:50] : 	"cld_opd_dcomp" has 85.91% NaN values
+DEBUG - 2022-03-01 14:04:45,847 [data_cleaners.py:50] : 	"cld_reff_dcomp" has 85.94% NaN values
+DEBUG - 2022-03-01 14:04:45,849 [data_cleaners.py:50] : 	"ozone" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:45,850 [data_cleaners.py:50] : 	"solar_zenith_angle" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:45,852 [data_cleaners.py:50] : 	"ssa" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:45,853 [data_cleaners.py:50] : 	"surface_albedo" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:45,854 [data_cleaners.py:50] : 	"surface_pressure" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:45,856 [data_cleaners.py:50] : 	"total_precipitable_water" has 0.00% NaN values
+DEBUG - 2022-03-01 14:04:45,856 [data_cleaners.py:53] : Interpolating opd and reff
+DEBUG - 2022-03-01 14:04:46,428 [data_cleaners.py:79] : Adding cloud type flag (e.g. flag=[night, clear, ice_cloud, water_cloud, bad_cloud])
+DEBUG - 2022-03-01 14:04:46,552 [data_cleaners.py:105] : Feature flag column has these values: ['ice_cloud' 'water_cloud' 'night' 'bad_cloud' 'clear']
+INFO - 2022-03-01 14:04:46,552 [data_cleaners.py:107] : Cleaning took 0.8 seconds
+DEBUG - 2022-03-01 14:04:46,552 [data_handlers.py:453] : Prepping validation data
+DEBUG - 2022-03-01 14:04:46,566 [data_handlers.py:463] : Mask: shape=(946512,), sum=470196
+DEBUG - 2022-03-01 14:04:46,602 [data_handlers.py:474] : Validation features: ['solar_zenith_angle', 'refl_0_65um_nom', 'refl_0_65um_nom_stddev_3x3', 'refl_3_75um_nom', 'temp_3_75um_nom', 'temp_11_0um_nom', 'temp_11_0um_nom_stddev_3x3', 'cloud_probability', 'cloud_fraction', 'air_temperature', 'dew_point', 'relative_humidity', 'total_precipitable_water', 'surface_albedo', 'flag']
+INFO - 2022-03-01 14:04:46,602 [validator.py:107] : Predicting opd and reff
+DEBUG - 2022-03-01 14:04:47,709 [validator.py:110] : Predicted data shape is (470196, 2)
+DEBUG - 2022-03-01 14:04:47,822 [validator.py:158] : shapes: df_feature_val=(946512, 20), df_all_sky_val=(946512, 15)
+INFO - 2022-03-01 14:04:47,911 [validator.py:179] : Calculating statistics
+DEBUG - 2022-03-01 14:04:47,915 [validator.py:182] : Calcing stats for gids: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+DEBUG - 2022-03-01 14:04:47,915 [validator.py:346] : Loading data for 2016 / west
+DEBUG - 2022-03-01 14:04:47,915 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 14:04:47,966 [validator.py:386] : 	Getting surfrad data for 0 from bon_2016.h5
+DEBUG - 2022-03-01 14:04:48,617 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 14:04:48,657 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2016.h5
+DEBUG - 2022-03-01 14:04:49,301 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 14:04:49,341 [validator.py:386] : 	Getting surfrad data for 2 from dra_2016.h5
+DEBUG - 2022-03-01 14:04:49,988 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 14:04:50,027 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2016.h5
+DEBUG - 2022-03-01 14:04:50,680 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 14:04:50,720 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2016.h5
+DEBUG - 2022-03-01 14:04:51,367 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 14:04:51,407 [validator.py:386] : 	Getting surfrad data for 5 from psu_2016.h5
+DEBUG - 2022-03-01 14:04:52,071 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 14:04:52,109 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2016.h5
+DEBUG - 2022-03-01 14:04:52,767 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 14:04:52,806 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2016.h5
+DEBUG - 2022-03-01 14:04:53,451 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 14:04:53,491 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2016.h5
+DEBUG - 2022-03-01 14:04:54,136 [validator.py:346] : Loading data for 2017 / west
+DEBUG - 2022-03-01 14:04:54,137 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 14:04:54,187 [validator.py:386] : 	Getting surfrad data for 0 from bon_2017.h5
+DEBUG - 2022-03-01 14:04:54,838 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 14:04:54,878 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2017.h5
+DEBUG - 2022-03-01 14:04:55,519 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 14:04:55,556 [validator.py:386] : 	Getting surfrad data for 2 from dra_2017.h5
+DEBUG - 2022-03-01 14:04:56,199 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 14:04:56,239 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2017.h5
+DEBUG - 2022-03-01 14:04:56,880 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 14:04:56,917 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2017.h5
+DEBUG - 2022-03-01 14:04:57,559 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 14:04:57,596 [validator.py:386] : 	Getting surfrad data for 5 from psu_2017.h5
+DEBUG - 2022-03-01 14:04:58,249 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 14:04:58,287 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2017.h5
+DEBUG - 2022-03-01 14:04:58,929 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 14:04:58,966 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2017.h5
+DEBUG - 2022-03-01 14:04:59,619 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 14:04:59,656 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2017.h5
+DEBUG - 2022-03-01 14:05:00,306 [validator.py:346] : Loading data for 2018 / west
+DEBUG - 2022-03-01 14:05:00,306 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 14:05:00,356 [validator.py:386] : 	Getting surfrad data for 0 from bon_2018.h5
+DEBUG - 2022-03-01 14:05:01,002 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 14:05:01,040 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2018.h5
+DEBUG - 2022-03-01 14:05:01,691 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 14:05:01,729 [validator.py:386] : 	Getting surfrad data for 2 from dra_2018.h5
+DEBUG - 2022-03-01 14:05:02,372 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 14:05:02,408 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2018.h5
+DEBUG - 2022-03-01 14:05:03,052 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 14:05:03,091 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2018.h5
+DEBUG - 2022-03-01 14:05:03,738 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 14:05:03,774 [validator.py:386] : 	Getting surfrad data for 5 from psu_2018.h5
+DEBUG - 2022-03-01 14:05:04,418 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 14:05:04,455 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2018.h5
+DEBUG - 2022-03-01 14:05:05,105 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 14:05:05,141 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2018.h5
+DEBUG - 2022-03-01 14:05:05,791 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 14:05:05,828 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2018.h5
+DEBUG - 2022-03-01 14:05:06,473 [validator.py:346] : Loading data for 2019 / west
+DEBUG - 2022-03-01 14:05:06,473 [validator.py:423] : 	Getting gid 0 from *.h5
+DEBUG - 2022-03-01 14:05:06,571 [validator.py:386] : 	Getting surfrad data for 0 from bon_2019.h5
+DEBUG - 2022-03-01 14:05:07,220 [validator.py:423] : 	Getting gid 1 from *.h5
+DEBUG - 2022-03-01 14:05:07,288 [validator.py:386] : 	Getting surfrad data for 1 from tbl_2019.h5
+DEBUG - 2022-03-01 14:05:07,938 [validator.py:423] : 	Getting gid 2 from *.h5
+DEBUG - 2022-03-01 14:05:08,005 [validator.py:386] : 	Getting surfrad data for 2 from dra_2019.h5
+DEBUG - 2022-03-01 14:05:08,665 [validator.py:423] : 	Getting gid 3 from *.h5
+DEBUG - 2022-03-01 14:05:08,733 [validator.py:386] : 	Getting surfrad data for 3 from fpk_2019.h5
+DEBUG - 2022-03-01 14:05:09,381 [validator.py:423] : 	Getting gid 4 from *.h5
+DEBUG - 2022-03-01 14:05:09,448 [validator.py:386] : 	Getting surfrad data for 4 from gwn_2019.h5
+DEBUG - 2022-03-01 14:05:10,098 [validator.py:423] : 	Getting gid 5 from *.h5
+DEBUG - 2022-03-01 14:05:10,164 [validator.py:386] : 	Getting surfrad data for 5 from psu_2019.h5
+DEBUG - 2022-03-01 14:05:10,814 [validator.py:423] : 	Getting gid 6 from *.h5
+DEBUG - 2022-03-01 14:05:10,881 [validator.py:386] : 	Getting surfrad data for 6 from sxf_2019.h5
+DEBUG - 2022-03-01 14:05:11,531 [validator.py:423] : 	Getting gid 7 from *.h5
+DEBUG - 2022-03-01 14:05:11,597 [validator.py:386] : 	Getting surfrad data for 7 from sgp_2019.h5
+DEBUG - 2022-03-01 14:05:12,253 [validator.py:423] : 	Getting gid 8 from *.h5
+DEBUG - 2022-03-01 14:05:12,319 [validator.py:386] : 	Getting surfrad data for 8 from srrl_2019.h5
+DEBUG - 2022-03-01 14:05:12,977 [validator.py:187] : Shapes: df_base_full=(946512, 6), df_surf_full=(946512, 4)
+DEBUG - 2022-03-01 14:05:12,982 [validator.py:203] : Computing stats for gid: 0 bon
+DEBUG - 2022-03-01 14:05:12,993 [validator.py:209] : Shapes: df_baseline=(105168, 6), df_surf=(105168, 4)
+DEBUG - 2022-03-01 14:05:18,773 [validator.py:203] : Computing stats for gid: 1 tbl
+DEBUG - 2022-03-01 14:05:18,785 [validator.py:209] : Shapes: df_baseline=(105168, 6), df_surf=(105168, 4)
+DEBUG - 2022-03-01 14:05:24,531 [validator.py:203] : Computing stats for gid: 2 dra
+DEBUG - 2022-03-01 14:05:24,543 [validator.py:209] : Shapes: df_baseline=(105168, 6), df_surf=(105168, 4)
+DEBUG - 2022-03-01 14:05:30,213 [validator.py:203] : Computing stats for gid: 3 fpk
+DEBUG - 2022-03-01 14:05:30,225 [validator.py:209] : Shapes: df_baseline=(105168, 6), df_surf=(105168, 4)
+DEBUG - 2022-03-01 14:05:35,936 [validator.py:203] : Computing stats for gid: 4 gwn
+DEBUG - 2022-03-01 14:05:35,948 [validator.py:209] : Shapes: df_baseline=(105168, 6), df_surf=(105168, 4)
+DEBUG - 2022-03-01 14:05:41,677 [validator.py:203] : Computing stats for gid: 5 psu
+DEBUG - 2022-03-01 14:05:41,689 [validator.py:209] : Shapes: df_baseline=(105168, 6), df_surf=(105168, 4)
+DEBUG - 2022-03-01 14:05:47,424 [validator.py:203] : Computing stats for gid: 6 sxf
+DEBUG - 2022-03-01 14:05:47,436 [validator.py:209] : Shapes: df_baseline=(105168, 6), df_surf=(105168, 4)
+DEBUG - 2022-03-01 14:05:53,160 [validator.py:203] : Computing stats for gid: 7 sgp
+DEBUG - 2022-03-01 14:05:53,172 [validator.py:209] : Shapes: df_baseline=(105168, 6), df_surf=(105168, 4)
+DEBUG - 2022-03-01 14:05:58,900 [validator.py:203] : Computing stats for gid: 8 srrl
+DEBUG - 2022-03-01 14:05:58,911 [validator.py:209] : Shapes: df_baseline=(105168, 6), df_surf=(105168, 4)
+INFO - 2022-03-01 14:06:04,612 [validator.py:292] : Finished computing stats.
