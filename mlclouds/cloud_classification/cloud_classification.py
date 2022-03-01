@@ -19,6 +19,33 @@ class CloudClassificationModel:
     clear, water_cloud, and ice_cloud
     """
 
+    # default feature set
+    DEF_FEATURES = [
+        'solar_zenith_angle',
+        'refl_0_65um_nom',
+        'refl_0_65um_nom_stddev_3x3',
+        'refl_3_75um_nom',
+        'temp_3_75um_nom',
+        'temp_11_0um_nom',
+        'temp_11_0um_nom_stddev_3x3',
+        'cloud_probability',
+        'cloud_fraction',
+        'air_temperature',
+        'dew_point',
+        'relative_humidity',
+        'total_precipitable_water',
+        'surface_albedo',
+        'alpha',
+        'aod',
+        'ozone',
+        'ssa',
+        'surface_pressure',
+        'cld_opd_mlclouds_water',
+        'cld_opd_mlclouds_ice',
+        'cloud_type',
+        'flag',
+        'cld_opd_dcomp']
+
     def __init__(self, model_file=None, max_depth=30,
                  n_estimators=2500, test_size=0.2,
                  features=None):
@@ -39,35 +66,14 @@ class CloudClassificationModel:
             by default features
         """
         if features is None:
-            self.features = [
-                'solar_zenith_angle',
-                'refl_0_65um_nom',
-                'refl_0_65um_nom_stddev_3x3',
-                'refl_3_75um_nom',
-                'temp_3_75um_nom',
-                'temp_11_0um_nom',
-                'temp_11_0um_nom_stddev_3x3',
-                'cloud_probability',
-                'cloud_fraction',
-                'air_temperature',
-                'dew_point',
-                'relative_humidity',
-                'total_precipitable_water',
-                'surface_albedo',
-                'alpha',
-                'aod',
-                'ozone',
-                'ssa',
-                'surface_pressure',
-                'cld_opd_mlclouds_water',
-                'cld_opd_mlclouds_ice',
-                'cloud_type',
-                'flag',
-                'cld_opd_dcomp']
+            features = self.DEF_FEATURES
 
         self.cloud_encoding = {'clearsky': 0, 'water': 1, 'ice': 2}
         self.flag_encoding = {'clear': 0, 'water_cloud': 1,
                               'ice_cloud': 2, 'bad_cloud': 3}
+
+        # UWisc cloud types
+        self.cloud_type_encoding = {'clearsky': 0, 'water': 2, 'ice': 6}
 
         if model_file is not None:
             try:
@@ -96,7 +102,7 @@ class CloudClassificationModel:
             csv file containing features and targets for training
         """
         self.df = pd.read_csv(data_file)
-        self.df['flag'] = self.df['flag'].replace(self.flag_encoding)
+        self.df = self.convert_flags(self.df)
 
     def _select_features(self):
         """Extract features from loaded dataframe
@@ -138,6 +144,58 @@ class CloudClassificationModel:
         y = self._select_targets()
         return train_test_split(X, y, np.arange(X.shape[0]),
                                 test_size=self.test_size)
+
+    def convert_flags(self, X):
+        """Convert the flag column from str to float in an input dataframe
+        before prediction
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            dataframe of features to use for cloud
+            type prediction
+
+        Returns
+        -------
+        X : pd.DataFrame
+            Same as input but if 'flag' was found its converted into a float
+            column.
+        """
+
+        if 'flag' in X:
+            try:
+                X['flag'] = X['flag'].astype(np.float32)
+            except:
+                bad_flags = [f for f in X['flag'].unique()
+                             if f not in self.flag_encoding.keys()]
+                if any(bad_flags):
+                    msg = ('The following "flag" values were not found in the '
+                           'flag encoding options: {} (available flag '
+                           'values: {}'
+                           .format(bad_flags, list(self.flag_encoding.keys())))
+                    logger.error(msg)
+                    raise KeyError(msg)
+
+                X['flag'].replace(self.flag_encoding, inplace=True)
+                X['flag'] = X['flag'].astype(np.float32)
+
+        return X
+
+    def check_features(self, X):
+        """Check an input dataframe for the features that this model uses.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            dataframe of features to use for cloud
+            type prediction
+        """
+        missing = [f for f in self.features if f not in X.columns]
+        if any(missing):
+            msg = ('The following features were missing from the input '
+                   'dataframe: {} '.format(missing))
+            logger.error(msg)
+            raise ValueError(msg)
 
     def load_data_and_train(self, data_file):
         """Load data and train model using features selected
@@ -192,7 +250,7 @@ class CloudClassificationModel:
         self.model = joblib.load(model_file)
         return self.model
 
-    def predict(self, X):
+    def predict(self, X, to_cloud_type=False):
         """Predict cloud type
 
         Parameters
@@ -200,6 +258,8 @@ class CloudClassificationModel:
         X : pd.DataFrame
             dataframe of features to use for cloud
             type prediction
+        to_cloud_type : bool
+            Flag to convert to UWisc numeric cloud types
 
         Returns
         -------
@@ -208,13 +268,16 @@ class CloudClassificationModel:
             observation in X
         """
 
-        if 'flag' in X:
-            X['flag'].replace(self.flag_encoding, inplace=True)
+        self.check_features(X)
+        X = self.convert_flags(X)
         y = self.model.predict(X[self.features])
-        inverse_cloud_encoding = {v: k for k, v in self.cloud_encoding}
+        inverse_cloud_encoding = {v: k for k, v in self.cloud_encoding.items()}
         y = [inverse_cloud_encoding[v] for v in y]
-        inverse_flag_encoding = {v: k for k, v in self.flag_encoding}
+        inverse_flag_encoding = {v: k for k, v in self.flag_encoding.items()}
         X['flag'].replace(inverse_flag_encoding, inplace=True)
+        if to_cloud_type:
+            y = pd.Series(y).map(self.cloud_type_encoding)
+            y = y.astype(np.uint16).values
         return y
 
     def update_all_sky_input(self, all_sky_input):
