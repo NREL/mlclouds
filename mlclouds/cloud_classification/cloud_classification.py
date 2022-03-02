@@ -292,7 +292,7 @@ class CloudClassificationModel:
         self.model = joblib.load(model_file)
         return self.model
 
-    def predict(self, X, to_cloud_type=False):
+    def raw_prediction(self, X):
         """Predict cloud type
 
         Parameters
@@ -313,7 +313,28 @@ class CloudClassificationModel:
         self.check_features(X)
         X = self.convert_flags(X)
         y = self.model.predict(X[self.features])
+        return y
 
+    def remap_predictions(self, X, y, to_cloud_type=False):
+        """Remap predictions to string cloud labels
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            dataframe of features to use for cloud
+            type prediction
+        y : np.ndarray
+            array of cloud type predictions for each
+            observation in X
+        to_cloud_type : bool
+            Flag to convert to UWisc numeric cloud types
+
+        Returns
+        -------
+        y : np.ndarray
+            array of cloud type predictions for each
+            observation in X with string labels
+        """
         inverse_cloud_encoding = {v: k for k, v in self.cloud_encoding.items()}
         y = [inverse_cloud_encoding[v] for v in y]
         inverse_flag_encoding = {v: k for k, v in self.flag_encoding.items()}
@@ -322,6 +343,27 @@ class CloudClassificationModel:
             y = pd.Series(y).map(self.cloud_type_encoding)
             y = y.astype(np.uint16).values
         return y
+
+    def predict(self, X, to_cloud_type=False):
+        """Predict cloud type
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            dataframe of features to use for cloud
+            type prediction
+        to_cloud_type : bool
+            Flag to convert to UWisc numeric cloud types
+
+        Returns
+        -------
+        y : np.ndarray
+            array of cloud type predictions for each
+            observation in X
+        """
+
+        y = self.raw_prediction(X)
+        return self.remap_predictions(X, y, to_cloud_type)
 
     def update_all_sky_input(self, all_sky_input, df):
         """Update fields for all_sky based on model classifications
@@ -436,6 +478,7 @@ class CloudClassificationModel:
             normalized confusion matrix array
         """
         y_pred = self.predict(X)
+        y_pred = [self.cloud_encoding[y] for y in y_pred]
         if binary:
             y_pred[y_pred != 0] = 1
             y_true[y_true != 0] = 1
@@ -584,17 +627,39 @@ class CloudClassificationNN(CloudClassificationModel):
             observation in X
         """
 
-        self.check_features(X)
-        X = self.convert_flags(X)
-        y = self.model.predict(X[self.features])
+        y = self.raw_prediction(X)
         y = pd.DataFrame(y)
         y = y.idxmax(axis=1)
 
-        inverse_cloud_encoding = {v: k for k, v in self.cloud_encoding.items()}
-        y = [inverse_cloud_encoding[v] for v in y]
-        inverse_flag_encoding = {v: k for k, v in self.flag_encoding.items()}
-        X['flag'].replace(inverse_flag_encoding, inplace=True)
-        if to_cloud_type:
-            y = pd.Series(y).map(self.cloud_type_encoding)
-            y = y.astype(np.uint16).values
-        return y
+        return self.remap_predictions(X, y, to_cloud_type)
+
+    def get_confusion_matrix(self, X, y_true, binary=True):
+        """Compute confusion matrix from true labels
+        and predicted labels
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            dataframe of features to use for cloud type
+            predictions
+        y_true : ndarray
+            array of cloud type labels
+        binary : bool, optional
+            whether to compute binary confusion matrix
+            (clear/cloudy) or keep all cloud types, by default True
+
+        Returns
+        -------
+        ndarray
+            normalized confusion matrix array
+        """
+        y_pred = self.predict(X)
+        y_pred = [self.cloud_encoding[y] for y in y_pred]
+        y_true = y_true.idxmax(axis=1)
+        y_true = y_true.replace(self.cloud_encoding)
+        if binary:
+            y_pred[y_pred != 0] = 1
+            y_true[y_true != 0] = 1
+        cm = confusion_matrix(y_true, y_pred)
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        return cm
