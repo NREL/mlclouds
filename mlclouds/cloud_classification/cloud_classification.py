@@ -11,6 +11,7 @@ from sklearn.pipeline import Pipeline
 import numpy as np
 import joblib
 import tensorflow as tf
+tf.random.set_seed(42)
 
 from nsrdb.all_sky.all_sky import all_sky, ALL_SKY_ARGS
 
