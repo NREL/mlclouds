@@ -536,6 +536,30 @@ class CloudClassificationNN(CloudClassificationModel):
         # UWisc cloud types
         self.cloud_type_encoding = {'clearsky': 0, 'water': 2, 'ice': 6}
 
+        self.initialize_model(
+            optimizer=optimizer, model_file=model_file)
+
+        self.features = features
+        self.test_size = test_size
+        self.batch_size = batch_size
+        self.df = None
+        self.X_train = None
+        self.y_train = None
+        self.X_test = None
+        self.y_test = None
+        self.train_indices = None
+        self.test_indices = None
+
+    def initialize_model(self, optimizer='adam', model_file=None):
+        """Initialize model architecture
+
+        Parameters
+        ----------
+        optimizer : str, optional
+            Type of optimizer. Can be adam or sgd, by default 'adam'
+        model_file : str, optional
+            File to load model from, by default None
+        """
         if model_file is not None:
             try:
                 self.model = self.load(model_file)
@@ -568,16 +592,7 @@ class CloudClassificationNN(CloudClassificationModel):
             )
             self.model = Pipeline([('scaler', StandardScaler()),
                                    ('clf', clf)])
-        self.features = features
-        self.test_size = test_size
-        self.batch_size = batch_size
-        self.df = None
-        self.X_train = None
-        self.y_train = None
-        self.X_test = None
-        self.y_test = None
-        self.train_indices = None
-        self.test_indices = None
+
 
     def train(self, X_train, y_train, X_test, y_test):
         """
