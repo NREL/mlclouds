@@ -593,7 +593,6 @@ class CloudClassificationNN(CloudClassificationModel):
             self.model = Pipeline([('scaler', StandardScaler()),
                                    ('clf', clf)])
 
-
     def train(self, X_train, y_train, X_test, y_test):
         """
         Parameters
