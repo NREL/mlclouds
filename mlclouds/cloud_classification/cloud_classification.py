@@ -479,6 +479,10 @@ class CloudClassificationModel:
         """
         y_pred = self.predict(X)
         y_pred = np.array([self.cloud_encoding[y] for y in y_pred])
+
+        if len(y_true.shape) > 1:
+            y_true = y_true.idxmax(axis=1)
+        y_true = np.array(y_true.replace(self.cloud_encoding))
         if binary:
             y_pred[y_pred != 0] = 1
             y_true[y_true != 0] = 1
@@ -494,7 +498,8 @@ class CloudClassificationNN(CloudClassificationModel):
     """
     def __init__(self, model_file=None, test_size=0.2,
                  features=None, learning_rate=0.01,
-                 epochs=100, batch_size=128):
+                 epochs=100, batch_size=128,
+                 optimizer='adam'):
         """Initialize cloud classification model
 
         Parameters
@@ -536,8 +541,15 @@ class CloudClassificationNN(CloudClassificationModel):
             clf.add(tf.keras.layers.Dense(256, activation='relu'))
             clf.add(tf.keras.layers.Dense(256, activation='relu'))
             clf.add(tf.keras.layers.Dense(3, activation='sigmoid'))
-            opt = tf.keras.optimizers.SGD(
-                learning_rate=self.learning_rate)
+
+            if optimizer == 'adam':
+                opt = tf.keras.optimizers.Adam(
+                    learning_rate=self.learning_rate
+                )
+            if optimizer == 'sgd':
+                opt = tf.keras.optimizers.SGD(
+                    learning_rate=self.learning_rate
+                )
             clf.compile(
                 loss=tf.keras.losses.binary_crossentropy,
                 optimizer=opt,
@@ -632,34 +644,3 @@ class CloudClassificationNN(CloudClassificationModel):
         y = y.idxmax(axis=1)
 
         return self.remap_predictions(X, y, to_cloud_type)
-
-    def get_confusion_matrix(self, X, y_true, binary=True):
-        """Compute confusion matrix from true labels
-        and predicted labels
-
-        Parameters
-        ----------
-        X : pd.DataFrame
-            dataframe of features to use for cloud type
-            predictions
-        y_true : ndarray
-            array of cloud type labels
-        binary : bool, optional
-            whether to compute binary confusion matrix
-            (clear/cloudy) or keep all cloud types, by default True
-
-        Returns
-        -------
-        ndarray
-            normalized confusion matrix array
-        """
-        y_pred = self.predict(X)
-        y_pred = np.array([self.cloud_encoding[y] for y in y_pred])
-        y_true = y_true.idxmax(axis=1)
-        y_true = np.array(y_true.replace(self.cloud_encoding))
-        if binary:
-            y_pred[y_pred != 0] = 1
-            y_true[y_true != 0] = 1
-        cm = confusion_matrix(y_true, y_pred)
-        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        return cm
