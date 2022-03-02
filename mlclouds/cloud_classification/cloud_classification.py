@@ -80,6 +80,34 @@ class CloudClassificationModel:
         # UWisc cloud types
         self.cloud_type_encoding = {'clearsky': 0, 'water': 2, 'ice': 6}
 
+        self.initialize_model(
+            model_file=model_file, max_depth=max_depth,
+            n_estimators=n_estimators)
+
+        self.features = features
+        self.test_size = test_size
+        self.df = None
+        self.X_train = None
+        self.y_train = None
+        self.X_test = None
+        self.y_test = None
+        self.train_indices = None
+        self.test_indices = None
+
+    def initialize_model(self, model_file=None,
+                         max_depth=30, n_estimators=2500):
+        """Initialize XGBoost model
+
+        Parameters
+        ----------
+        model_file : str, optional
+            File to load model from, by default None
+        max_depth : int, optional
+            max tree depth, by default 30
+        n_estimators : int, optional
+            number of trees, by default 2500
+        """
+
         if model_file is not None:
             try:
                 self.model = self.load(model_file)
@@ -90,15 +118,6 @@ class CloudClassificationModel:
                                     n_estimators=n_estimators)
             self.model = Pipeline([('scaler', StandardScaler()),
                                    ('clf', clf)])
-        self.features = features
-        self.test_size = test_size
-        self.df = None
-        self.X_train = None
-        self.y_train = None
-        self.X_test = None
-        self.y_test = None
-        self.train_indices = None
-        self.test_indices = None
 
     def _load_data(self, data_file, frac=None):
         """Load csv data file for training
