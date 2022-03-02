@@ -408,7 +408,6 @@ class CloudClassificationNN(CloudClassificationModel):
             clf.add(tf.keras.layers.Dense(256, activation='relu'))
             clf.add(tf.keras.layers.Dense(256, activation='relu'))
             clf.add(tf.keras.layers.Dense(3, activation='sigmoid'))
-            clf.summary()
             opt = tf.keras.optimizers.SGD(
                 learning_rate=self.learning_rate)
             clf.compile(
@@ -455,10 +454,10 @@ class CloudClassificationNN(CloudClassificationModel):
             restore_best_weights=True)
 
         history = self.model.fit(
-            X_train, y_train, batch_size=self.batch_size,
-            epochs=self.epochs, validation_data=(X_test, y_test),
-            callbacks=[earlystopping])
-        return history
+            X_train, y_train, clf__batch_size=self.batch_size,
+            clf__epochs=self.epochs, clf__validation_data=(X_test, y_test),
+            clf__callbacks=[earlystopping])
+        return history['clf'].history.history
 
     def load_data_and_train(self, data_file):
         """Load data and train model using features selected
