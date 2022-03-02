@@ -5,7 +5,8 @@ import xgboost as xgb
 import logging
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import log_loss
+from sklearn.metrics import (log_loss,
+                             confusion_matrix)
 from sklearn.pipeline import Pipeline
 import numpy as np
 import joblib
@@ -105,23 +106,41 @@ class CloudClassificationModel:
         ----------
         data_file : str
             csv file containing features and targets for training
+
+        Returns
+        -------
+        pd.DataFrame
+            loaded dataframe with features for training or prediction
         """
         self.df = pd.read_csv(data_file)
         self.df = self.convert_flags(self.df)
+        return self.df
 
-    def _select_features(self):
+    def _select_features(self, df):
         """Extract features from loaded dataframe
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            dataframe with features to use for cloud type prediction
 
         Returns
         -------
         X : pd.DataFrame
             dataframe of features to use for training/predictions
         """
-        X = self.df[self.features]
+        X = df[self.features]
         return X
 
-    def _select_targets(self, one_hot_encoding=True):
+    def _select_targets(self, df, one_hot_encoding=True):
         """Extract targets from loaded dataframe
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            dataframe with features to use for cloud type prediction
+        one_hot_encoding : bool
+            whether to one hot encode targets or keep single column
 
         Returns
         -------
@@ -132,17 +151,19 @@ class CloudClassificationModel:
             integer encode
         """
         if one_hot_encoding:
-            y = pd.get_dummies(self.df['nom_cloud_id'])
+            y = pd.get_dummies(df['nom_cloud_id'])
             self.cloud_encoding = {k: v for v, k in enumerate(y.columns)}
         else:
-            y = self.df['nom_cloud_id'].replace(self.cloud_encoding)
+            y = df['nom_cloud_id'].replace(self.cloud_encoding)
         return y
 
-    def _split_data(self, one_hot_encoding=False):
+    def _split_data(self, df, one_hot_encoding=False):
         """Split data into training and validation
 
         Parameters
         ----------
+        df : pd.DataFrame
+            dataframe with features to use for cloud type prediction
         one_hot_coding : bool
             Whether to one hot encode targets or to just
             integer encode
@@ -158,8 +179,8 @@ class CloudClassificationModel:
         y_test : pd.DataFrame
             Fraction of full target dataframe to use for validation
         """
-        X = self._select_features()
-        y = self._select_targets(one_hot_encoding)
+        X = self._select_features(df)
+        y = self._select_targets(df, one_hot_encoding)
         return train_test_split(X, y, np.arange(X.shape[0]),
                                 test_size=self.test_size)
 
@@ -224,9 +245,9 @@ class CloudClassificationModel:
         data_file : str
             csv file containing features and targets for training
         """
-        self._load_data(data_file=data_file)
+        df = self._load_data(data_file=data_file)
         self.X_train, self.X_test, self.y_train, self.y_test, \
-            self.train_indices, self.test_indices = self._split_data()
+            self.train_indices, self.test_indices = self._split_data(df)
         self.train(self.X_train, self.y_train)
 
     def train(self, X_train, y_train, epochs=None):
@@ -394,6 +415,34 @@ class CloudClassificationModel:
         """
         return log_loss(y, self.model.predict_proba(X))
 
+    def get_confusion_matrix(self, X, y_true, binary=True):
+        """Compute confusion matrix from true labels
+        and predicted labels
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            dataframe of features to use for cloud type
+            predictions
+        y_true : ndarray
+            array of cloud type labels
+        binary : bool, optional
+            whether to compute binary confusion matrix
+            (clear/cloudy) or keep all cloud types, by default True
+
+        Returns
+        -------
+        ndarray
+            normalized confusion matrix array
+        """
+        y_pred = self.predict(X)
+        if binary:
+            y_pred[y_pred != 0] = 1
+            y_true[y_true != 0] = 1
+        cm = confusion_matrix(y_true, y_pred)
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        return cm
+
 
 class CloudClassificationNN(CloudClassificationModel):
     """Cloud Classification Model class using
@@ -510,10 +559,10 @@ class CloudClassificationNN(CloudClassificationModel):
             dictionary with loss and accuracy history
             over course of training
         """
-        self._load_data(data_file=data_file)
+        df = self._load_data(data_file=data_file)
         self.X_train, self.X_test, self.y_train, self.y_test, \
             self.train_indices, self.test_indices = self._split_data(
-                one_hot_encoding=True)
+                df, one_hot_encoding=True)
         return self.train(
             self.X_train, self.y_train, self.X_test, self.y_test)
 
