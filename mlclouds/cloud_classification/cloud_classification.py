@@ -478,7 +478,7 @@ class CloudClassificationModel:
             normalized confusion matrix array
         """
         y_pred = self.predict(X)
-        y_pred = [self.cloud_encoding[y] for y in y_pred]
+        y_pred = np.array([self.cloud_encoding[y] for y in y_pred])
         if binary:
             y_pred[y_pred != 0] = 1
             y_true[y_true != 0] = 1
@@ -654,9 +654,9 @@ class CloudClassificationNN(CloudClassificationModel):
             normalized confusion matrix array
         """
         y_pred = self.predict(X)
-        y_pred = [self.cloud_encoding[y] for y in y_pred]
+        y_pred = np.array([self.cloud_encoding[y] for y in y_pred])
         y_true = y_true.idxmax(axis=1)
-        y_true = y_true.replace(self.cloud_encoding)
+        y_true = np.array(y_true.replace(self.cloud_encoding))
         if binary:
             y_pred[y_pred != 0] = 1
             y_true[y_true != 0] = 1
