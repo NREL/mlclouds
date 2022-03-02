@@ -99,7 +99,7 @@ class CloudClassificationModel:
         self.train_indices = None
         self.test_indices = None
 
-    def _load_data(self, data_file, samples=None):
+    def _load_data(self, data_file, frac=None):
         """Load csv data file for training
 
         Parameters
@@ -115,8 +115,10 @@ class CloudClassificationModel:
         self.df = pd.read_csv(data_file)
         self.df = self.convert_flags(self.df)
 
-        if samples is not None:
-            self.df = self.df.sample(n=samples)
+        if frac is not None:
+            self.df = self.df.groupby(
+                'nom_cloud_id').apply(
+                    lambda x: x.sample(frac=frac))
         return self.df
 
     def _select_features(self, df):
@@ -239,7 +241,7 @@ class CloudClassificationModel:
             logger.error(msg)
             raise ValueError(msg)
 
-    def load_data_and_train(self, data_file, samples=None):
+    def load_data_and_train(self, data_file, frac=None):
         """Load data and train model using features selected
         during initialization
 
@@ -248,7 +250,7 @@ class CloudClassificationModel:
         data_file : str
             csv file containing features and targets for training
         """
-        df = self._load_data(data_file=data_file, samples=samples)
+        df = self._load_data(data_file=data_file, frac=frac)
         self.X_train, self.X_test, self.y_train, self.y_test, \
             self.train_indices, self.test_indices = self._split_data(df)
         self.train(self.X_train, self.y_train)
@@ -602,7 +604,7 @@ class CloudClassificationNN(CloudClassificationModel):
             clf__callbacks=[earlystopping])
         return history['clf'].history.history
 
-    def load_data_and_train(self, data_file, samples=None):
+    def load_data_and_train(self, data_file, frac=None):
         """Load data and train model using features selected
         during initialization
 
@@ -617,7 +619,7 @@ class CloudClassificationNN(CloudClassificationModel):
             dictionary with loss and accuracy history
             over course of training
         """
-        df = self._load_data(data_file=data_file, samples=samples)
+        df = self._load_data(data_file=data_file, frac=frac)
         self.X_train, self.X_test, self.y_train, self.y_test, \
             self.train_indices, self.test_indices = self._split_data(
                 df, one_hot_encoding=True)
