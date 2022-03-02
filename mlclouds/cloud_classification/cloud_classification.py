@@ -376,8 +376,8 @@ class CloudClassificationNN(CloudClassificationModel):
         features : list, optional
             list of features to use for training and for predictions,
             by default features
-        learning_rate : float
-            learning rate for classifier
+        learning_rate : float, optional
+            learning rate for classifier, by default 0.01
         epochs : int
             number of epochs for classifier training
         """
@@ -428,6 +428,22 @@ class CloudClassificationNN(CloudClassificationModel):
         self.y_test = None
 
     def train(self, X, y):
+        """
+        Parameters
+        ----------
+        X : pd.DataFrame
+            dataframe of features to use for cloud
+            type prediction
+        y : pd.DataFrame
+            dataframe of targets to use for cloud
+            type prediction
+
+        Returns
+        -------
+        history : dict
+            dictionary with loss and accuracy history
+            over course of training
+        """
         history = super().train(X, y, self.epochs)
         return history
 
@@ -439,11 +455,17 @@ class CloudClassificationNN(CloudClassificationModel):
         ----------
         data_file : str
             csv file containing features and targets for training
+
+        Returns
+        -------
+        history : dict
+            dictionary with loss and accuracy history
+            over course of training
         """
         self._load_data(data_file=data_file)
         self.X_train, self.X_test, self.y_train, self.y_test = \
             self._split_data(one_hot_encoding=True)
-        self.train(self.X_train, self.y_train)
+        return self.train(self.X_train, self.y_train)
 
     def predict(self, X, to_cloud_type=False):
         """Predict cloud type
