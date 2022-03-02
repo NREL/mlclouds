@@ -11,6 +11,8 @@ import numpy as np
 import joblib
 import tensorflow as tf
 
+from nsrdb.all_sky.all_sky import all_sky, ALL_SKY_ARGS
+
 logger = logging.getLogger(__name__)
 
 
@@ -300,12 +302,14 @@ class CloudClassificationModel:
             y = y.astype(np.uint16).values
         return y
 
-    def update_all_sky_input(self, all_sky_input):
+    def update_all_sky_input(self, all_sky_input, df):
         """Update fields for all_sky based on model classifications
 
         Parameters
         ----------
         all_sky_input : pd.DataFrame
+            dataframe to update and then send to all_sky run
+        df : pd.DataFrame
             dataframe with variables needed for running all_sky
 
         Returns
@@ -315,26 +319,58 @@ class CloudClassificationModel:
             model classifications
         """
 
-        df = all_sky_input.copy()
-        y = self.predict(all_sky_input)
+        y = self.predict(df)
 
-        df['cloud_type'] = 0
-        df['cld_opd_dcomp'] = 0
-        df['cld_reff_dcomp'] = 0
+        all_sky_input['cloud_type'] = 0
+        all_sky_input['cld_opd_dcomp'] = 0
+        all_sky_input['cld_reff_dcomp'] = 0
 
         ice_mask = y == 'ice'
         water_mask = y == 'water'
 
-        df.loc[ice_mask, 'cld_opd_dcomp'] = \
+        all_sky_input.loc[ice_mask, 'cld_opd_dcomp'] = \
             df.loc[ice_mask, 'cld_opd_mlclouds_ice']
-        df.loc[ice_mask, 'cld_reff_dcomp'] = \
+        all_sky_input.loc[ice_mask, 'cld_reff_dcomp'] = \
             df.loc[ice_mask, 'cld_reff_mlclouds_ice']
-        df.loc[ice_mask, 'cloud_type'] = 6
-        df.loc[water_mask, 'cld_opd_dcomp'] = \
+        all_sky_input.loc[ice_mask, 'cloud_type'] = 6
+        all_sky_input.loc[water_mask, 'cld_opd_dcomp'] = \
             df.loc[water_mask, 'cld_opd_mlclouds_water']
-        df.loc[water_mask, 'cld_reff_dcomp'] = \
+        all_sky_input.loc[water_mask, 'cld_reff_dcomp'] = \
             df.loc[water_mask, 'cld_reff_mlclouds_water']
-        df.loc[water_mask, 'cloud_type'] = 2
+        all_sky_input.loc[water_mask, 'cloud_type'] = 2
+        all_sky_input['time_index'] = df['time_index'].values
+        return all_sky_input
+
+    def run_all_sky(self, df):
+        """Update all sky inputs with model predictions and
+        then run all_sky
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            dataframe with features needed to make cloud type
+            predictions
+
+        Returns
+        -------
+        pd.DataFrame
+            updated dataframe with all_sky irradiance outputs
+        """
+        ignore = ('cloud_fill_flag',)
+
+        all_sky_args = [dset for dset in ALL_SKY_ARGS if dset not in ignore]
+        all_sky_input = {dset: df[dset].values for dset in all_sky_args}
+
+        all_sky_input = self.update_all_sky_input(all_sky_input, df)
+
+        all_sky_input = {k: np.expand_dims(v, axis=1)
+                         for k, v in all_sky_input.items()}
+
+        out = all_sky(**all_sky_input)
+
+        for dset in ('ghi', 'dni', 'dhi'):
+            df[f'nn_{dset}'] = out[dset].flatten()
+
         return df
 
     def loss(self, X, y):
