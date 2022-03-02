@@ -93,6 +93,8 @@ class CloudClassificationModel:
         self.y_train = None
         self.X_test = None
         self.y_test = None
+        self.train_indices = None
+        self.test_indices = None
 
     def _load_data(self, data_file):
         """Load csv data file for training
@@ -134,7 +136,7 @@ class CloudClassificationModel:
             y = self.df['nom_cloud_id'].replace(self.cloud_encoding)
         return y
 
-    def _split_data(self, one_hot_encoding=True):
+    def _split_data(self, one_hot_encoding=False):
         """Split data into training and validation
 
         Parameters
@@ -221,7 +223,9 @@ class CloudClassificationModel:
             csv file containing features and targets for training
         """
         self._load_data(data_file=data_file)
-        self.X_train, self.X_test, self.y_train, self.y_test = \
+        self.X_train, self.X_test,
+        self.y_train, self.y_test,
+        self.train_indices, self.test_indices = \
             self._split_data()
         self.train(self.X_train, self.y_train)
 
@@ -426,6 +430,8 @@ class CloudClassificationNN(CloudClassificationModel):
         self.y_train = None
         self.X_test = None
         self.y_test = None
+        self.train_indices = None
+        self.test_indices = None
 
     def train(self, X, y):
         """
@@ -463,7 +469,9 @@ class CloudClassificationNN(CloudClassificationModel):
             over course of training
         """
         self._load_data(data_file=data_file)
-        self.X_train, self.X_test, self.y_train, self.y_test = \
+        self.X_train, self.X_test,
+        self.y_train, self.y_test,
+        self.train_indices, self.test_indices = \
             self._split_data(one_hot_encoding=True)
         return self.train(self.X_train, self.y_train)
 
