@@ -543,9 +543,10 @@ class CloudClassificationNN(CloudClassificationModel):
                 logger.error(f'Model file not found: {model_file}')
         else:
             clf = tf.keras.models.Sequential()
+            clf.add(tf.keras.layers.Dense(256, activation='relu'))
             clf.add(tf.keras.layers.Dense(128, activation='relu'))
-            clf.add(tf.keras.layers.Dense(256, activation='relu'))
-            clf.add(tf.keras.layers.Dense(256, activation='relu'))
+            clf.add(tf.keras.layers.Dense(64, activation='relu'))
+            clf.add(tf.keras.layers.Dense(32, activation='relu'))
             clf.add(tf.keras.layers.Dense(3, activation='sigmoid'))
 
             if optimizer == 'adam':
