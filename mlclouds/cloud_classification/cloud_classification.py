@@ -559,7 +559,7 @@ class CloudClassificationNN(CloudClassificationModel):
                 loss=tf.keras.losses.categorical_crossentropy,
                 optimizer=opt,
                 metrics=[
-                    tf.keras.metrics.BinaryAccuracy(name='accuracy'),
+                    tf.keras.metrics.CategoricalAccuracy(name='accuracy'),
                     tf.keras.metrics.Precision(name='precision'),
                     tf.keras.metrics.Recall(name='recall'),
                 ]
