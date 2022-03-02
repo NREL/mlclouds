@@ -551,7 +551,7 @@ class CloudClassificationNN(CloudClassificationModel):
                     learning_rate=self.learning_rate
                 )
             clf.compile(
-                loss=tf.keras.losses.binary_crossentropy,
+                loss=tf.keras.losses.categorical_crossentropy,
                 optimizer=opt,
                 metrics=[
                     tf.keras.metrics.BinaryAccuracy(name='accuracy'),
