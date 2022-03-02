@@ -223,10 +223,8 @@ class CloudClassificationModel:
             csv file containing features and targets for training
         """
         self._load_data(data_file=data_file)
-        self.X_train, self.X_test,
-        self.y_train, self.y_test,
-        self.train_indices, self.test_indices = \
-            self._split_data()
+        self.X_train, self.X_test, self.y_train, self.y_test, \
+            self.train_indices, self.test_indices = self._split_data()
         self.train(self.X_train, self.y_train)
 
     def train(self, X_train, y_train, epochs=None):
@@ -411,10 +409,11 @@ class CloudClassificationNN(CloudClassificationModel):
                 tf.keras.layers.Dense(256, activation='relu'),
                 tf.keras.layers.Dense(3, activation='sigmoid'),
             ])
+            opt = tf.keras.optimizers.SGD(
+                learning_rate=self.learning_rate)
             clf.compile(
                 loss=tf.keras.losses.binary_crossentropy,
-                optimizer=tf.keras.optimizers.Adam(
-                    learning_rate=self.learning_rate),
+                optimizer=opt,
                 metrics=[
                     tf.keras.metrics.BinaryAccuracy(name='accuracy'),
                     tf.keras.metrics.Precision(name='precision'),
@@ -469,10 +468,9 @@ class CloudClassificationNN(CloudClassificationModel):
             over course of training
         """
         self._load_data(data_file=data_file)
-        self.X_train, self.X_test,
-        self.y_train, self.y_test,
-        self.train_indices, self.test_indices = \
-            self._split_data(one_hot_encoding=True)
+        self.X_train, self.X_test, self.y_train, self.y_test, \
+            self.train_indices, self.test_indices = self._split_data(
+                one_hot_encoding=True)
         return self.train(self.X_train, self.y_train)
 
     def predict(self, X, to_cloud_type=False):
