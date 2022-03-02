@@ -366,7 +366,7 @@ class CloudClassificationNN(CloudClassificationModel):
     """
     def __init__(self, model_file=None, test_size=0.2,
                  features=None, learning_rate=0.01,
-                 epochs=100):
+                 epochs=100, batch_size=128):
         """Initialize cloud classification model
 
         Parameters
@@ -403,12 +403,12 @@ class CloudClassificationNN(CloudClassificationModel):
             except FileNotFoundError:
                 logger.error(f'Model file not found: {model_file}')
         else:
-            clf = tf.keras.Sequential([
-                tf.keras.layers.Dense(128, activation='relu'),
-                tf.keras.layers.Dense(256, activation='relu'),
-                tf.keras.layers.Dense(256, activation='relu'),
-                tf.keras.layers.Dense(3, activation='sigmoid'),
-            ])
+            clf = tf.keras.models.Sequential()
+            clf.add(tf.keras.layers.Dense(128, activation='relu'))
+            clf.add(tf.keras.layers.Dense(256, activation='relu'))
+            clf.add(tf.keras.layers.Dense(256, activation='relu'))
+            clf.add(tf.keras.layers.Dense(3, activation='sigmoid'))
+            clf.summary()
             opt = tf.keras.optimizers.SGD(
                 learning_rate=self.learning_rate)
             clf.compile(
@@ -417,13 +417,14 @@ class CloudClassificationNN(CloudClassificationModel):
                 metrics=[
                     tf.keras.metrics.BinaryAccuracy(name='accuracy'),
                     tf.keras.metrics.Precision(name='precision'),
-                    tf.keras.metrics.Recall(name='recall')
+                    tf.keras.metrics.Recall(name='recall'),
                 ]
             )
             self.model = Pipeline([('scaler', StandardScaler()),
                                    ('clf', clf)])
         self.features = features
         self.test_size = test_size
+        self.batch_size = batch_size
         self.df = None
         self.X_train = None
         self.y_train = None
@@ -432,7 +433,7 @@ class CloudClassificationNN(CloudClassificationModel):
         self.train_indices = None
         self.test_indices = None
 
-    def train(self, X, y):
+    def train(self, X_train, y_train, X_test, y_test):
         """
         Parameters
         ----------
@@ -449,7 +450,14 @@ class CloudClassificationNN(CloudClassificationModel):
             dictionary with loss and accuracy history
             over course of training
         """
-        history = super().train(X, y, self.epochs)
+        earlystopping = tf.keras.callbacks.EarlyStopping(
+            monitor="val_loss", mode="min", patience=5,
+            restore_best_weights=True)
+
+        history = self.model.fit(
+            X_train, y_train, batch_size=self.batch_size,
+            epochs=self.epochs, validation_data=(X_test, y_test),
+            callbacks=[earlystopping])
         return history
 
     def load_data_and_train(self, data_file):
@@ -471,7 +479,8 @@ class CloudClassificationNN(CloudClassificationModel):
         self.X_train, self.X_test, self.y_train, self.y_test, \
             self.train_indices, self.test_indices = self._split_data(
                 one_hot_encoding=True)
-        return self.train(self.X_train, self.y_train)
+        return self.train(
+            self.X_train, self.y_train, self.X_test, self.y_test)
 
     def predict(self, X, to_cloud_type=False):
         """Predict cloud type
