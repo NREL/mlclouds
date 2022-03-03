@@ -1,5 +1,6 @@
 """Cloud Classification model using XGBoost"""
 
+from tkinter import N
 import pandas as pd
 import xgboost as xgb
 import logging
@@ -195,6 +196,10 @@ class CloudClassificationModel:
             Fraction of full target dataframe to use for training
         y_test : pd.DataFrame
             Fraction of full target dataframe to use for validation
+        train_indices : ndarray
+            array of indices corresponding to training data
+        test_indices : ndarray
+            array of indices corresponding to test data
         """
         X = self._select_features(df)
         y = self._select_targets(df, one_hot_encoding)
@@ -252,6 +257,33 @@ class CloudClassificationModel:
                    'dataframe: {} '.format(missing))
             logger.error(msg)
             raise ValueError(msg)
+
+    def load_data_and_split(self, data_file, frac=None):
+        """Load data and train model using features selected
+        during initialization
+
+        Parameters
+        ----------
+        data_file : str
+            csv file containing features and targets for training
+
+        Returns
+        -------
+        X_train : pd.DataFrame
+            Fraction of full feature dataframe to use for training
+        X_test : pd.DataFrame
+            Fraction of full feature dataframe to use for validation
+        y_train : pd.DataFrame
+            Fraction of full target dataframe to use for training
+        y_test : pd.DataFrame
+            Fraction of full target dataframe to use for validation
+        train_indices : ndarray
+            array of indices corresponding to training data
+        test_indices : ndarray
+            array of indices corresponding to test data
+        """
+        df = self._load_data(data_file=data_file, frac=frac)
+        return self._split_data(df)
 
     def load_data_and_train(self, data_file, frac=None):
         """Load data and train model using features selected
@@ -533,7 +565,6 @@ class CloudClassificationNN(CloudClassificationModel):
         epochs : int
             number of epochs for classifier training
         """
-        super().__init__()
 
         if features is None:
             features = self.DEF_FEATURES
@@ -560,6 +591,8 @@ class CloudClassificationNN(CloudClassificationModel):
         self.train_indices = None
         self.test_indices = None
         self.model = None
+        self.means = None
+        self.stds = None
 
         self.initialize_model()
 
@@ -573,7 +606,6 @@ class CloudClassificationNN(CloudClassificationModel):
                 logger.error(f'Model file not found: {self.model_file}')
         else:
             clf = tf.keras.models.Sequential()
-            clf.add(tf.keras.layers.Normalization())
             clf.add(tf.keras.layers.Dense(128, activation='relu'))
             clf.add(tf.keras.layers.Dense(128, activation='relu'))
             clf.add(tf.keras.layers.Dense(128, activation='relu'))
@@ -600,16 +632,46 @@ class CloudClassificationNN(CloudClassificationModel):
             )
             self.model = clf
 
+    def _split_data(self, df, one_hot_encoding=False):
+        """Split data into training and validation
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            dataframe with features to use for cloud type prediction
+        one_hot_coding : bool
+            Whether to one hot encode targets or to just
+            integer encode
+
+        Returns
+        -------
+        X_train : pd.DataFrame
+            Fraction of full feature dataframe to use for training
+        X_test : pd.DataFrame
+            Fraction of full feature dataframe to use for validation
+        y_train : pd.DataFrame
+            Fraction of full target dataframe to use for training
+        y_test : pd.DataFrame
+            Fraction of full target dataframe to use for validation
+        """
+        X = self._select_features(df)
+        X = self.normalize(X)
+        y = self._select_targets(df, one_hot_encoding)
+        return train_test_split(X, y, np.arange(X.shape[0]),
+                                test_size=self.test_size)
+
     def train(self, X_train, y_train, X_test, y_test):
         """
         Parameters
         ----------
-        X : pd.DataFrame
-            dataframe of features to use for cloud
-            type prediction
-        y : pd.DataFrame
-            dataframe of targets to use for cloud
-            type prediction
+        X_train : pd.DataFrame
+            dataframe of features to use for training
+        y_train : pd.DataFrame
+            dataframe of targets to use for training
+        X_test : pd.DataFrame
+            dataframe of features to use for testing
+        y_test : pd.DataFrame
+            dataframe of targets to use for testing
 
         Returns
         -------
@@ -618,14 +680,46 @@ class CloudClassificationNN(CloudClassificationModel):
             over course of training
         """
         earlystopping = tf.keras.callbacks.EarlyStopping(
-            monitor="val_loss", mode="min", patience=5,
+            monitor="val_loss", mode="min", patience=10,
             restore_best_weights=True)
 
         history = self.model.fit(
             X_train, y_train, batch_size=self.batch_size,
             epochs=self.epochs, validation_data=(X_test, y_test),
             callbacks=[earlystopping])
-        return history['clf'].history.history
+        return history
+
+    def tune_learning_rate(self, X_train, y_train,
+                           X_test, y_test, epochs=100):
+        """
+        Parameters
+        ----------
+        X_train : pd.DataFrame
+            dataframe of features to use for training
+        y_train : pd.DataFrame
+            dataframe of targets to use for training
+        X_test : pd.DataFrame
+            dataframe of features to use for testing
+        y_test : pd.DataFrame
+            dataframe of targets to use for testing
+        epochs : int
+            number of epochs to run
+
+        Returns
+        -------
+        history : dict
+            dictionary with loss and accuracy history
+            over course of training
+        """
+        tunelearning = tf.keras.callbacks.LearningRateScheduler(
+            lambda epoch: 1e-3 * 10 ** (epoch / 30)
+        )
+
+        history = self.model.fit(
+            X_train, y_train, batch_size=self.batch_size,
+            epochs=epochs, validation_data=(X_test, y_test),
+            callbacks=[tunelearning])
+        return history
 
     def load_data_and_train(self, data_file, frac=None):
         """Load data and train model using features selected
@@ -649,6 +743,29 @@ class CloudClassificationNN(CloudClassificationModel):
         return self.train(
             self.X_train, self.y_train, self.X_test, self.y_test)
 
+    def normalize(self, X, means=None, stds=None):
+        """Normalze features
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            dataframe of features used for prediction/training
+        means : pd.DataFrame, optional
+            dataframe of means for all features, by default None
+        stds : pd.DataFrame, optional
+            dataframe of stds for all features, by default None
+
+        Returns
+        -------
+        pd.DataFrame
+            normalized dataframe of features
+        """
+        if means is None:
+            self.means = means = X.mean(axis=1)
+        if stds is None:
+            self.stds = stds = X.std(axis=1)
+        return (X - means) / stds
+
     def predict(self, X, to_cloud_type=False):
         """Predict cloud type
 
@@ -667,7 +784,8 @@ class CloudClassificationNN(CloudClassificationModel):
             observation in X
         """
 
-        y = self.raw_prediction(X)
+        X_scaled = self.normalize(X, self.means, self.stds)
+        y = self.raw_prediction(X_scaled)
         y = pd.DataFrame(y)
         y = y.idxmax(axis=1)
 
