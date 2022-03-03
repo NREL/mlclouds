@@ -81,9 +81,7 @@ class CloudClassificationModel:
         # UWisc cloud types
         self.cloud_type_encoding = {'clearsky': 0, 'water': 2, 'ice': 6}
 
-        self.initialize_model(
-            model_file=model_file, max_depth=max_depth,
-            n_estimators=n_estimators)
+        self.initialize_model()
 
         self.features = features
         self.test_size = test_size
@@ -94,29 +92,21 @@ class CloudClassificationModel:
         self.y_test = None
         self.train_indices = None
         self.test_indices = None
+        self.model_file = model_file
+        self.max_depth = max_depth
+        self.n_estimators = n_estimators
 
-    def initialize_model(self, model_file=None,
-                         max_depth=30, n_estimators=2500):
-        """Initialize XGBoost model
+    def initialize_model(self):
+        """Initialize XGBoost model"""
 
-        Parameters
-        ----------
-        model_file : str, optional
-            File to load model from, by default None
-        max_depth : int, optional
-            max tree depth, by default 30
-        n_estimators : int, optional
-            number of trees, by default 2500
-        """
-
-        if model_file is not None:
+        if self.model_file is not None:
             try:
-                self.model = self.load(model_file)
+                self.model = self.load(self.model_file)
             except FileNotFoundError:
-                logger.error(f'Model file not found: {model_file}')
+                logger.error(f'Model file not found: {self.model_file}')
         else:
-            clf = xgb.XGBClassifier(max_depth=max_depth,
-                                    n_estimators=n_estimators)
+            clf = xgb.XGBClassifier(max_depth=self.max_depth,
+                                    n_estimators=self.n_estimators)
             self.model = Pipeline([('scaler', StandardScaler()),
                                    ('clf', clf)])
 
@@ -556,9 +546,10 @@ class CloudClassificationNN(CloudClassificationModel):
         # UWisc cloud types
         self.cloud_type_encoding = {'clearsky': 0, 'water': 2, 'ice': 6}
 
-        self.initialize_model(
-            optimizer=optimizer, model_file=model_file)
+        self.initialize_model()
 
+        self.optimizer = optimizer
+        self.model_file = model_file
         self.features = features
         self.test_size = test_size
         self.batch_size = batch_size
@@ -570,21 +561,14 @@ class CloudClassificationNN(CloudClassificationModel):
         self.train_indices = None
         self.test_indices = None
 
-    def initialize_model(self, optimizer='adam', model_file=None):
-        """Initialize model architecture
+    def initialize_model(self):
+        """Initialize model architecture"""
 
-        Parameters
-        ----------
-        optimizer : str, optional
-            Type of optimizer. Can be adam or sgd, by default 'adam'
-        model_file : str, optional
-            File to load model from, by default None
-        """
-        if model_file is not None:
+        if self.model_file is not None:
             try:
-                self.model = self.load(model_file)
+                self.model = self.load(self.model_file)
             except FileNotFoundError:
-                logger.error(f'Model file not found: {model_file}')
+                logger.error(f'Model file not found: {self.model_file}')
         else:
             clf = tf.keras.models.Sequential()
             clf.add(tf.keras.layers.Normalization())
@@ -595,11 +579,11 @@ class CloudClassificationNN(CloudClassificationModel):
             clf.add(tf.keras.layers.Dense(128, activation='relu'))
             clf.add(tf.keras.layers.Dense(3, activation='sigmoid'))
 
-            if optimizer == 'adam':
+            if self.optimizer == 'adam':
                 opt = tf.keras.optimizers.Adam(
                     learning_rate=self.learning_rate
                 )
-            if optimizer == 'sgd':
+            if self.optimizer == 'sgd':
                 opt = tf.keras.optimizers.SGD(
                     learning_rate=self.learning_rate
                 )
