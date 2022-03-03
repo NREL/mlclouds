@@ -81,8 +81,6 @@ class CloudClassificationModel:
         # UWisc cloud types
         self.cloud_type_encoding = {'clearsky': 0, 'water': 2, 'ice': 6}
 
-        self.initialize_model()
-
         self.features = features
         self.test_size = test_size
         self.df = None
@@ -95,6 +93,9 @@ class CloudClassificationModel:
         self.model_file = model_file
         self.max_depth = max_depth
         self.n_estimators = n_estimators
+        self.model = None
+
+        self.initialize_model()
 
     def initialize_model(self):
         """Initialize XGBoost model"""
@@ -540,14 +541,12 @@ class CloudClassificationNN(CloudClassificationModel):
         self.cloud_encoding = {'clearsky': 0, 'water': 1, 'ice': 2}
         self.flag_encoding = {'clear': 0, 'water_cloud': 1,
                               'ice_cloud': 2, 'bad_cloud': 3}
-        self.learning_rate = learning_rate
-        self.epochs = epochs
 
         # UWisc cloud types
         self.cloud_type_encoding = {'clearsky': 0, 'water': 2, 'ice': 6}
 
-        self.initialize_model()
-
+        self.learning_rate = learning_rate
+        self.epochs = epochs
         self.optimizer = optimizer
         self.model_file = model_file
         self.features = features
@@ -560,6 +559,9 @@ class CloudClassificationNN(CloudClassificationModel):
         self.y_test = None
         self.train_indices = None
         self.test_indices = None
+        self.model = None
+
+        self.initialize_model()
 
     def initialize_model(self):
         """Initialize model architecture"""
