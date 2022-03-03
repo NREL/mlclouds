@@ -720,6 +720,33 @@ class CloudClassificationNN(CloudClassificationModel):
             callbacks=[tunelearning])
         return history
 
+    def load_data_and_split(self, data_file, frac=None):
+        """Load data and train model using features selected
+        during initialization
+
+        Parameters
+        ----------
+        data_file : str
+            csv file containing features and targets for training
+
+        Returns
+        -------
+        X_train : pd.DataFrame
+            Fraction of full feature dataframe to use for training
+        X_test : pd.DataFrame
+            Fraction of full feature dataframe to use for validation
+        y_train : pd.DataFrame
+            Fraction of full target dataframe to use for training
+        y_test : pd.DataFrame
+            Fraction of full target dataframe to use for validation
+        train_indices : ndarray
+            array of indices corresponding to training data
+        test_indices : ndarray
+            array of indices corresponding to test data
+        """
+        df = self._load_data(data_file=data_file, frac=frac)
+        return self._split_data(df, one_hot_encoding=True)
+
     def load_data_and_train(self, data_file, frac=None):
         """Load data and train model using features selected
         during initialization
