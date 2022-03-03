@@ -14,6 +14,7 @@ import tensorflow as tf
 tf.random.set_seed(42)
 
 from nsrdb.all_sky.all_sky import all_sky, ALL_SKY_ARGS
+from phygnn import TfModel
 
 logger = logging.getLogger(__name__)
 
@@ -586,10 +587,12 @@ class CloudClassificationNN(CloudClassificationModel):
                 logger.error(f'Model file not found: {model_file}')
         else:
             clf = tf.keras.models.Sequential()
-            clf.add(tf.keras.layers.Dense(256, activation='relu'))
+            clf.add(tf.keras.layers.Normalization())
             clf.add(tf.keras.layers.Dense(128, activation='relu'))
-            clf.add(tf.keras.layers.Dense(64, activation='relu'))
-            clf.add(tf.keras.layers.Dense(32, activation='relu'))
+            clf.add(tf.keras.layers.Dense(128, activation='relu'))
+            clf.add(tf.keras.layers.Dense(128, activation='relu'))
+            clf.add(tf.keras.layers.Dense(128, activation='relu'))
+            clf.add(tf.keras.layers.Dense(128, activation='relu'))
             clf.add(tf.keras.layers.Dense(3, activation='sigmoid'))
 
             if optimizer == 'adam':
@@ -609,8 +612,7 @@ class CloudClassificationNN(CloudClassificationModel):
                     tf.keras.metrics.Recall(name='recall'),
                 ]
             )
-            self.model = Pipeline([('scaler', StandardScaler()),
-                                   ('clf', clf)])
+            self.model = clf
 
     def train(self, X_train, y_train, X_test, y_test):
         """
@@ -634,9 +636,9 @@ class CloudClassificationNN(CloudClassificationModel):
             restore_best_weights=True)
 
         history = self.model.fit(
-            X_train, y_train, clf__batch_size=self.batch_size,
-            clf__epochs=self.epochs, clf__validation_data=(X_test, y_test),
-            clf__callbacks=[earlystopping])
+            X_train, y_train, batch_size=self.batch_size,
+            epochs=self.epochs, validation_data=(X_test, y_test),
+            callbacks=[earlystopping])
         return history['clf'].history.history
 
     def load_data_and_train(self, data_file, frac=None):
