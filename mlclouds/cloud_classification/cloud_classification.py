@@ -1,6 +1,5 @@
 """Cloud Classification model using XGBoost"""
 
-from tkinter import N
 import pandas as pd
 import xgboost as xgb
 import logging
