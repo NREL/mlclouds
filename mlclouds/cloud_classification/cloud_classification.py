@@ -760,9 +760,9 @@ class CloudClassificationNN(CloudClassificationModel):
             normalized dataframe of features
         """
         if means is None:
-            self.means = means = X.mean(axis=1)
+            self.means = means = X.mean(axis=0)
         if stds is None:
-            self.stds = stds = X.std(axis=1)
+            self.stds = stds = X.std(axis=0)
         return (X - means) / stds
 
     def predict(self, X, to_cloud_type=False):
