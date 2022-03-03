@@ -539,15 +539,42 @@ class CloudClassificationModel:
         return cm
 
 
-class CloudClassificationNN(CloudClassificationModel):
+class CloudClassificationNN(TfModel):
     """Cloud Classification Model class using
     TensorFlow Classifier to classify conditions into
     clear, water_cloud, and ice_cloud
     """
-    def __init__(self, model_file=None, test_size=0.2,
+
+    # default feature set
+    DEF_FEATURES = [
+        'solar_zenith_angle',
+        'refl_0_65um_nom',
+        'refl_0_65um_nom_stddev_3x3',
+        'refl_3_75um_nom',
+        'temp_3_75um_nom',
+        'temp_11_0um_nom',
+        'temp_11_0um_nom_stddev_3x3',
+        'cloud_probability',
+        'cloud_fraction',
+        'air_temperature',
+        'dew_point',
+        'relative_humidity',
+        'total_precipitable_water',
+        'surface_albedo',
+        'alpha',
+        'aod',
+        'ozone',
+        'ssa',
+        'surface_pressure',
+        'cld_opd_mlclouds_water',
+        'cld_opd_mlclouds_ice',
+        'cloud_type',
+        'flag',
+        'cld_opd_dcomp']
+
+    def __init__(self, model_file=None,
                  features=None, learning_rate=0.01,
-                 epochs=100, batch_size=128,
-                 optimizer='adam'):
+                 epochs=100, batch_size=128, frac=None):
         """Initialize cloud classification model
 
         Parameters
@@ -577,243 +604,99 @@ class CloudClassificationNN(CloudClassificationModel):
 
         self.learning_rate = learning_rate
         self.epochs = epochs
-        self.optimizer = optimizer
         self.model_file = model_file
         self.features = features
-        self.test_size = test_size
         self.batch_size = batch_size
-        self.df = None
-        self.X_train = None
-        self.y_train = None
-        self.X_test = None
-        self.y_test = None
-        self.train_indices = None
-        self.test_indices = None
-        self.model = None
-        self.means = None
-        self.stds = None
+        self.df = self._load_data(model_file, frac=frac)
+        self.X = self._select_features(self.df)
+        self.y = self._select_targets(self.df)
+        self.model = self.initialize_model()
 
-        self.initialize_model()
+    def _load_data(self, data_file, frac=None):
+        """Load csv data file for training
+
+        Parameters
+        ----------
+        data_file : str
+            csv file containing features and targets for training
+
+        Returns
+        -------
+        pd.DataFrame
+            loaded dataframe with features for training or prediction
+        """
+        self.df = pd.read_csv(data_file)
+
+        if frac is not None:
+            self.df = self.df.groupby(
+                'nom_cloud_id').apply(
+                    lambda x: x.sample(frac=frac))
+        return self.df
+
+    def _select_features(self, df):
+        """Extract features from loaded dataframe
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            dataframe with features to use for cloud type prediction
+
+        Returns
+        -------
+        X : pd.DataFrame
+            dataframe of features to use for training/predictions
+        """
+        self.X = df[self.features]
+        return self.X
+
+    def _select_targets(self, df, one_hot_encoding=True):
+        """Extract targets from loaded dataframe
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            dataframe with features to use for cloud type prediction
+        one_hot_encoding : bool
+            whether to one hot encode targets or keep single column
+
+        Returns
+        -------
+        y : pd.DataFrame
+            dataframe of targets to use for training
+        one_hot_coding : bool
+            Whether to one hot encode targets or to just
+            integer encode
+        """
+        if one_hot_encoding:
+            self.y = pd.get_dummies(df['nom_cloud_id'])
+            self.cloud_encoding = {k: v for v, k in enumerate(self.y.columns)}
+        else:
+            self.y = df['nom_cloud_id'].replace(self.cloud_encoding)
+        return self.y
 
     def initialize_model(self):
         """Initialize model architecture"""
 
         if self.model_file is not None:
             try:
-                self.model = self.load(self.model_file)
+                model = self.load(self.model_file)
             except FileNotFoundError:
                 logger.error(f'Model file not found: {self.model_file}')
         else:
-            clf = tf.keras.models.Sequential()
-            clf.add(tf.keras.layers.Dense(128, activation='relu'))
-            clf.add(tf.keras.layers.Dense(128, activation='relu'))
-            clf.add(tf.keras.layers.Dense(128, activation='relu'))
-            clf.add(tf.keras.layers.Dense(128, activation='relu'))
-            clf.add(tf.keras.layers.Dense(128, activation='relu'))
-            clf.add(tf.keras.layers.Dense(3, activation='sigmoid'))
+            model = tf.keras.models.Sequential()
+            model.add(tf.keras.layers.Dense(128, activation='relu'))
+            model.add(tf.keras.layers.Dense(128, activation='relu'))
+            model.add(tf.keras.layers.Dense(128, activation='relu'))
+            model.add(tf.keras.layers.Dense(128, activation='relu'))
+            model.add(tf.keras.layers.Dense(128, activation='relu'))
+            model.add(tf.keras.layers.Dense(3, activation='sigmoid'))
 
-            if self.optimizer == 'adam':
-                opt = tf.keras.optimizers.Adam(
-                    learning_rate=self.learning_rate
-                )
-            if self.optimizer == 'sgd':
-                opt = tf.keras.optimizers.SGD(
-                    learning_rate=self.learning_rate
-                )
-            clf.compile(
-                loss=tf.keras.losses.categorical_crossentropy,
-                optimizer=opt,
-                metrics=[
-                    tf.keras.metrics.CategoricalAccuracy(name='accuracy'),
-                    tf.keras.metrics.Precision(name='precision'),
-                    tf.keras.metrics.Recall(name='recall'),
-                ]
-            )
-            self.model = clf
+            model = TfModel(
+                model, pd.get_dummies(self.df[self.features]).columns,
+                label_names=pd.get_dummies(self.df['nom_cloud_id']).columns)
 
-    def _split_data(self, df, one_hot_encoding=False):
-        """Split data into training and validation
+        return model
 
-        Parameters
-        ----------
-        df : pd.DataFrame
-            dataframe with features to use for cloud type prediction
-        one_hot_coding : bool
-            Whether to one hot encode targets or to just
-            integer encode
-
-        Returns
-        -------
-        X_train : pd.DataFrame
-            Fraction of full feature dataframe to use for training
-        X_test : pd.DataFrame
-            Fraction of full feature dataframe to use for validation
-        y_train : pd.DataFrame
-            Fraction of full target dataframe to use for training
-        y_test : pd.DataFrame
-            Fraction of full target dataframe to use for validation
-        """
-        X = self._select_features(df)
-        X = self.normalize(X)
-        y = self._select_targets(df, one_hot_encoding)
-        return train_test_split(X, y, np.arange(X.shape[0]),
-                                test_size=self.test_size)
-
-    def train(self, X_train, y_train, X_test, y_test):
-        """
-        Parameters
-        ----------
-        X_train : pd.DataFrame
-            dataframe of features to use for training
-        y_train : pd.DataFrame
-            dataframe of targets to use for training
-        X_test : pd.DataFrame
-            dataframe of features to use for testing
-        y_test : pd.DataFrame
-            dataframe of targets to use for testing
-
-        Returns
-        -------
-        history : dict
-            dictionary with loss and accuracy history
-            over course of training
-        """
-        earlystopping = tf.keras.callbacks.EarlyStopping(
-            monitor="val_loss", mode="min", patience=10,
-            restore_best_weights=True)
-
-        history = self.model.fit(
-            X_train, y_train, batch_size=self.batch_size,
-            epochs=self.epochs, validation_data=(X_test, y_test),
-            callbacks=[earlystopping])
-        return history
-
-    def tune_learning_rate(self, X_train, y_train,
-                           X_test, y_test, min_val=1e-4,
-                           epochs=100):
-        """
-        Parameters
-        ----------
-        X_train : pd.DataFrame
-            dataframe of features to use for training
-        y_train : pd.DataFrame
-            dataframe of targets to use for training
-        X_test : pd.DataFrame
-            dataframe of features to use for testing
-        y_test : pd.DataFrame
-            dataframe of targets to use for testing
-        epochs : int
-            number of epochs to run
-
-        Returns
-        -------
-        history : dict
-            dictionary with loss and accuracy history
-            over course of training
-        """
-        tunelearning = tf.keras.callbacks.LearningRateScheduler(
-            lambda epoch: min_val * 10 ** (epoch / 30)
-        )
-
-        history = self.model.fit(
-            X_train, y_train, batch_size=self.batch_size,
-            epochs=epochs, validation_data=(X_test, y_test),
-            callbacks=[tunelearning])
-        return history
-
-    def load_data_and_split(self, data_file, frac=None):
-        """Load data and train model using features selected
-        during initialization
-
-        Parameters
-        ----------
-        data_file : str
-            csv file containing features and targets for training
-
-        Returns
-        -------
-        X_train : pd.DataFrame
-            Fraction of full feature dataframe to use for training
-        X_test : pd.DataFrame
-            Fraction of full feature dataframe to use for validation
-        y_train : pd.DataFrame
-            Fraction of full target dataframe to use for training
-        y_test : pd.DataFrame
-            Fraction of full target dataframe to use for validation
-        train_indices : ndarray
-            array of indices corresponding to training data
-        test_indices : ndarray
-            array of indices corresponding to test data
-        """
-        df = self._load_data(data_file=data_file, frac=frac)
-        return self._split_data(df, one_hot_encoding=True)
-
-    def load_data_and_train(self, data_file, frac=None):
-        """Load data and train model using features selected
-        during initialization
-
-        Parameters
-        ----------
-        data_file : str
-            csv file containing features and targets for training
-
-        Returns
-        -------
-        history : dict
-            dictionary with loss and accuracy history
-            over course of training
-        """
-        df = self._load_data(data_file=data_file, frac=frac)
-        self.X_train, self.X_test, self.y_train, self.y_test, \
-            self.train_indices, self.test_indices = self._split_data(
-                df, one_hot_encoding=True)
-        return self.train(
-            self.X_train, self.y_train, self.X_test, self.y_test)
-
-    def normalize(self, X, means=None, stds=None):
-        """Normalze features
-
-        Parameters
-        ----------
-        X : pd.DataFrame
-            dataframe of features used for prediction/training
-        means : pd.DataFrame, optional
-            dataframe of means for all features, by default None
-        stds : pd.DataFrame, optional
-            dataframe of stds for all features, by default None
-
-        Returns
-        -------
-        pd.DataFrame
-            normalized dataframe of features
-        """
-        if means is None:
-            self.means = means = X.mean(axis=0)
-        if stds is None:
-            self.stds = stds = X.std(axis=0)
-        return (X - means) / stds
-
-    def predict(self, X, to_cloud_type=False):
-        """Predict cloud type
-
-        Parameters
-        ----------
-        X : pd.DataFrame
-            dataframe of features to use for cloud
-            type prediction
-        to_cloud_type : bool
-            Flag to convert to UWisc numeric cloud types
-
-        Returns
-        -------
-        y : np.ndarray
-            array of cloud type predictions for each
-            observation in X
-        """
-
-        X_scaled = self.normalize(X, self.means, self.stds)
-        y = self.raw_prediction(X_scaled)
-        y = pd.DataFrame(y)
-        y = y.idxmax(axis=1)
-
-        return self.remap_predictions(X, y, to_cloud_type)
+    def train(self):
+        """Train model using TfModel method"""
+        self.model.train_model(self.X, self.y)
