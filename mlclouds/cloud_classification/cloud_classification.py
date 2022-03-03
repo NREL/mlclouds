@@ -689,7 +689,8 @@ class CloudClassificationNN(CloudClassificationModel):
         return history
 
     def tune_learning_rate(self, X_train, y_train,
-                           X_test, y_test, epochs=100):
+                           X_test, y_test, min_val=1e-4,
+                           epochs=100):
         """
         Parameters
         ----------
@@ -711,7 +712,7 @@ class CloudClassificationNN(CloudClassificationModel):
             over course of training
         """
         tunelearning = tf.keras.callbacks.LearningRateScheduler(
-            lambda epoch: 1e-3 * 10 ** (epoch / 30)
+            lambda epoch: min_val * 10 ** (epoch / 30)
         )
 
         history = self.model.fit(
