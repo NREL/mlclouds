@@ -11,12 +11,170 @@ from sklearn.pipeline import Pipeline
 import numpy as np
 import joblib
 import tensorflow as tf
+import matplotlib.pyplot as plt
+import seaborn as sns
 tf.random.set_seed(42)
 
-from nsrdb.all_sky.all_sky import all_sky, ALL_SKY_ARGS
 from phygnn import TfModel
 
+from nsrdb.all_sky.all_sky import ALL_SKY_ARGS, all_sky
+
+
 logger = logging.getLogger(__name__)
+
+
+def get_confusion_matrix(y_pred, y_true, binary=True):
+    """Compute confusion matrix from true labels
+    and predicted labels
+
+    Parameters
+    ----------
+    y_pred : ndarray
+        array of predicted cloud type labels
+    y_true : ndarray
+        array of cloud type labels
+    binary : bool, optional
+        whether to compute binary confusion matrix
+        (clear/cloudy) or keep all cloud types, by default True
+
+    Returns
+    -------
+    ndarray
+        normalized confusion matrix array
+    """
+    if binary:
+        y_pred[y_pred != 0] = 1
+        y_true[y_true != 0] = 1
+    cm = confusion_matrix(y_true, y_pred)
+    cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+    return cm
+
+
+def plot_binary_cm(cm, title='Confusion Matrix'):
+    """Plot confusion matrix for cloudy/clear
+
+    Parameters
+    ----------
+    cm : ndarray
+        binary confusion matrix
+    title : str, optional
+        Title of confusion matrix plot, by default 'Confusion Matrix'
+    """
+    ax = plt.subplot()
+    sns.heatmap(cm, annot=True, fmt='g', ax=ax)
+    ax.set_xlabel('Predicted Labels')
+    ax.set_ylabel('True Labels')
+    ax.set_title(title)
+    ax.yaxis.set_ticklabels(['clear', 'cloudy'])
+    ax.xaxis.set_ticklabels(['clear', 'cloudy'])
+    plt.show()
+
+
+def update_all_sky_input(model, df, all_sky_input=None):
+    """Update fields for all_sky based on model classifications
+
+    Parameters
+    ----------
+    model : TfModel | Pipeline
+        model to use to predict cloud types
+    df : pd.DataFrame
+        dataframe of features to use for cloud type
+        predictions
+    all_sky_input : pd.DataFrame
+        dataframe to update and then send to all_sky run
+
+    Returns
+    -------
+    pd.DataFrame
+        updated all_sky_input with cloud type predictions from
+        model classifications
+    """
+
+    y = model.predict(pd.get_dummies(df)[model.feature_names])
+    y = remap_predictions(y)
+
+    if all_sky_input is None:
+        all_sky_input = df.copy()
+
+    all_sky_input = all_sky_input.reset_index(drop=True)
+    df = df.reset_index(drop=True)
+
+    all_sky_input['cloud_type'] = 0
+    all_sky_input['cld_opd_dcomp'] = 0
+    all_sky_input['cld_reff_dcomp'] = 0
+
+    ice_mask = y == 'ice'
+    water_mask = y == 'water'
+
+    all_sky_input.loc[ice_mask, 'cld_opd_dcomp'] = \
+        df.loc[ice_mask, 'cld_opd_mlclouds_ice']
+    all_sky_input.loc[ice_mask, 'cld_reff_dcomp'] = \
+        df.loc[ice_mask, 'cld_reff_mlclouds_ice']
+    all_sky_input.loc[ice_mask, 'cloud_type'] = 6
+    all_sky_input.loc[water_mask, 'cld_opd_dcomp'] = \
+        df.loc[water_mask, 'cld_opd_mlclouds_water']
+    all_sky_input.loc[water_mask, 'cld_reff_dcomp'] = \
+        df.loc[water_mask, 'cld_reff_mlclouds_water']
+    all_sky_input.loc[water_mask, 'cloud_type'] = 2
+    all_sky_input['time_index'] = df['time_index'].values
+    return all_sky_input
+
+
+def remap_predictions(y, cloud_type_encoding=None):
+    """Remap predictions to string cloud labels
+
+    Parameters
+    ----------
+    y : pd.DataFrame
+        dataframe of cloud type predictions
+
+    Returns
+    -------
+    y_pred : np.ndarray
+        array of cloud type predictions
+    """
+
+    if cloud_type_encoding is not None:
+        y_pred = y.replace(cloud_type_encoding)
+    else:
+        y_pred = y.idxmax(axis=1)
+        y_pred = y_pred.replace({k: v for v, k in enumerate(y.columns)})
+    return y_pred
+
+
+def run_all_sky(model, df):
+    """Update all sky inputs with model predictions and
+    then run all_sky
+
+    Parameters
+    ----------
+    model : TfModel | Pipeline
+        model to use to predict cloud types
+    df : pd.DataFrame
+        dataframe of features to use for cloud type
+        predictions
+
+    Returns
+    -------
+    pd.DataFrame
+        updated dataframe with all_sky irradiance outputs
+    """
+    ignore = ('cloud_fill_flag',)
+
+    all_sky_args = [dset for dset in ALL_SKY_ARGS if dset not in ignore]
+    all_sky_input = {dset: df[dset].values for dset in all_sky_args}
+
+    all_sky_input = update_all_sky_input(model, df, all_sky_input)
+
+    all_sky_input = {k: np.expand_dims(v, axis=1)
+                     for k, v in all_sky_input.items()}
+
+    out = all_sky(**all_sky_input)
+
+    for dset in ('ghi', 'dni', 'dhi'):
+        df[f'nn_{dset}'] = out[dset].flatten()
+
+    return df
 
 
 class CloudClassificationModel:
@@ -413,77 +571,6 @@ class CloudClassificationModel:
         y = self.raw_prediction(X)
         return self.remap_predictions(X, y, to_cloud_type)
 
-    def update_all_sky_input(self, all_sky_input, df):
-        """Update fields for all_sky based on model classifications
-
-        Parameters
-        ----------
-        all_sky_input : pd.DataFrame
-            dataframe to update and then send to all_sky run
-        df : pd.DataFrame
-            dataframe with variables needed for running all_sky
-
-        Returns
-        -------
-        pd.DataFrame
-            updated all_sky_input with cloud type predictions from
-            model classifications
-        """
-
-        y = self.predict(df)
-
-        all_sky_input['cloud_type'] = 0
-        all_sky_input['cld_opd_dcomp'] = 0
-        all_sky_input['cld_reff_dcomp'] = 0
-
-        ice_mask = y == 'ice'
-        water_mask = y == 'water'
-
-        all_sky_input.loc[ice_mask, 'cld_opd_dcomp'] = \
-            df.loc[ice_mask, 'cld_opd_mlclouds_ice']
-        all_sky_input.loc[ice_mask, 'cld_reff_dcomp'] = \
-            df.loc[ice_mask, 'cld_reff_mlclouds_ice']
-        all_sky_input.loc[ice_mask, 'cloud_type'] = 6
-        all_sky_input.loc[water_mask, 'cld_opd_dcomp'] = \
-            df.loc[water_mask, 'cld_opd_mlclouds_water']
-        all_sky_input.loc[water_mask, 'cld_reff_dcomp'] = \
-            df.loc[water_mask, 'cld_reff_mlclouds_water']
-        all_sky_input.loc[water_mask, 'cloud_type'] = 2
-        all_sky_input['time_index'] = df['time_index'].values
-        return all_sky_input
-
-    def run_all_sky(self, df):
-        """Update all sky inputs with model predictions and
-        then run all_sky
-
-        Parameters
-        ----------
-        df : pd.DataFrame
-            dataframe with features needed to make cloud type
-            predictions
-
-        Returns
-        -------
-        pd.DataFrame
-            updated dataframe with all_sky irradiance outputs
-        """
-        ignore = ('cloud_fill_flag',)
-
-        all_sky_args = [dset for dset in ALL_SKY_ARGS if dset not in ignore]
-        all_sky_input = {dset: df[dset].values for dset in all_sky_args}
-
-        all_sky_input = self.update_all_sky_input(all_sky_input, df)
-
-        all_sky_input = {k: np.expand_dims(v, axis=1)
-                         for k, v in all_sky_input.items()}
-
-        out = all_sky(**all_sky_input)
-
-        for dset in ('ghi', 'dni', 'dhi'):
-            df[f'nn_{dset}'] = out[dset].flatten()
-
-        return df
-
     def loss(self, X, y):
         """Calculate categorical crossentropy loss
         for given features dataframe and targets
@@ -504,39 +591,6 @@ class CloudClassificationModel:
             predictions and targets
         """
         return log_loss(y, self.model.predict_proba(X))
-
-    def get_confusion_matrix(self, X, y_true, binary=True):
-        """Compute confusion matrix from true labels
-        and predicted labels
-
-        Parameters
-        ----------
-        X : pd.DataFrame
-            dataframe of features to use for cloud type
-            predictions
-        y_true : ndarray
-            array of cloud type labels
-        binary : bool, optional
-            whether to compute binary confusion matrix
-            (clear/cloudy) or keep all cloud types, by default True
-
-        Returns
-        -------
-        ndarray
-            normalized confusion matrix array
-        """
-        y_pred = self.predict(X)
-        y_pred = np.array([self.cloud_encoding[y] for y in y_pred])
-
-        if len(y_true.shape) > 1:
-            y_true = y_true.idxmax(axis=1)
-        y_true = np.array(y_true.replace(self.cloud_encoding))
-        if binary:
-            y_pred[y_pred != 0] = 1
-            y_true[y_true != 0] = 1
-        cm = confusion_matrix(y_true, y_pred)
-        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        return cm
 
 
 class CloudClassificationNN(TfModel):
@@ -572,15 +626,16 @@ class CloudClassificationNN(TfModel):
         'flag',
         'cld_opd_dcomp']
 
-    def __init__(self, model_file=None,
-                 features=None, learning_rate=0.01,
-                 epochs=100, batch_size=128, frac=None):
+    def __init__(self, model, feature_names,
+                 label_names, **kwargs):
         """Initialize cloud classification model
 
         Parameters
         ----------
         model_file : str, optional
             file containing previously trained and saved model, by default None
+        data_file : str
+            file containing features and targets to use for training
         test_size : float, optional
             fraction of full data set to reserve for validation, by default 0.2
         features : list, optional
@@ -592,27 +647,14 @@ class CloudClassificationNN(TfModel):
             number of epochs for classifier training
         """
 
-        if features is None:
-            features = self.DEF_FEATURES
+        self.X = None
+        self.y = None
+        self.df = None
+        super().__init__(model, feature_names,
+                         label_names, **kwargs)
 
-        self.cloud_encoding = {'clearsky': 0, 'water': 1, 'ice': 2}
-        self.flag_encoding = {'clear': 0, 'water_cloud': 1,
-                              'ice_cloud': 2, 'bad_cloud': 3}
-
-        # UWisc cloud types
-        self.cloud_type_encoding = {'clearsky': 0, 'water': 2, 'ice': 6}
-
-        self.learning_rate = learning_rate
-        self.epochs = epochs
-        self.model_file = model_file
-        self.features = features
-        self.batch_size = batch_size
-        self.df = self._load_data(model_file, frac=frac)
-        self.X = self._select_features(self.df)
-        self.y = self._select_targets(self.df)
-        self.model = self.initialize_model()
-
-    def _load_data(self, data_file, frac=None):
+    @staticmethod
+    def load_data(data_file, frac=None):
         """Load csv data file for training
 
         Parameters
@@ -625,15 +667,16 @@ class CloudClassificationNN(TfModel):
         pd.DataFrame
             loaded dataframe with features for training or prediction
         """
-        self.df = pd.read_csv(data_file)
+        df = pd.read_csv(data_file)
 
         if frac is not None:
-            self.df = self.df.groupby(
-                'nom_cloud_id').apply(
+            df = df.groupby(
+                'nom_cloud_id', group_keys=False).apply(
                     lambda x: x.sample(frac=frac))
-        return self.df
+        return df
 
-    def _select_features(self, df):
+    @staticmethod
+    def select_features(df, features):
         """Extract features from loaded dataframe
 
         Parameters
@@ -646,57 +689,87 @@ class CloudClassificationNN(TfModel):
         X : pd.DataFrame
             dataframe of features to use for training/predictions
         """
-        self.X = df[self.features]
-        return self.X
+        X = pd.get_dummies(df[features])
+        return X
 
-    def _select_targets(self, df, one_hot_encoding=True):
+    @staticmethod
+    def select_targets(df):
         """Extract targets from loaded dataframe
 
         Parameters
         ----------
         df : pd.DataFrame
             dataframe with features to use for cloud type prediction
-        one_hot_encoding : bool
-            whether to one hot encode targets or keep single column
 
         Returns
         -------
         y : pd.DataFrame
             dataframe of targets to use for training
-        one_hot_coding : bool
-            Whether to one hot encode targets or to just
-            integer encode
         """
-        if one_hot_encoding:
-            self.y = pd.get_dummies(df['nom_cloud_id'])
-            self.cloud_encoding = {k: v for v, k in enumerate(self.y.columns)}
-        else:
-            self.y = df['nom_cloud_id'].replace(self.cloud_encoding)
-        return self.y
+        y = pd.get_dummies(df['nom_cloud_id'])
+        return y
 
-    def initialize_model(self):
+    @staticmethod
+    def initialize_layers():
         """Initialize model architecture"""
 
-        if self.model_file is not None:
-            try:
-                model = self.load(self.model_file)
-            except FileNotFoundError:
-                logger.error(f'Model file not found: {self.model_file}')
-        else:
-            model = tf.keras.models.Sequential()
-            model.add(tf.keras.layers.Dense(128, activation='relu'))
-            model.add(tf.keras.layers.Dense(128, activation='relu'))
-            model.add(tf.keras.layers.Dense(128, activation='relu'))
-            model.add(tf.keras.layers.Dense(128, activation='relu'))
-            model.add(tf.keras.layers.Dense(128, activation='relu'))
-            model.add(tf.keras.layers.Dense(3, activation='sigmoid'))
-
-            model = TfModel(
-                model, pd.get_dummies(self.df[self.features]).columns,
-                label_names=pd.get_dummies(self.df['nom_cloud_id']).columns)
+        model = tf.keras.models.Sequential()
+        model.add(tf.keras.layers.Dense(128, activation='relu'))
+        model.add(tf.keras.layers.Dense(128, activation='relu'))
+        model.add(tf.keras.layers.Dense(128, activation='relu'))
+        model.add(tf.keras.layers.Dense(128, activation='relu'))
+        model.add(tf.keras.layers.Dense(128, activation='relu'))
+        model.add(tf.keras.layers.Dense(3, activation='sigmoid'))
 
         return model
 
-    def train(self):
-        """Train model using TfModel method"""
-        self.model.train_model(self.X, self.y)
+    @classmethod
+    def initialize_model(cls, data_file, frac=None):
+        """Load data and initialize TfModel
+
+        Parameters
+        ----------
+        data_file : str
+            file with feature and target data
+        frac : float, optional
+            fraction of full dataset to use, by default None
+
+        Returns
+        -------
+        TfModel
+            TfModel class initialized with feature and
+            label names from data file
+        """
+        df = cls.load_data(data_file=data_file, frac=frac)
+        X = cls.select_features(df, cls.DEF_FEATURES)
+        y = cls.select_targets(df)
+        model = cls.initialize_layers()
+        clf = cls(model, X.columns, y.columns)
+        clf.df = df
+        clf.X = X
+        clf.y = y
+        return clf
+
+    @classmethod
+    def initialize_and_train(cls, data_file, frac=None, **kwargs):
+        """Load data and initialize TfModel
+
+        Parameters
+        ----------
+        data_file : str
+            file with feature and target data
+        frac : float, optional
+            fraction of full dataset to use, by default None
+
+        Returns
+        -------
+        TfModel
+            Initialized and trained TfModel
+        """
+        clf = cls.initialize_model(
+            data_file=data_file, frac=frac)
+        model = clf.build_trained(clf.X, clf.y, **kwargs)
+        model.df = clf.df
+        model.X = clf.X
+        model.y = clf.y
+        return model
