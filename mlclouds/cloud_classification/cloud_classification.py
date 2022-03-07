@@ -164,6 +164,7 @@ def remap_predictions(y, cloud_type_encoding=None):
         y_pred = y.idxmax(axis=1)
     return y_pred
 
+
 def encode_features(X, features):
     """One hot encode features
 
@@ -432,7 +433,6 @@ class CloudClassificationBase:
                 tf.keras.callbacks.LearningRateScheduler(
                     lambda epoch: 1e-4 * 10 ** (epoch / 30))])
         return initial_history
-
 
 
 class CloudClassificationModel:
@@ -1057,23 +1057,3 @@ class CloudClassificationNN(TfModel):
         y_pred = self.predict(pd.get_dummies(X)[self.feature_names])
         y_pred = remap_predictions(y_pred)
         return y_pred
-
-    def tune_learning_rate(self, data_file=None, frac=None, **kwargs):
-
-        clf = self.initialize_model(
-            data_file=data_file, frac=frac)
-
-        if not kwargs:
-            kwargs = {}
-
-        kwargs['loss'] = kwargs.get('loss', 'categorical_crossentropy')
-        kwargs['metrics'] = kwargs.get(
-            'metrics', [categorical_crossentropy, categorical_accuracy])
-        model = clf.build(clf.X, clf.y, **kwargs)
-
-        initial_history = model.fit(
-            clf.X, clf.y, epochs=100,
-            callbacks=[
-                tf.keras.callbacks.LearningRateScheduler(
-                    lambda epoch: 1e-4 * 10 ** (epoch / 30))])
-        return initial_history
