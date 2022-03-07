@@ -88,7 +88,7 @@ def update_dataframe(model, df):
     """
 
     y = model.predict(pd.get_dummies(df)[model.feature_names])
-    y = remap_predictions(y)
+    y_labels = remap_predictions(y)
 
     df = df.reset_index(drop=True)
 
@@ -96,8 +96,8 @@ def update_dataframe(model, df):
     df['cld_opd_dcomp'] = 0
     df['cld_reff_dcomp'] = 0
 
-    ice_mask = y == 'ice'
-    water_mask = y == 'water'
+    ice_mask = y_labels == 'ice'
+    water_mask = y_labels == 'water'
 
     df.loc[ice_mask, 'cld_opd_dcomp'] = \
         df.loc[ice_mask, 'cld_opd_mlclouds_ice']
@@ -109,11 +109,35 @@ def update_dataframe(model, df):
     df.loc[water_mask, 'cld_reff_dcomp'] = \
         df.loc[water_mask, 'cld_reff_mlclouds_water']
     df.loc[water_mask, 'cloud_type'] = 2
+
+    df['cloud_id_model'] = y_labels
+
     return df
 
 
 def remap_predictions(y, cloud_type_encoding=None):
     """Remap predictions to string cloud labels
+
+    Parameters
+    ----------
+    y : pd.DataFrame
+        dataframe of cloud type predictions
+
+    Returns
+    -------
+    y_pred : np.ndarray
+        array of cloud type predictions
+    """
+
+    if cloud_type_encoding is not None:
+        y_pred = y.replace({v: k for k, v in cloud_type_encoding.items()})
+    else:
+        y_pred = y.idxmax(axis=1)
+    return y_pred
+
+
+def encode_predictions(y, cloud_type_encoding=None):
+    """Remap predictions to integer cloud labels
 
     Parameters
     ----------
@@ -168,7 +192,7 @@ def run_all_sky(model, df):
     out = all_sky(**all_sky_input)
 
     for dset in ('ghi', 'dni', 'dhi'):
-        df[f'nn_{dset}'] = out[dset].flatten()
+        df[f'{dset}_model'] = out[dset].flatten()
 
     return df
 
