@@ -70,16 +70,17 @@ def plot_binary_cm(cm, title='Confusion Matrix'):
     plt.show()
 
 
-def update_dataframe(model, df):
+def update_dataframe(df, y):
     """Update fields for all_sky based on model classifications
 
     Parameters
     ----------
-    model : TfModel | Pipeline
-        model to use to predict cloud types
     df : pd.DataFrame
         dataframe of features to use for cloud type
         predictions
+    y : ndarray
+        array of cloud type predictions
+
     Returns
     -------
     pd.DataFrame
@@ -87,17 +88,14 @@ def update_dataframe(model, df):
         model classifications
     """
 
-    y = model.predict(pd.get_dummies(df)[model.feature_names])
-    y_labels = remap_predictions(y)
-
     df = df.reset_index(drop=True)
 
     df['cloud_type'] = 0
     df['cld_opd_dcomp'] = 0
     df['cld_reff_dcomp'] = 0
 
-    ice_mask = y_labels == 'ice'
-    water_mask = y_labels == 'water'
+    ice_mask = y == 'ice'
+    water_mask = y == 'water'
 
     df.loc[ice_mask, 'cld_opd_dcomp'] = \
         df.loc[ice_mask, 'cld_opd_mlclouds_ice']
@@ -110,7 +108,7 @@ def update_dataframe(model, df):
         df.loc[water_mask, 'cld_reff_mlclouds_water']
     df.loc[water_mask, 'cloud_type'] = 2
 
-    df['cloud_id_model'] = y_labels
+    df['cloud_id_model'] = y
 
     return df
 
@@ -158,17 +156,17 @@ def encode_predictions(y, cloud_type_encoding=None):
     return y_pred
 
 
-def run_all_sky(model, df):
+def run_all_sky(df, y):
     """Update all sky inputs with model predictions and
     then run all_sky
 
     Parameters
     ----------
-    model : TfModel | Pipeline
-        model to use to predict cloud types
     df : pd.DataFrame
         dataframe of features to use for cloud type
         predictions
+    y : ndarray
+        array of cloud type predictions
 
     Returns
     -------
@@ -180,7 +178,7 @@ def run_all_sky(model, df):
     all_sky_args = [dset for dset in ALL_SKY_ARGS if dset not in ignore]
     all_sky_input = {dset: df[dset].values for dset in all_sky_args}
 
-    df = update_dataframe(model, df)
+    df = update_dataframe(df, y)
 
     all_sky_input['cloud_type'] = df['cloud_type'].values
     all_sky_input['cld_opd_dcomp'] = df['cld_opd_dcomp'].values
