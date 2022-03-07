@@ -14,6 +14,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import seaborn as sns
 from tensorflow.keras.losses import categorical_crossentropy
+from tensorflow.keras.metrics import categorical_accuracy
 
 tf.random.set_seed(42)
 
@@ -50,6 +51,34 @@ def get_confusion_matrix(y_pred, y_true, binary=True):
     cm = confusion_matrix(y_true, y_pred)
     cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
     return cm
+
+
+def normalize(X, means=None, stds=None):
+    """Normalize features used computed stats
+    or inputs
+
+    Parameters
+    ----------
+    X : pd.DataFrame
+        dataframe of features
+    means : ndarray, optional
+        array of means for each feature, by default None
+    stds : ndarray, optional
+        array of standard deviations for each
+        feature, by default None
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
+    if means is None:
+        means = X.mean(axis=0)
+
+    if stds is None:
+        stds = X.std(axis=0)
+
+    return (X - means) / stds
 
 
 def plot_binary_cm(cm, title='Confusion Matrix'):
@@ -135,6 +164,24 @@ def remap_predictions(y, cloud_type_encoding=None):
         y_pred = y.idxmax(axis=1)
     return y_pred
 
+def encode_features(X, features):
+    """One hot encode features
+
+    Parameters
+    ----------
+    X : pd.DataFrame
+        dataframe of features
+    features : list
+        list of features to extract from X
+
+    Returns
+    -------
+    pd.DataFrame
+        dataframe of encoded features
+    """
+    X_new = pd.get_dummies(X[features])
+    return X_new
+
 
 def encode_predictions(y, cloud_type_encoding=None):
     """Remap predictions to integer cloud labels
@@ -195,6 +242,197 @@ def run_all_sky(df, y):
         df[f'{dset}_model'] = out[dset].flatten()
 
     return df
+
+
+class CloudClassificationBase:
+    """Base Class for cloud classifier"""
+
+    DEF_FEATURES = [
+        'solar_zenith_angle',
+        'refl_0_65um_nom',
+        'refl_0_65um_nom_stddev_3x3',
+        'refl_3_75um_nom',
+        'temp_3_75um_nom',
+        'temp_11_0um_nom',
+        'temp_11_0um_nom_stddev_3x3',
+        'cloud_probability',
+        'cloud_fraction',
+        'air_temperature',
+        'dew_point',
+        'relative_humidity',
+        'total_precipitable_water',
+        'surface_albedo',
+        'alpha',
+        'aod',
+        'ozone',
+        'ssa',
+        'surface_pressure',
+        'cld_opd_mlclouds_water',
+        'cld_opd_mlclouds_ice',
+        'cloud_type',
+        'flag',
+        'cld_opd_dcomp']
+
+    def __init__(self, data_file):
+        self.data_file = data_file
+        self.model = self.initialize_model()
+
+    def initialize_model(self):
+        """Initialize sequential model layers and compile
+
+        Returns
+        -------
+        Sequential
+            sequential tensorflow model
+        """
+        model = tf.keras.models.Sequential()
+        model.add(tf.keras.layers.Dense(128, activation='relu'))
+        model.add(tf.keras.layers.Dense(128, activation='relu'))
+        model.add(tf.keras.layers.Dense(128, activation='relu'))
+        model.add(tf.keras.layers.Dense(128, activation='relu'))
+        model.add(tf.keras.layers.Dense(128, activation='relu'))
+        model.add(tf.keras.layers.Dense(3, activation='sigmoid'))
+
+        model.compile(
+            loss=tf.keras.losses.categorical_crossentropy,
+            optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+            metrics=[
+                tf.keras.metrics.CategoricalAccuracy(name='accuracy'),
+                tf.keras.metrics.Precision(name='precision'),
+                tf.keras.metrics.Recall(name='recall')])
+
+        return model
+
+    @staticmethod
+    def load_data(data_file, frac=None):
+        """Load csv data file for training
+
+        Parameters
+        ----------
+        data_file : str
+            csv file containing features and targets for training
+
+        Returns
+        -------
+        pd.DataFrame
+            loaded dataframe with features for training or prediction
+        """
+        df = pd.read_csv(data_file)
+
+        if frac is not None:
+            df = df.groupby(
+                'nom_cloud_id', group_keys=False).apply(
+                    lambda x: x.sample(frac=frac))
+        return df
+
+    @staticmethod
+    def select_features(df, features):
+        """Extract features from loaded dataframe
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            dataframe with features to use for cloud type prediction
+
+        Returns
+        -------
+        X : pd.DataFrame
+            dataframe of features to use for training/predictions
+        """
+        X = pd.get_dummies(df[features])
+        return X
+
+    @staticmethod
+    def select_targets(df):
+        """Extract targets from loaded dataframe
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            dataframe with features to use for cloud type prediction
+
+        Returns
+        -------
+        y : pd.DataFrame
+            dataframe of targets to use for training
+        """
+        y = pd.get_dummies(df['nom_cloud_id'])
+        return y
+
+    def split_data(self, X, y):
+        """Split data into training and validation
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            dataframe of features
+        y : pd.DataFrame
+            dataframe of targets
+
+        Returns
+        -------
+        X_train : pd.DataFrame
+            dataframe of features to use for training
+        X_test : pd.DataFrame
+            dataframe of feeatures to use for validation
+        y_train : pd.DataFrame
+            dataframe of targets to use for training
+        y_test : pd.DataFrame
+            dataframe of targets to use for validation
+        """
+        return train_test_split(
+            X, y, test_size=0.2, random_state=42)
+
+    def train_model(self, X_train, X_test, y_train, y_test):
+        """Train model using provided training and test data
+
+        Parameters
+        ----------
+        X_train : pd.DataFrame
+            dataframe of features to use for training
+        X_test : pd.DataFrame
+            dataframe of feeatures to use for validation
+        y_train : pd.DataFrame
+            dataframe of targets to use for training
+        y_test : pd.DataFrame
+            dataframe of targets to use for validation
+
+        Returns
+        -------
+        history : dict
+            history of model training
+        """
+
+        history = self.model.fit(
+            X_train, y_train, epochs=100,
+            validation_data=(X_test, y_test),
+            callbacks=[tf.keras.callbacks.EarlyStopping(
+                monitor='val_loss', min_delta=0, patience=10, verbose=0,
+                mode='min', baseline=None, restore_best_weights=True)])
+
+        return history
+
+    def tune_learning_rate(self, X, y):
+        """Optimize learning rate
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            dataframe of features
+        y : pd.DataFrame
+            dataframe of targets
+
+        Returns
+        -------
+        history : dict
+            history of model training
+        """
+        initial_history = self.model.fit(
+            X, y, epochs=100, callbacks=[
+                tf.keras.callbacks.LearningRateScheduler(
+                    lambda epoch: 1e-4 * 10 ** (epoch / 30))])
+        return initial_history
+
 
 
 class CloudClassificationModel:
@@ -793,7 +1031,8 @@ class CloudClassificationNN(TfModel):
             kwargs = {}
 
         kwargs['loss'] = kwargs.get('loss', 'categorical_crossentropy')
-        kwargs['metrics'] = kwargs.get('metrics', [categorical_crossentropy])
+        kwargs['metrics'] = kwargs.get(
+            'metrics', [categorical_crossentropy, categorical_accuracy])
         model = clf.build_trained(clf.X, clf.y, **kwargs)
         model.df = clf.df
         model.X = clf.X
@@ -818,3 +1057,23 @@ class CloudClassificationNN(TfModel):
         y_pred = self.predict(pd.get_dummies(X)[self.feature_names])
         y_pred = remap_predictions(y_pred)
         return y_pred
+
+    def tune_learning_rate(self, data_file=None, frac=None, **kwargs):
+
+        clf = self.initialize_model(
+            data_file=data_file, frac=frac)
+
+        if not kwargs:
+            kwargs = {}
+
+        kwargs['loss'] = kwargs.get('loss', 'categorical_crossentropy')
+        kwargs['metrics'] = kwargs.get(
+            'metrics', [categorical_crossentropy, categorical_accuracy])
+        model = clf.build(clf.X, clf.y, **kwargs)
+
+        initial_history = model.fit(
+            clf.X, clf.y, epochs=100,
+            callbacks=[
+                tf.keras.callbacks.LearningRateScheduler(
+                    lambda epoch: 1e-4 * 10 ** (epoch / 30))])
+        return initial_history
