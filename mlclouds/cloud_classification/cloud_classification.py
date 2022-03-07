@@ -70,7 +70,7 @@ def plot_binary_cm(cm, title='Confusion Matrix'):
     plt.show()
 
 
-def update_all_sky_input(model, df, all_sky_input=None):
+def update_dataframe(model, df):
     """Update fields for all_sky based on model classifications
 
     Parameters
@@ -80,44 +80,36 @@ def update_all_sky_input(model, df, all_sky_input=None):
     df : pd.DataFrame
         dataframe of features to use for cloud type
         predictions
-    all_sky_input : pd.DataFrame
-        dataframe to update and then send to all_sky run
-
     Returns
     -------
     pd.DataFrame
-        updated all_sky_input with cloud type predictions from
+        updated dataframe with cloud type predictions from
         model classifications
     """
 
     y = model.predict(pd.get_dummies(df)[model.feature_names])
     y = remap_predictions(y)
 
-    if all_sky_input is None:
-        all_sky_input = df.copy()
-
-    all_sky_input = all_sky_input.reset_index(drop=True)
     df = df.reset_index(drop=True)
 
-    all_sky_input['cloud_type'] = 0
-    all_sky_input['cld_opd_dcomp'] = 0
-    all_sky_input['cld_reff_dcomp'] = 0
+    df['cloud_type'] = 0
+    df['cld_opd_dcomp'] = 0
+    df['cld_reff_dcomp'] = 0
 
     ice_mask = y == 'ice'
     water_mask = y == 'water'
 
-    all_sky_input.loc[ice_mask, 'cld_opd_dcomp'] = \
+    df.loc[ice_mask, 'cld_opd_dcomp'] = \
         df.loc[ice_mask, 'cld_opd_mlclouds_ice']
-    all_sky_input.loc[ice_mask, 'cld_reff_dcomp'] = \
+    df.loc[ice_mask, 'cld_reff_dcomp'] = \
         df.loc[ice_mask, 'cld_reff_mlclouds_ice']
-    all_sky_input.loc[ice_mask, 'cloud_type'] = 6
-    all_sky_input.loc[water_mask, 'cld_opd_dcomp'] = \
+    df.loc[ice_mask, 'cloud_type'] = 6
+    df.loc[water_mask, 'cld_opd_dcomp'] = \
         df.loc[water_mask, 'cld_opd_mlclouds_water']
-    all_sky_input.loc[water_mask, 'cld_reff_dcomp'] = \
+    df.loc[water_mask, 'cld_reff_dcomp'] = \
         df.loc[water_mask, 'cld_reff_mlclouds_water']
-    all_sky_input.loc[water_mask, 'cloud_type'] = 2
-    all_sky_input['time_index'] = df['time_index'].values
-    return all_sky_input
+    df.loc[water_mask, 'cloud_type'] = 2
+    return df
 
 
 def remap_predictions(y, cloud_type_encoding=None):
@@ -164,10 +156,14 @@ def run_all_sky(model, df):
     all_sky_args = [dset for dset in ALL_SKY_ARGS if dset not in ignore]
     all_sky_input = {dset: df[dset].values for dset in all_sky_args}
 
-    all_sky_input = update_all_sky_input(model, df, all_sky_input)
+    df = update_dataframe(model, df)
 
+    all_sky_input['cloud_type'] = df['cloud_type'].values
+    all_sky_input['cld_opd_dcomp'] = df['cld_opd_dcomp'].values
+    all_sky_input['cld_reff_dcomp'] = df['cld_reff_dcomp'].values
     all_sky_input = {k: np.expand_dims(v, axis=1)
                      for k, v in all_sky_input.items()}
+    all_sky_input['time_index'] = df['time_index'].values
 
     out = all_sky(**all_sky_input)
 
