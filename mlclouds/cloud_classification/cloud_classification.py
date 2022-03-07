@@ -791,3 +791,22 @@ class CloudClassificationNN(TfModel):
         model.X = clf.X
         model.y = clf.y
         return model
+
+    def predict_new(self, df):
+        """Predict labels from new dataframe
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            dataframe of features to use for predictions
+
+        Returns
+        -------
+        ndarray
+            array of cloud type predictions
+        """
+
+        X = self.select_features(df, self.DEF_FEATURES)
+        y_pred = self.predict(pd.get_dummies(X)[self.feature_names])
+        y_pred = remap_predictions(y_pred)
+        return y_pred
