@@ -13,6 +13,8 @@ import joblib
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import seaborn as sns
+from tensorflow.keras.losses import categorical_crossentropy
+
 tf.random.set_seed(42)
 
 from phygnn import TfModel
@@ -786,6 +788,12 @@ class CloudClassificationNN(TfModel):
         """
         clf = cls.initialize_model(
             data_file=data_file, frac=frac)
+
+        if not kwargs:
+            kwargs = {}
+
+        kwargs['loss'] = kwargs.get('loss', 'categorical_crossentropy')
+        kwargs['metrics'] = kwargs.get('metrics', [categorical_crossentropy])
         model = clf.build_trained(clf.X, clf.y, **kwargs)
         model.df = clf.df
         model.X = clf.X
