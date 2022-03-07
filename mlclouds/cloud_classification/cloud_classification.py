@@ -274,12 +274,17 @@ class CloudClassificationBase:
         'flag',
         'cld_opd_dcomp']
 
-    def __init__(self, data_file):
-        self.data_file = data_file
-        self.model = self.initialize_model()
+    def __init__(self, **kwargs):
+        self.model = self.initialize_model(**kwargs)
 
-    def initialize_model(self):
+    @staticmethod
+    def initialize_model(learning_rate=0.001):
         """Initialize sequential model layers and compile
+
+        Parameters
+        ----------
+        learning_rate : float
+            model learning rate
 
         Returns
         -------
@@ -296,7 +301,8 @@ class CloudClassificationBase:
 
         model.compile(
             loss=tf.keras.losses.categorical_crossentropy,
-            optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+            optimizer=tf.keras.optimizers.Adam(
+                learning_rate=learning_rate),
             metrics=[
                 tf.keras.metrics.CategoricalAccuracy(name='accuracy'),
                 tf.keras.metrics.Precision(name='precision'),
@@ -340,7 +346,7 @@ class CloudClassificationBase:
         X : pd.DataFrame
             dataframe of features to use for training/predictions
         """
-        X = pd.get_dummies(df[features])
+        X = encode_features(df, features)
         return X
 
     @staticmethod
@@ -360,15 +366,13 @@ class CloudClassificationBase:
         y = pd.get_dummies(df['nom_cloud_id'])
         return y
 
-    def split_data(self, X, y):
+    def split_data(self, df, features):
         """Split data into training and validation
 
         Parameters
         ----------
-        X : pd.DataFrame
-            dataframe of features
-        y : pd.DataFrame
-            dataframe of targets
+        df : pd.DataFrame
+            dataframe of features and targets
 
         Returns
         -------
@@ -381,6 +385,8 @@ class CloudClassificationBase:
         y_test : pd.DataFrame
             dataframe of targets to use for validation
         """
+        X = self.select_features(df, features)
+        y = self.select_targets(df)
         return train_test_split(
             X, y, test_size=0.2, random_state=42)
 
@@ -527,7 +533,7 @@ class CloudClassificationModel:
             self.model = Pipeline([('scaler', StandardScaler()),
                                    ('clf', clf)])
 
-    def _load_data(self, data_file, frac=None):
+    def load_data(self, data_file, frac=None):
         """Load csv data file for training
 
         Parameters
@@ -549,7 +555,7 @@ class CloudClassificationModel:
                     lambda x: x.sample(frac=frac))
         return self.df
 
-    def _select_features(self, df):
+    def select_features(self, df, features=DEF_FEATURES):
         """Extract features from loaded dataframe
 
         Parameters
@@ -562,18 +568,16 @@ class CloudClassificationModel:
         X : pd.DataFrame
             dataframe of features to use for training/predictions
         """
-        X = df[self.features]
+        X = df[features]
         return X
 
-    def _select_targets(self, df, one_hot_encoding=True):
+    def select_targets(self, df):
         """Extract targets from loaded dataframe
 
         Parameters
         ----------
         df : pd.DataFrame
             dataframe with features to use for cloud type prediction
-        one_hot_encoding : bool
-            whether to one hot encode targets or keep single column
 
         Returns
         -------
@@ -583,23 +587,16 @@ class CloudClassificationModel:
             Whether to one hot encode targets or to just
             integer encode
         """
-        if one_hot_encoding:
-            y = pd.get_dummies(df['nom_cloud_id'])
-            self.cloud_encoding = {k: v for v, k in enumerate(y.columns)}
-        else:
-            y = df['nom_cloud_id'].replace(self.cloud_encoding)
+        y = df['nom_cloud_id'].replace(self.cloud_encoding)
         return y
 
-    def _split_data(self, df, one_hot_encoding=False):
+    def split_data(self, df, features=DEF_FEATURES):
         """Split data into training and validation
 
         Parameters
         ----------
         df : pd.DataFrame
             dataframe with features to use for cloud type prediction
-        one_hot_coding : bool
-            Whether to one hot encode targets or to just
-            integer encode
 
         Returns
         -------
@@ -616,8 +613,8 @@ class CloudClassificationModel:
         test_indices : ndarray
             array of indices corresponding to test data
         """
-        X = self._select_features(df)
-        y = self._select_targets(df, one_hot_encoding)
+        X = self.select_features(df, features)
+        y = self.select_targets(df)
         return train_test_split(X, y, np.arange(X.shape[0]),
                                 test_size=self.test_size)
 
