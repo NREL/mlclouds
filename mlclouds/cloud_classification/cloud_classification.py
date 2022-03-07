@@ -386,6 +386,7 @@ class CloudClassificationBase:
             dataframe of targets to use for validation
         """
         X = self.select_features(df, features)
+        X = normalize(X)
         y = self.select_targets(df)
         return train_test_split(
             X, y, test_size=0.2, random_state=42)
@@ -440,6 +441,25 @@ class CloudClassificationBase:
                     lambda epoch: 1e-4 * 10 ** (epoch / 30))])
         return initial_history
 
+    def predict(self, X):
+        """Predict new cloud type labels
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            dataframe of features to use for predictions
+
+
+        Returns
+        -------
+        y : ndarray
+            array of cloud type labels
+        """
+        X_scaled = encode_features(X, self.DEF_FEATURES)
+        X_scaled = normalize(X_scaled)
+        y_pred = self.model.predict(X_scaled)
+        y_pred = y_pred.idxmax(axis=1)
+        return y_pred
 
 class CloudClassificationModel:
     """Cloud Classification Model class using
@@ -694,8 +714,8 @@ class CloudClassificationModel:
         test_indices : ndarray
             array of indices corresponding to test data
         """
-        df = self._load_data(data_file=data_file, frac=frac)
-        return self._split_data(df)
+        df = self.load_data(data_file=data_file, frac=frac)
+        return self.split_data(df)
 
     def load_data_and_train(self, data_file, frac=None):
         """Load data and train model using features selected
@@ -706,9 +726,9 @@ class CloudClassificationModel:
         data_file : str
             csv file containing features and targets for training
         """
-        df = self._load_data(data_file=data_file, frac=frac)
+        df = self.load_data(data_file=data_file, frac=frac)
         self.X_train, self.X_test, self.y_train, self.y_test, \
-            self.train_indices, self.test_indices = self._split_data(df)
+            self.train_indices, self.test_indices = self.split_data(df)
         self.train(self.X_train, self.y_train)
 
     def train(self, X_train, y_train, epochs=None):
