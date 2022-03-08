@@ -274,6 +274,12 @@ class CloudClassificationBase:
         'flag',
         'cld_opd_dcomp']
 
+    DEF_LABELS = [
+        'clearsky',
+        'ice',
+        'water'
+    ]
+
     def __init__(self, **kwargs):
         self.model = self.initialize_model(**kwargs)
 
@@ -347,7 +353,7 @@ class CloudClassificationBase:
             dataframe of features to use for training/predictions
         """
         X = encode_features(df, features)
-        return X
+        return normalize(X)
 
     @staticmethod
     def select_targets(df):
@@ -364,7 +370,7 @@ class CloudClassificationBase:
             dataframe of targets to use for training
         """
         y = pd.get_dummies(df['nom_cloud_id'])
-        return y
+        return y[CloudClassificationBase.DEF_LABELS]
 
     def split_data(self, df, features):
         """Split data into training and validation
@@ -386,10 +392,29 @@ class CloudClassificationBase:
             dataframe of targets to use for validation
         """
         X = self.select_features(df, features)
-        X = normalize(X)
         y = self.select_targets(df)
         return train_test_split(
             X, y, test_size=0.2, random_state=42)
+
+    def load_and_train(self, data_file):
+        """Load data and train model
+
+        Parameters
+        ----------
+        data_file : str
+            path to data file with feaures and targets
+
+        Returns
+        -------
+        dict
+            dictionary with training history
+        """
+
+        df = self.load_data(data_file)
+        X_train, X_test, y_train, y_test = self.split_data(
+            df, self.DEF_FEATURES)
+        history = self.train_model(X_train, X_test, y_train, y_test)
+        return history
 
     def train_model(self, X_train, X_test, y_train, y_test):
         """Train model using provided training and test data
@@ -441,12 +466,12 @@ class CloudClassificationBase:
                     lambda epoch: 1e-4 * 10 ** (epoch / 30))])
         return initial_history
 
-    def predict(self, X):
+    def predict(self, df):
         """Predict new cloud type labels
 
         Parameters
         ----------
-        X : pd.DataFrame
+        df : pd.DataFrame
             dataframe of features to use for predictions
 
 
@@ -455,11 +480,34 @@ class CloudClassificationBase:
         y : ndarray
             array of cloud type labels
         """
-        X_scaled = encode_features(X, self.DEF_FEATURES)
-        X_scaled = normalize(X_scaled)
+        X_scaled = self.select_features(df, self.DEF_FEATURES)
         y_pred = self.model.predict(X_scaled)
         y_pred = y_pred.idxmax(axis=1)
+        y_pred = remap_predictions(
+            y_pred, {k: v for k, v in enumerate(self.DEF_LABELS)})
         return y_pred
+
+    def load_train_and_run_all_sky(self, data_file):
+        """Load and train model then run all sky with
+        predictions
+
+        Parameters
+        ----------
+        data_file : str
+            path to data file with features and targets for training
+
+        Returns
+        -------
+        pd.DataFrame
+            dataframe with cloud type predictions and irradiance from all sky
+        """
+        df = self.load_data(data_file)
+        X_train, X_test, y_train, y_test = self.split_data(df)
+        _ = self.train_model(X_train, X_test, y_train, y_test)
+        y_pred = self.predict(df)
+        df_res = run_all_sky(df, y_pred)
+        return df_res
+
 
 class CloudClassificationModel:
     """Cloud Classification Model class using
