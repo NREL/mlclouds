@@ -482,7 +482,7 @@ class CloudClassificationBase:
         """
         X_scaled = self.select_features(df, self.DEF_FEATURES)
         y_pred = self.model.predict(X_scaled)
-        y_pred = y_pred.idxmax(axis=1)
+        y_pred = pd.DataFrame(y_pred).idxmax(axis=1)
         y_pred = remap_predictions(
             y_pred, {k: v for k, v in enumerate(self.DEF_LABELS)})
         return y_pred
