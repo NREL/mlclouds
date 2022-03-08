@@ -487,7 +487,7 @@ class CloudClassificationBase:
             y_pred, {k: v for k, v in enumerate(self.DEF_LABELS)})
         return y_pred
 
-    def load_train_and_run_all_sky(self, data_file):
+    def load_train_run_all_sky(self, data_file):
         """Load and train model then run all sky with
         predictions
 
@@ -502,11 +502,26 @@ class CloudClassificationBase:
             dataframe with cloud type predictions and irradiance from all sky
         """
         df = self.load_data(data_file)
-        X_train, X_test, y_train, y_test = self.split_data(df)
+        X_train, X_test, y_train, y_test = self.split_data(
+            df, self.DEF_FEATURES)
         _ = self.train_model(X_train, X_test, y_train, y_test)
         y_pred = self.predict(df)
         df_res = run_all_sky(df, y_pred)
         return df_res
+
+    def save_model(self, model_file):
+        """Save model to model_file"""
+        joblib.dump(self, model_file)
+
+    def load_model(self, model_file):
+        """Load model from model_file
+
+        Returns
+        -------
+        CloudClassificationBase
+        """
+
+        return joblib.load(model_file)
 
 
 class CloudClassificationModel:
