@@ -396,7 +396,7 @@ class CloudClassificationBase:
         return train_test_split(
             X, y, test_size=0.2, random_state=42)
 
-    def load_and_train(self, data_file, frac=None):
+    def load_and_train(self, data_file, frac=None, epochs=100):
         """Load data and train model
 
         Parameters
@@ -413,10 +413,11 @@ class CloudClassificationBase:
         df = self.load_data(data_file, frac=frac)
         X_train, X_test, y_train, y_test = self.split_data(
             df, self.DEF_FEATURES)
-        history = self.train_model(X_train, X_test, y_train, y_test)
+        history = self.train_model(
+            X_train, X_test, y_train, y_test, epochs=epochs)
         return history
 
-    def train_model(self, X_train, X_test, y_train, y_test):
+    def train_model(self, X_train, X_test, y_train, y_test, epochs=100):
         """Train model using provided training and test data
 
         Parameters
@@ -437,7 +438,7 @@ class CloudClassificationBase:
         """
 
         history = self.model.fit(
-            X_train, y_train, epochs=100,
+            X_train, y_train, epochs=epochs,
             validation_data=(X_test, y_test),
             callbacks=[tf.keras.callbacks.EarlyStopping(
                 monitor='val_loss', min_delta=0, patience=10, verbose=0,
@@ -483,11 +484,10 @@ class CloudClassificationBase:
         X_scaled = self.select_features(df, self.DEF_FEATURES)
         y_pred = self.model.predict(X_scaled)
         y_pred = pd.DataFrame(y_pred).idxmax(axis=1)
-        y_pred = remap_predictions(
-            y_pred, {k: v for k, v in enumerate(self.DEF_LABELS)})
+        y_pred = np.array([self.DEF_LABELS[y] for y in y_pred])
         return y_pred
 
-    def load_train_run_all_sky(self, data_file, frac=None):
+    def load_train_run_all_sky(self, data_file, frac=None, epochs=100):
         """Load and train model then run all sky with
         predictions
 
@@ -504,7 +504,8 @@ class CloudClassificationBase:
         df = self.load_data(data_file, frac=frac)
         X_train, X_test, y_train, y_test = self.split_data(
             df, self.DEF_FEATURES)
-        _ = self.train_model(X_train, X_test, y_train, y_test)
+        _ = self.train_model(
+            X_train, X_test, y_train, y_test, epochs=epochs)
         y_pred = self.predict(df)
         df_res = run_all_sky(df, y_pred)
         return df_res
