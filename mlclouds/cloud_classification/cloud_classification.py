@@ -446,21 +446,22 @@ class CloudClassificationBase:
 
         return history
 
-    def tune_learning_rate(self, X, y):
+    def tune_learning_rate(self, df):
         """Optimize learning rate
 
         Parameters
         ----------
-        X : pd.DataFrame
-            dataframe of features
-        y : pd.DataFrame
-            dataframe of targets
+        df : pd.DataFrame
+            dataframe of features and targets
 
         Returns
         -------
         history : dict
             history of model training
         """
+
+        X = self.select_features(df, self.DEF_FEATURES)
+        y = self.select_targets(df)
         initial_history = self.model.fit(
             X, y, epochs=100, callbacks=[
                 tf.keras.callbacks.LearningRateScheduler(
