@@ -396,7 +396,7 @@ class CloudClassificationBase:
         return train_test_split(
             X, y, test_size=0.2, random_state=42)
 
-    def load_and_train(self, data_file):
+    def load_and_train(self, data_file, frac=None):
         """Load data and train model
 
         Parameters
@@ -410,7 +410,7 @@ class CloudClassificationBase:
             dictionary with training history
         """
 
-        df = self.load_data(data_file)
+        df = self.load_data(data_file, frac=frac)
         X_train, X_test, y_train, y_test = self.split_data(
             df, self.DEF_FEATURES)
         history = self.train_model(X_train, X_test, y_train, y_test)
@@ -487,7 +487,7 @@ class CloudClassificationBase:
             y_pred, {k: v for k, v in enumerate(self.DEF_LABELS)})
         return y_pred
 
-    def load_train_run_all_sky(self, data_file):
+    def load_train_run_all_sky(self, data_file, frac=None):
         """Load and train model then run all sky with
         predictions
 
@@ -501,7 +501,7 @@ class CloudClassificationBase:
         pd.DataFrame
             dataframe with cloud type predictions and irradiance from all sky
         """
-        df = self.load_data(data_file)
+        df = self.load_data(data_file, frac=frac)
         X_train, X_test, y_train, y_test = self.split_data(
             df, self.DEF_FEATURES)
         _ = self.train_model(X_train, X_test, y_train, y_test)
@@ -513,14 +513,14 @@ class CloudClassificationBase:
         """Save model to model_file"""
         joblib.dump(self, model_file)
 
-    def load_model(self, model_file):
+    @staticmethod
+    def load_model(model_file):
         """Load model from model_file
 
         Returns
         -------
         CloudClassificationBase
         """
-
         return joblib.load(model_file)
 
 
