@@ -402,6 +402,10 @@ class CloudClassificationBase:
         ----------
         data_file : str
             path to data file with feaures and targets
+        frac : float
+            fraction of full dataset to use for validation
+        epochs : int
+            number of epochs to use for training
 
         Returns
         -------
@@ -445,13 +449,15 @@ class CloudClassificationBase:
 
         return history
 
-    def tune_learning_rate(self, df):
+    def tune_learning_rate(self, data_file, frac=None):
         """Optimize learning rate
 
         Parameters
         ----------
-        df : pd.DataFrame
-            dataframe of features and targets
+        data_file : str
+            path to data file with feaures and targets
+        frac : float
+            fraction of full dataset to use for validation
 
         Returns
         -------
@@ -459,6 +465,7 @@ class CloudClassificationBase:
             history of model training
         """
 
+        df = self.load_data(data_file, frac=frac)
         X = self.select_features(df, self.DEF_FEATURES)
         y = self.select_targets(df)
         initial_history = self.model.fit(
