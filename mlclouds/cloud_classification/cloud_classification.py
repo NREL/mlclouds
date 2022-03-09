@@ -284,13 +284,15 @@ class CloudClassificationBase:
         self.model = self.initialize_model(**kwargs)
 
     @staticmethod
-    def initialize_model(learning_rate=0.001):
+    def initialize_model(learning_rate=0.001, n_layers=5):
         """Initialize sequential model layers and compile
 
         Parameters
         ----------
         learning_rate : float
             model learning rate
+        n_layers : int
+            number of layers in model
 
         Returns
         -------
@@ -298,11 +300,8 @@ class CloudClassificationBase:
             sequential tensorflow model
         """
         model = tf.keras.models.Sequential()
-        model.add(tf.keras.layers.Dense(128, activation='relu'))
-        model.add(tf.keras.layers.Dense(128, activation='relu'))
-        model.add(tf.keras.layers.Dense(128, activation='relu'))
-        model.add(tf.keras.layers.Dense(128, activation='relu'))
-        model.add(tf.keras.layers.Dense(128, activation='relu'))
+        for _ in range(n_layers):
+            model.add(tf.keras.layers.Dense(128, activation='relu'))
         model.add(tf.keras.layers.Dense(3, activation='sigmoid'))
 
         model.compile(
