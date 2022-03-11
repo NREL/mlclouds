@@ -47,4 +47,4 @@ setup(
     ],
     test_suite="tests",
     install_requires=install_requires,
-
+    )
