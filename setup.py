@@ -15,6 +15,9 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open("README.md", encoding="utf-8") as readme_file:
     readme = convert_text(readme_file.read(), "md", format="md")
 
+with open("requirements.txt") as f:
+    install_requires = f.readlines()
+
 setup(
     name="mlclouds",
     version="0.0.0",
@@ -43,6 +46,5 @@ setup(
         "Programming Language :: Python :: 3.9",
     ],
     test_suite="tests",
-    install_requires=["NREL-nsrdb>=3.0",
-                      "NREL-phygnn>=0.0.14"],
-)
+    install_requires=install_requires,
+
