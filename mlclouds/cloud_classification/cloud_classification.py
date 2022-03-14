@@ -245,7 +245,7 @@ def run_all_sky(df, y):
     return df
 
 
-class CloudClassificationBase:
+class CloudClassificationBase(TfModel):
     """Base Class for cloud classifier"""
 
     DEF_FEATURES = [
@@ -289,8 +289,8 @@ class CloudClassificationBase:
 
         Parameters
         ----------
-        learning_rate : float
-            model learning rate
+        learning_rate : float, optional
+            model learning rate, by default 0.001
         n_layers : int
             number of layers in model
 
@@ -304,6 +304,26 @@ class CloudClassificationBase:
             model.add(tf.keras.layers.Dense(128, activation='relu'))
         model.add(tf.keras.layers.Dense(3, activation='sigmoid'))
 
+        return CloudClassificationBase.compile_model(
+            model, learning_rate=learning_rate)
+
+    @staticmethod
+    def compile_model(model, learning_rate=0.001):
+        """Compile model using specified parameters
+
+        Parameters
+        ----------
+        model : Sequential
+            sequential tensorflow model
+        learning_rate : float, optional
+            model learning rate, by default 0.001
+
+        Returns
+        -------
+        Sequential
+            sequential tensorflow model
+        """
+
         model.compile(
             loss=tf.keras.losses.categorical_crossentropy,
             optimizer=tf.keras.optimizers.Adam(
@@ -312,7 +332,6 @@ class CloudClassificationBase:
                 tf.keras.metrics.CategoricalAccuracy(name='accuracy'),
                 tf.keras.metrics.Precision(name='precision'),
                 tf.keras.metrics.Recall(name='recall')])
-
         return model
 
     @staticmethod
@@ -937,211 +956,3 @@ class CloudClassificationModel:
             predictions and targets
         """
         return log_loss(y, self.model.predict_proba(X))
-
-
-class CloudClassificationNN(TfModel):
-    """Cloud Classification Model class using
-    TensorFlow Classifier to classify conditions into
-    clear, water_cloud, and ice_cloud
-    """
-
-    # default feature set
-    DEF_FEATURES = [
-        'solar_zenith_angle',
-        'refl_0_65um_nom',
-        'refl_0_65um_nom_stddev_3x3',
-        'refl_3_75um_nom',
-        'temp_3_75um_nom',
-        'temp_11_0um_nom',
-        'temp_11_0um_nom_stddev_3x3',
-        'cloud_probability',
-        'cloud_fraction',
-        'air_temperature',
-        'dew_point',
-        'relative_humidity',
-        'total_precipitable_water',
-        'surface_albedo',
-        'alpha',
-        'aod',
-        'ozone',
-        'ssa',
-        'surface_pressure',
-        'cld_opd_mlclouds_water',
-        'cld_opd_mlclouds_ice',
-        'cloud_type',
-        'flag',
-        'cld_opd_dcomp']
-
-    def __init__(self, model, feature_names,
-                 label_names, **kwargs):
-        """Initialize cloud classification model
-
-        Parameters
-        ----------
-        model_file : str, optional
-            file containing previously trained and saved model, by default None
-        data_file : str
-            file containing features and targets to use for training
-        test_size : float, optional
-            fraction of full data set to reserve for validation, by default 0.2
-        features : list, optional
-            list of features to use for training and for predictions,
-            by default features
-        learning_rate : float, optional
-            learning rate for classifier, by default 0.01
-        epochs : int
-            number of epochs for classifier training
-        """
-
-        self.X = None
-        self.y = None
-        self.df = None
-        super().__init__(model, feature_names,
-                         label_names, **kwargs)
-
-    @staticmethod
-    def load_data(data_file, frac=None):
-        """Load csv data file for training
-
-        Parameters
-        ----------
-        data_file : str
-            csv file containing features and targets for training
-
-        Returns
-        -------
-        pd.DataFrame
-            loaded dataframe with features for training or prediction
-        """
-        df = pd.read_csv(data_file)
-
-        if frac is not None:
-            df = df.groupby(
-                'nom_cloud_id', group_keys=False).apply(
-                    lambda x: x.sample(frac=frac))
-        return df
-
-    @staticmethod
-    def select_features(df, features):
-        """Extract features from loaded dataframe
-
-        Parameters
-        ----------
-        df : pd.DataFrame
-            dataframe with features to use for cloud type prediction
-
-        Returns
-        -------
-        X : pd.DataFrame
-            dataframe of features to use for training/predictions
-        """
-        X = pd.get_dummies(df[features])
-        return X
-
-    @staticmethod
-    def select_targets(df):
-        """Extract targets from loaded dataframe
-
-        Parameters
-        ----------
-        df : pd.DataFrame
-            dataframe with features to use for cloud type prediction
-
-        Returns
-        -------
-        y : pd.DataFrame
-            dataframe of targets to use for training
-        """
-        y = pd.get_dummies(df['nom_cloud_id'])
-        return y
-
-    @staticmethod
-    def initialize_layers():
-        """Initialize model architecture"""
-
-        model = tf.keras.models.Sequential()
-        model.add(tf.keras.layers.Dense(128, activation='relu'))
-        model.add(tf.keras.layers.Dense(128, activation='relu'))
-        model.add(tf.keras.layers.Dense(128, activation='relu'))
-        model.add(tf.keras.layers.Dense(128, activation='relu'))
-        model.add(tf.keras.layers.Dense(128, activation='relu'))
-        model.add(tf.keras.layers.Dense(3, activation='sigmoid'))
-
-        return model
-
-    @classmethod
-    def initialize_model(cls, data_file, frac=None):
-        """Load data and initialize TfModel
-
-        Parameters
-        ----------
-        data_file : str
-            file with feature and target data
-        frac : float, optional
-            fraction of full dataset to use, by default None
-
-        Returns
-        -------
-        TfModel
-            TfModel class initialized with feature and
-            label names from data file
-        """
-        df = cls.load_data(data_file=data_file, frac=frac)
-        X = cls.select_features(df, cls.DEF_FEATURES)
-        y = cls.select_targets(df)
-        model = cls.initialize_layers()
-        clf = cls(model, X.columns, y.columns)
-        clf.df = df
-        clf.X = X
-        clf.y = y
-        return clf
-
-    @classmethod
-    def initialize_and_train(cls, data_file, frac=None, **kwargs):
-        """Load data and initialize TfModel
-
-        Parameters
-        ----------
-        data_file : str
-            file with feature and target data
-        frac : float, optional
-            fraction of full dataset to use, by default None
-
-        Returns
-        -------
-        TfModel
-            Initialized and trained TfModel
-        """
-        clf = cls.initialize_model(
-            data_file=data_file, frac=frac)
-
-        if not kwargs:
-            kwargs = {}
-
-        kwargs['loss'] = kwargs.get('loss', 'categorical_crossentropy')
-        kwargs['metrics'] = kwargs.get(
-            'metrics', [categorical_crossentropy, categorical_accuracy])
-        model = clf.build_trained(clf.X, clf.y, **kwargs)
-        model.df = clf.df
-        model.X = clf.X
-        model.y = clf.y
-        return model
-
-    def predict_new(self, df):
-        """Predict labels from new dataframe
-
-        Parameters
-        ----------
-        df : pd.DataFrame
-            dataframe of features to use for predictions
-
-        Returns
-        -------
-        ndarray
-            array of cloud type predictions
-        """
-
-        X = self.select_features(df, self.DEF_FEATURES)
-        y_pred = self.predict(pd.get_dummies(X)[self.feature_names])
-        y_pred = remap_predictions(y_pred)
-        return y_pred
