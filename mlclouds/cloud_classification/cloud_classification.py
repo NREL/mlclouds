@@ -509,6 +509,25 @@ class CloudClassificationBase(TfModel):
         y_pred = np.array([self.DEF_LABELS[y] for y in y_pred])
         return y_pred
 
+    def run_all_sky(self, df):
+        """Load and train model then run all sky with
+        predictions
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            dataframe of features to use for cloud type predictions
+
+        Returns
+        -------
+        pd.DataFrame
+            dataframe with cloud type predictions and irradiance from all sky
+        """
+        y_pred = self.predict(df)
+        df_res = run_all_sky(df, y_pred)
+        return df_res
+
+
     def load_train_run_all_sky(self, data_file, frac=None, epochs=100):
         """Load and train model then run all sky with
         predictions
