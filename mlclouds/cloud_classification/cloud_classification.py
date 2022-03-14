@@ -280,17 +280,17 @@ class CloudClassificationBase(TfModel):
         'water'
     ]
 
-    def __init__(self, **kwargs):
-        self.model = self.initialize_model(**kwargs)
+    def __init__(self, learning_rate=1e-4, n_layers=5, **kwargs):
+        layers = self.initialize_layers(n_layers=n_layers)
+        super().__init__(layers, **kwargs)
+        self.compile_model(learning_rate=learning_rate)
 
     @staticmethod
-    def initialize_model(learning_rate=0.001, n_layers=5):
+    def initialize_layers(n_layers=5):
         """Initialize sequential model layers and compile
 
         Parameters
         ----------
-        learning_rate : float, optional
-            model learning rate, by default 0.001
         n_layers : int
             number of layers in model
 
@@ -304,17 +304,13 @@ class CloudClassificationBase(TfModel):
             model.add(tf.keras.layers.Dense(128, activation='relu'))
         model.add(tf.keras.layers.Dense(3, activation='sigmoid'))
 
-        return CloudClassificationBase.compile_model(
-            model, learning_rate=learning_rate)
+        return model
 
-    @staticmethod
-    def compile_model(model, learning_rate=0.001):
+    def compile_model(self, learning_rate=0.001):
         """Compile model using specified parameters
 
         Parameters
         ----------
-        model : Sequential
-            sequential tensorflow model
         learning_rate : float, optional
             model learning rate, by default 0.001
 
@@ -324,7 +320,7 @@ class CloudClassificationBase(TfModel):
             sequential tensorflow model
         """
 
-        model.compile(
+        self.model.compile(
             loss=tf.keras.losses.categorical_crossentropy,
             optimizer=tf.keras.optimizers.Adam(
                 learning_rate=learning_rate),
@@ -332,7 +328,7 @@ class CloudClassificationBase(TfModel):
                 tf.keras.metrics.CategoricalAccuracy(name='accuracy'),
                 tf.keras.metrics.Precision(name='precision'),
                 tf.keras.metrics.Recall(name='recall')])
-        return model
+        return self.model
 
     @staticmethod
     def load_data(data_file, frac=None):
