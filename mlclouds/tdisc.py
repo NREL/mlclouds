@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Tensorflow impelemtation of the DISC model
+"""Tensorflow implementation of the DISC model
 
 Created on Wed Jun 25 13:26:21 2014
 
@@ -10,7 +10,7 @@ There were four main changes from the original code
     1) functions were vectorized
     2) pvl_ephemeris expects UTC time
     3) removed unused result calculations
-    4) Water and Pressure were changed to vectors from scalers
+    4) Water and Pressure were changed to vectors from scalars
 """
 
 import tensorflow as tf
