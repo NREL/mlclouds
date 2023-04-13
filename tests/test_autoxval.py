@@ -2,8 +2,9 @@ import os
 import pandas as pd
 import pytest
 
-from mlclouds.autoxval import AutoXVal, CONFIG
+from mlclouds.autoxval import AutoXVal
 from mlclouds import TESTDATADIR
+from mlclouds.utilities import FP_DATA, CONFIG, surf_meta
 from mlclouds.data_handlers import TrainData
 
 
@@ -57,16 +58,22 @@ def test_kxn_fold():
 
 def test_test_train_split():
     """ Test train/test fraction has appropriate split """
-    west_2016 = '/lustre/eaglefs/projects/mlclouds/data_surfrad_9/2016' +\
-                '_west_adj/mlclouds_surfrad_2016.h5'
-    config = CONFIG
-    td = TrainData('all', west_2016, config=config, test_fraction=0.2)
-    assert td.df_raw.shape[0] == 98381
-    assert td.test_set_mask.shape == (122976,)
-    assert td.test_set_mask.sum() == 24595
+    west_2016 = FP_DATA.format(year=2016, area='west')
+
+    if not os.path.exists(west_2016):
+        msg = ('These tests require access to /projects/pxs/mlclouds/ and '
+               'can only be run on the Eagle HPC')
+        pytest.skip(msg)
+
+    td = TrainData('all', west_2016, config=CONFIG, test_fraction=0.2)
+    n_surf = len(surf_meta())
+    n_obs = 2 * 8784 * n_surf  # 30 min leap year data
+    assert td.df_raw.shape[0] == int(round(n_obs * 0.8))
+    assert td.test_set_mask.shape[0] == n_obs
+    assert td.test_set_mask.sum() == int(round(n_obs * 0.2))
 
     # Verify the two masks are unique
-    assert (td.test_set_mask | td.train_set_mask).sum() == 122976
+    assert (td.test_set_mask | td.train_set_mask).sum() == n_obs
     assert (td.test_set_mask & td.train_set_mask).sum() == 0
 
 

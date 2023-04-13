@@ -27,6 +27,7 @@ class TrainTest:
     Train and test a model using a single dataset. Reserve a percentage
     of the data for testing that is not used for training.
     """
+
     def __init__(self, data_files, config=CONFIG, test_fraction=0.2,
                  stats_file=None, model_file=None, history_file=None):
         """
@@ -96,6 +97,7 @@ class XVal:
     the NSRDB baseline data using another satellite dataset to predict cloud
     parameters. The sites used for training may also be controlled.
     """
+
     def __init__(self, config=CONFIG):
         """
         Parameters
