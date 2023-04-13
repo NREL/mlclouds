@@ -96,9 +96,8 @@ class TrainData:
                     df_raw = temp_raw
                     df_all_sky = temp_all_sky
                 else:
-                    df_raw = df_raw.append(temp_raw, ignore_index=True)
-                    df_all_sky = df_all_sky.append(temp_all_sky,
-                                                   ignore_index=True)
+                    df_raw = pd.concat([df_raw, temp_raw])
+                    df_all_sky = pd.concat([df_all_sky, temp_all_sky])
 
             logger.debug('\tShape temp_raw={}, temp_all_sky={}'
                          ''.format(temp_raw.shape, temp_all_sky.shape))
@@ -129,7 +128,7 @@ class TrainData:
                 if df_surf is None:
                     df_surf = temp_surf
                 else:
-                    df_surf = df_surf.append(temp_surf, ignore_index=True)
+                    df_surf = pd.concat([df_surf, temp_surf])
 
                 logger.debug('\tShape: temp_surf={}'.format(temp_surf.shape))
 
@@ -399,8 +398,8 @@ class ValidationData:
                     df_raw = temp_raw
                     df_all_sky = temp_all_sky
                 else:
-                    df_raw = df_raw.append(temp_raw)
-                    df_all_sky = df_all_sky.append(temp_all_sky)
+                    df_raw = pd.concat([df_raw, temp_raw])
+                    df_all_sky = pd.concat([df_all_sky, temp_all_sky])
 
             year, area = extract_file_meta(val_file)
             time_step = calc_time_step(temp_raw.time_index)

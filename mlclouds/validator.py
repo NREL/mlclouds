@@ -271,14 +271,7 @@ class Validator:
                     stats.at[i, 'N'] = mask.sum()
                     i += 1
 
-                    stats.at[i, 'Model'] = 'Adjusted'
-                    stats.at[i, 'Site'] = code.upper()
-                    stats.at[i, 'Variable'] = var.upper()
-                    stats.at[i, 'Condition'] = condition
-                    stats.at[i, 'N'] = mask.sum()
-                    i += 1
-
-                    stats.at[i, 'Model'] = 'PHYGNN'
+                    stats.at[i, 'Model'] = 'MLClouds'
                     stats.at[i, 'Site'] = code.upper()
                     stats.at[i, 'Variable'] = var.upper()
                     stats.at[i, 'Condition'] = condition
@@ -349,14 +342,12 @@ class Validator:
                 tmp_surf = self._get_surfrad_df(gid, year,
                                                 tstep=year_meta['time_step'])
 
-                tstep_base = calc_time_step(pd.Series(tmp_base.index))
-
                 if df_base is None:
                     df_base = tmp_base
                     df_surf = tmp_surf
                 else:
-                    df_base = df_base.append(tmp_base)
-                    df_surf = df_surf.append(tmp_surf)
+                    df_base = pd.concat([df_base, tmp_base])
+                    df_surf = pd.concat([df_surf, tmp_surf])
 
         assert (df_base.gid == df_surf.gid).all()
         return df_base, df_surf

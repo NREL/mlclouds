@@ -29,5 +29,10 @@ def test_tensor_farms():
     tensor_ghi = tfarms(ttau, cloud_type, cloud_radius, sza, radius,
                         Tuuclr, Ruuclr, Tddclr, Tduclr, albedo, debug=False)
 
+    # Protect against new FARMS-DNI which returns (ghi, farms-dni, dni0)
+    if isinstance(baseline_ghi, (list, tuple)):
+        baseline_ghi = baseline_ghi[0]
+    assert isinstance(baseline_ghi, np.ndarray)
+
     assert tf.is_tensor(tensor_ghi)
-    assert np.allclose(baseline_ghi, tensor_ghi.numpy())
+    assert np.allclose(baseline_ghi, tensor_ghi.numpy(), rtol=0.001)

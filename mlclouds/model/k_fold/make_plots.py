@@ -36,7 +36,7 @@ for i, sid in enumerate(surfrad_ids):
         if df is None:
             df = temp
         else:
-            df = df.append(temp, ignore_index=True)
+            df = pd.concat([df, temp])
 
 variables = df.Variable.unique()
 conditions = df.Condition.unique()

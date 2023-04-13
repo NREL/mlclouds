@@ -17,7 +17,7 @@ df_east = pd.read_csv('./outputs/validation_stats_east.csv')
 df_west = pd.read_csv('./outputs/validation_stats_west.csv')
 df_east = df_east[df_east.Site.isin(east_sites)]
 df_west = df_west[df_west.Site.isin(west_sites)]
-df = df_east.append(df_west, ignore_index=True)
+df = pd.concat([df_east, df_west])
 df = df.sort_values(['Site', 'Model'])
 
 variables = df.Variable.unique()
