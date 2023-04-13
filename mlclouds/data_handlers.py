@@ -96,8 +96,9 @@ class TrainData:
                     df_raw = temp_raw
                     df_all_sky = temp_all_sky
                 else:
-                    df_raw = pd.concat([df_raw, temp_raw])
-                    df_all_sky = pd.concat([df_all_sky, temp_all_sky])
+                    df_raw = pd.concat([df_raw, temp_raw], ignore_index=True)
+                    df_all_sky = pd.concat([df_all_sky, temp_all_sky],
+                                           ignore_index=True)
 
             logger.debug('\tShape temp_raw={}, temp_all_sky={}'
                          ''.format(temp_raw.shape, temp_all_sky.shape))
@@ -128,7 +129,8 @@ class TrainData:
                 if df_surf is None:
                     df_surf = temp_surf
                 else:
-                    df_surf = pd.concat([df_surf, temp_surf])
+                    df_surf = pd.concat([df_surf, temp_surf],
+                                        ignore_index=True)
 
                 logger.debug('\tShape: temp_surf={}'.format(temp_surf.shape))
 
@@ -142,18 +144,20 @@ class TrainData:
         assert len(self.observation_sources) == len(df_raw)
         assert all(df_all_sky.gid.values == df_surf.gid.values)
         assert all(df_all_sky.time_index.values == df_surf.time_index.values)
-
         time_index_full = df_all_sky.time_index
-        df_surf = df_surf.reset_index(drop=True)
+        df_surf.index = df_all_sky.index.values
         df_surf = df_surf.drop(['gid', 'time_index'], axis=1)
         df_all_sky = df_all_sky.join(df_surf)
 
+        assert len(df_raw) == len(df_all_sky)
         if test_fraction:
             np.random.seed(self._config['phygnn_seed'])
 
             df_raw, df_all_sky = self._test_train_split(df_raw, df_all_sky,
                                                         time_index_full,
                                                         test_fraction)
+
+        assert len(df_raw) == len(df_all_sky)
 
         logger.debug('Extracting 2D arrays to run rest2 for '
                      'clearsky PhyGNN inputs.')
@@ -200,6 +204,7 @@ class TrainData:
         df_all_sky = df_all_sky.drop('time_index', axis=1)
         self.df_all_sky = df_all_sky.interpolate('nearest').bfill().ffill()
         self.df_all_sky['time_index'] = time_index
+        assert len(df_raw) == len(df_all_sky)
 
     def _prep_data(self, kwargs=TRAINING_PREP_KWARGS):
         """
@@ -281,6 +286,12 @@ class TrainData:
                      ''.format(test_fraction*100))
         assert 0 < test_fraction < 1
         assert len(time_index_full) == len(df_all_sky_orig)
+
+        ti1 = df_raw_orig['time_index'].values
+        ti2 = df_all_sky_orig['time_index'].values
+        msg = ('Time indices dont match, something went wrong: \n{} \n{}'
+               .format(ti1, ti2))
+        assert (ti1 == ti2).all(), msg
 
         df_raw = df_raw_orig.sample(frac=(1-test_fraction)).sort_index()
         self.train_set_mask = df_raw_orig.index.isin(df_raw.index)
@@ -398,8 +409,9 @@ class ValidationData:
                     df_raw = temp_raw
                     df_all_sky = temp_all_sky
                 else:
-                    df_raw = pd.concat([df_raw, temp_raw])
-                    df_all_sky = pd.concat([df_all_sky, temp_all_sky])
+                    df_raw = pd.concat([df_raw, temp_raw], ignore_index=True)
+                    df_all_sky = pd.concat([df_all_sky, temp_all_sky],
+                                           ignore_index=True)
 
             year, area = extract_file_meta(val_file)
             time_step = calc_time_step(temp_raw.time_index)
