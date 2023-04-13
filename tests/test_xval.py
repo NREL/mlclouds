@@ -12,24 +12,23 @@ from datetime import datetime as dt
 
 from mlclouds.autoxval import XVal
 from mlclouds.utilities import CONFIG, extract_file_meta, FP_DATA
-from mlclouds import TESTDATADIR
 
 STAT_FIELDS = ['MAE (%)', 'MBE (%)', 'RMSE (%)']
 
 
-@pytest.fixture
 def check_for_eagle():
     if not os.path.exists('/lustre/eaglefs/projects/pxs/mlclouds/'):
         msg = ('These tests require access to /projects/pxs/mlclouds/ and '
                'can only be run on the Eagle HPC')
-        raise RuntimeError(msg)
+        pytest.skip(msg)
 
 
-def test_xval(check_for_eagle):
+def test_xval():
     """
     Test that xval creates the proper results for a simple model. Also test
     model saving and loading.
     """
+    check_for_eagle()
 
     config = CONFIG
     config['epochs_a'] = 4
@@ -65,11 +64,12 @@ def test_xval(check_for_eagle):
     assert (xv2.stats.loc[ml_mask, 'MAE (%)'] < 30).all()
 
 
-def test_xval_mismatched_timesteps(check_for_eagle):
+def test_xval_mismatched_timesteps():
     """
     Test training and validation with 5 minute and 30 minute GOES data at
     the same time.
     """
+    check_for_eagle()
 
     config = CONFIG
     config['epochs_a'] = 4

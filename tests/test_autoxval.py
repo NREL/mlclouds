@@ -59,6 +59,12 @@ def test_kxn_fold():
 def test_test_train_split():
     """ Test train/test fraction has appropriate split """
     west_2016 = FP_DATA.format(year=2016, area='west')
+
+    if not os.path.exists(west_2016):
+        msg = ('These tests require access to /projects/pxs/mlclouds/ and '
+               'can only be run on the Eagle HPC')
+        pytest.skip(msg)
+
     td = TrainData('all', west_2016, config=CONFIG, test_fraction=0.2)
     n_surf = len(surf_meta())
     n_obs = 2 * 8784 * n_surf  # 30 min leap year data
