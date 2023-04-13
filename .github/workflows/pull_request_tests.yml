@@ -1,0 +1,39 @@
+name: Pytests
+
+on: pull_request
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: [3.8]
+        include:
+          - os: ubuntu-latest
+            python-version: 3.9
+
+    steps:
+    - name: checkout mlclouds
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+        path: mlclouds
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        python-version: ${{ matrix.python-version }}
+    - name: Install mlclouds dependencies
+      working-directory: ./mlclouds
+      shell: bash -l {0}
+      run: |
+        pip install -e .
+        pip install pytest
+    - name: Run mlclouds pytest
+      working-directory: ./mlclouds
+      shell: bash -l {0}
+      run: |
+        conda install pytest
+        pytest -v --disable-warnings
