@@ -60,5 +60,4 @@ jobs:
       working-directory: ./mlclouds
       shell: bash -l {0}
       run: |
-        conda install pytest
         pytest -v --disable-warnings
