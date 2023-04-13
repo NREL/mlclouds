@@ -1,4 +1,4 @@
 NREL-nsrdb>=3.0
-NREL-phygnn>=0.24.0
+NREL-phygnn>=0.0.24
 tensorflow==2.8.0
 protobuf==3.19.*
