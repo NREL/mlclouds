@@ -3,7 +3,8 @@ setup.py
 """
 import os
 from codecs import open
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 try:
     from pypandoc import convert_text
@@ -19,13 +20,13 @@ with open("requirements.txt") as f:
     install_requires = f.readlines()
 
 setup(
-    name="mlclouds",
+    name="NREL-mlclouds",
     version="0.0.0",
     description="Machines Learning Clouds",
     long_description=readme,
     author="Grant Buster",
     author_email="grant.buster@nrel.gov",
-    url="https://github.nrel.gov/PXS/mlclouds",
+    url="https://github.com/NREL",
     packages=find_packages(),
     package_dir={"mlclouds": "mlclouds"},
     package_data={'mlclouds':
