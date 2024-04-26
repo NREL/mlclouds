@@ -19,9 +19,14 @@ with open("README.md", encoding="utf-8") as readme_file:
 with open("requirements.txt") as f:
     install_requires = f.readlines()
 
+with open(os.path.join(here, "mlclouds", "version.py"), encoding="utf-8") as f:
+    version = f.read()
+
+version = version.split('=')[-1].strip().strip('"').strip("'")
+
 setup(
     name="NREL-mlclouds",
-    version="0.0.0",
+    version=version,
     description="Machines Learning Clouds",
     long_description=readme,
     author="Grant Buster",
@@ -38,7 +43,8 @@ setup(
     keywords="mlclouds",
     python_requires='>=3.9',
     classifiers=[
-        "Intended Audience :: Modelers",
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Science/Research",
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3.9",
