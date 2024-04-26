@@ -38,7 +38,6 @@ setup(
     keywords="mlclouds",
     python_requires='>=3.9',
     classifiers=[
-        "Development Status :: Beta",
         "Intended Audience :: Modelers",
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
