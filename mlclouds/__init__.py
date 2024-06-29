@@ -2,6 +2,8 @@
 """MLClouds library."""
 import os
 
+from .version import __version__
+
 MLCLOUDSDIR = os.path.dirname(os.path.realpath(__file__))
 TESTDATADIR = os.path.join(os.path.dirname(MLCLOUDSDIR), 'tests', 'data')
 PROD_DIR = os.path.join(MLCLOUDSDIR, 'model/production_model')
