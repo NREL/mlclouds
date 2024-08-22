@@ -6,4 +6,4 @@
 #SBATCH --partition=debug
 #SBATCH --mem=178000
 #SBATCH --qos=high
-python train_n_test.py
+python train_n_val.py

@@ -1,55 +1,58 @@
 """
 Perform a grid search over a phygnn mlclouds model.
 """
+
 import argparse
 import json
-import pandas as pd
-
 from copy import deepcopy
 from getpass import getuser
 from itertools import product
 from os import makedirs
 from os.path import join
 
+import pandas as pd
 from rex.utilities.hpc import SLURM
 
-
-DATA_FILES = {'east': {2016: '2016_east_adj/mlclouds_surfrad_2016.h5',
-                       2017: '2017_east_adj/mlclouds_surfrad_2017.h5',
-                       2018: '2018_east_adj/mlclouds_surfrad_2018.h5',
-                       2019: '2019_east_adj/mlclouds_surfrad_2019.h5'},
-              'west': {2016: '2016_west_adj/mlclouds_surfrad_2016.h5',
-                       2017: '2017_west_adj/mlclouds_surfrad_2017.h5',
-                       2018: '2018_west_adj/mlclouds_surfrad_2018.h5',
-                       2019: '2019_west_adj/mlclouds_surfrad_2019.h5'}
-              }
+DATA_FILES = {
+    "east": {
+        2016: "2016_east_adj/mlclouds_surfrad_2016.h5",
+        2017: "2017_east_adj/mlclouds_surfrad_2017.h5",
+        2018: "2018_east_adj/mlclouds_surfrad_2018.h5",
+        2019: "2019_east_adj/mlclouds_surfrad_2019.h5",
+    },
+    "west": {
+        2016: "2016_west_adj/mlclouds_surfrad_2016.h5",
+        2017: "2017_west_adj/mlclouds_surfrad_2017.h5",
+        2018: "2018_west_adj/mlclouds_surfrad_2018.h5",
+        2019: "2019_west_adj/mlclouds_surfrad_2019.h5",
+    },
+}
 
 CONFIG = {
     "surfrad_window_minutes": 15,
-    "features": ["solar_zenith_angle",
-                 "cloud_type",
-                 "refl_0_65um_nom",
-                 "refl_0_65um_nom_stddev_3x3",
-                 "refl_3_75um_nom",
-                 "temp_3_75um_nom",
-                 "temp_11_0um_nom",
-                 "temp_11_0um_nom_stddev_3x3",
-                 "cloud_probability",
-                 "cloud_fraction",
-                 "air_temperature",
-                 "dew_point",
-                 "relative_humidity",
-                 "total_precipitable_water",
-                 "surface_albedo"
-                 ],
+    "features": [
+        "solar_zenith_angle",
+        "cloud_type",
+        "refl_0_65um_nom",
+        "refl_0_65um_nom_stddev_3x3",
+        "refl_3_75um_nom",
+        "temp_3_75um_nom",
+        "temp_11_0um_nom",
+        "temp_11_0um_nom_stddev_3x3",
+        "cloud_probability",
+        "cloud_fraction",
+        "air_temperature",
+        "dew_point",
+        "relative_humidity",
+        "total_precipitable_water",
+        "surface_albedo",
+    ],
     "y_labels": ["cld_opd_dcomp", "cld_reff_dcomp"],
-    "hidden_layers": [{"units": 64, "activation": "relu", "name": "relu1",
-                       "dropout": 0.01},
-                      {"units": 64, "activation": "relu", "name": "relu2",
-                       "dropout": 0.01},
-                      {"units": 64, "activation": "relu", "name": "relu3",
-                       "dropout": 0.01}
-                      ],
+    "hidden_layers": [
+        {"units": 64, "activation": "relu", "name": "relu1", "dropout": 0.01},
+        {"units": 64, "activation": "relu", "name": "relu2", "dropout": 0.01},
+        {"units": 64, "activation": "relu", "name": "relu3", "dropout": 0.01},
+    ],
     "phygnn_seed": 0,
     "metric": "relative_mae",
     "learning_rate": 1e-3,
@@ -60,24 +63,38 @@ CONFIG = {
     "loss_weights_b": [0.5, 0.5],
     "p_kwargs": {"loss_terms": ["mae_ghi", "mae_dni", "mbe_ghi", "mbe_dni"]},
     "p_fun": "p_fun_all_sky",
-    "clean_training_data_kwargs": {"filter_clear": False,
-                                   "nan_option": "interp"},
-    "one_hot_categories": {"flag": ["clear", "ice_cloud", "water_cloud",
-                                    "bad_cloud"]}
+    "clean_training_data_kwargs": {
+        "filter_clear": False,
+        "nan_option": "interp",
+    },
+    "one_hot_categories": {
+        "flag": ["clear", "ice_cloud", "water_cloud", "bad_cloud"]
+    },
 }
 
 
-class GridSearcher(object):
+class GridSearcher:
     """
     Perform a grid search over provided model hyperparmaters.
     """
-    def __init__(self, output_ws, exe_fpath,
-                 data_root='/eaglefs/projects/mlclouds/data_surfrad_9/',
-                 conda_env='mlclouds', number_hidden_layers=(3, ),
-                 number_hidden_nodes=(64, ), dropouts=(0.01, ),
-                 learning_rates=(0.001, ), loss_weights_b=([0.5, 0.5], ),
-                 test_fractions=(0.2, ), epochs_a=(10, ), epochs_b=(10, ),
-                 n_batches=(16, ), base_config=CONFIG):
+
+    def __init__(
+        self,
+        output_ws,
+        exe_fpath,
+        data_root="/eaglefs/projects/mlclouds/data_surfrad_9/",
+        conda_env="mlclouds",
+        number_hidden_layers=(3,),
+        number_hidden_nodes=(64,),
+        dropouts=(0.01,),
+        learning_rates=(0.001,),
+        loss_weights_b=([0.5, 0.5],),
+        test_fractions=(0.2,),
+        epochs_a=(10,),
+        epochs_b=(10,),
+        n_batches=(16,),
+        base_config=CONFIG,
+    ):
         """
         Parameters
         ----------
@@ -161,17 +178,18 @@ class GridSearcher(object):
                  "one_hot_categories": {"flag": ["clear", "ice_cloud",
                                                  "water_cloud", "bad_cloud"]}
                 }
-       """
+        """
         self._output_ws = None
         self.output_ws = output_ws
 
         self.exe_fpath = exe_fpath
-        self.config_fpath = join(self.output_ws, 'clds_opt_{id}.ini')
-        self.stats_fpath = join(self.output_ws, 'clds_opt_{id}_stats.csv')
-        self.log_fpath = join(self.output_ws, 'clds_opt_{id}.log')
-        self.history_fpath = join(self.output_ws,
-                                  'clds_opt_{id}_training_history.csv')
-        self.model_fpath = join(self.output_ws, 'clds_opt_{id}.pkl')
+        self.config_fpath = join(self.output_ws, "clds_opt_{id}.ini")
+        self.stats_fpath = join(self.output_ws, "clds_opt_{id}_stats.csv")
+        self.log_fpath = join(self.output_ws, "clds_opt_{id}.log")
+        self.history_fpath = join(
+            self.output_ws, "clds_opt_{id}_training_history.csv"
+        )
+        self.model_fpath = join(self.output_ws, "clds_opt_{id}.pkl")
 
         self.base_config = base_config
 
@@ -182,29 +200,43 @@ class GridSearcher(object):
         self.job_ids = []
         self.job_stdout = []
 
-        self.jobs = list(product(number_hidden_layers, number_hidden_nodes,
-                                 dropouts, learning_rates, loss_weights_b,
-                                 test_fractions, epochs_a, epochs_b,
-                                 n_batches))
+        self.jobs = list(
+            product(
+                number_hidden_layers,
+                number_hidden_nodes,
+                dropouts,
+                learning_rates,
+                loss_weights_b,
+                test_fractions,
+                epochs_a,
+                epochs_b,
+                n_batches,
+            )
+        )
 
-        self.results = pd.DataFrame(self.jobs, columns=['number_hidden_layers',
-                                                        'number_hidden_nodes',
-                                                        'dropout',
-                                                        'learning_rate',
-                                                        'loss_weights_b',
-                                                        'test_fraction',
-                                                        'epochs_a',
-                                                        'epochs_b',
-                                                        'n_batch'])
-        for var in ['elapsed_time', 'training_loss', 'validation_loss']:
-            self.results[var] = [None, ] * len(self.jobs)
-        self.collect_results(fpath=join(self.output_ws, 'results.csv'))
+        self.results = pd.DataFrame(
+            self.jobs,
+            columns=[
+                "number_hidden_layers",
+                "number_hidden_nodes",
+                "dropout",
+                "learning_rate",
+                "loss_weights_b",
+                "test_fraction",
+                "epochs_a",
+                "epochs_b",
+                "n_batch",
+            ],
+        )
+        for var in ["elapsed_time", "training_loss", "validation_loss"]:
+            self.results[var] = [None] * len(self.jobs)
+        self.collect_results(fpath=join(self.output_ws, "results.csv"))
 
         files = []
         for region in DATA_FILES:
             for year in DATA_FILES[region]:
                 files.append(join(data_root, DATA_FILES[region][year]))
-        self.base_config['files'] = files
+        self.base_config["files"] = files
 
     @property
     def output_ws(self):
@@ -227,9 +259,20 @@ class GridSearcher(object):
         else:
             self._output_ws = value
 
-    def start_job(self, number_hidden_layers, number_hidden_nodes, dropout,
-                  learning_rate, loss_weights_b, test_fraction, epochs_a,
-                  epochs_b, n_batch, id='0', walltime=1):
+    def start_job(
+        self,
+        number_hidden_layers,
+        number_hidden_nodes,
+        dropout,
+        learning_rate,
+        loss_weights_b,
+        test_fraction,
+        epochs_a,
+        epochs_b,
+        n_batch,
+        id="0",
+        walltime=1,
+    ):
         """
         Start a single HPC task for a single model run via run_mlclouds.py.
 
@@ -264,39 +307,51 @@ class GridSearcher(object):
         """
         config = deepcopy(self.base_config)
 
-        hidden_layers = [{"units": number_hidden_nodes, "activation": "relu",
-                          "dropout": dropout}] * number_hidden_layers
+        hidden_layers = [
+            {
+                "units": number_hidden_nodes,
+                "activation": "relu",
+                "dropout": dropout,
+            }
+        ] * number_hidden_layers
 
         config.update(
-            {'hidden_layers': hidden_layers,
-             'learning_rate': learning_rate,
-             'loss_weights_b': loss_weights_b,
-             'epochs_a': epochs_a,
-             'epochs_b': epochs_b,
-             'n_batch': n_batch
-             }
+            {
+                "hidden_layers": hidden_layers,
+                "learning_rate": learning_rate,
+                "loss_weights_b": loss_weights_b,
+                "epochs_a": epochs_a,
+                "epochs_b": epochs_b,
+                "n_batch": n_batch,
+            }
         )
 
-        with open(self.config_fpath.format(id=id), 'w') as f:
+        with open(self.config_fpath.format(id=id), "w") as f:
             json.dump(config, f)
 
-        cmd = f'python {self.exe_fpath} {self.config_fpath.format(id=id)} '\
-              f'{test_fraction} ' \
-              f'--stats_file={self.stats_fpath.format(id=id)} ' \
-              f'--log={self.log_fpath.format(id=id)} ' \
-              f'--log_level=DEBUG ' \
-              f'--training_history={self.history_fpath.format(id=id)} ' \
-              f'--model_path={self.model_fpath.format(id=id)}'
+        cmd = (
+            f"python {self.exe_fpath} {self.config_fpath.format(id=id)} "
+            f"{test_fraction} "
+            f"--stats_file={self.stats_fpath.format(id=id)} "
+            f"--log={self.log_fpath.format(id=id)} "
+            f"--log_level=DEBUG "
+            f"--training_history={self.history_fpath.format(id=id)} "
+            f"--model_path={self.model_fpath.format(id=id)}"
+        )
 
-        jobid, stdout = self.slurm.sbatch(cmd, alloc='mlclouds',
-                                          walltime=walltime,
-                                          memory=None, feature='--gres=gpu:1',
-                                          name=f'clds_opt_{id}',
-                                          stdout_path=self.output_ws,
-                                          keep_sh=False,
-                                          conda_env=self.conda_env,
-                                          module=None,
-                                          module_root=None)
+        jobid, stdout = self.slurm.sbatch(
+            cmd,
+            alloc="mlclouds",
+            walltime=walltime,
+            memory=None,
+            feature="--gres=gpu:1",
+            name=f"clds_opt_{id}",
+            stdout_path=self.output_ws,
+            keep_sh=False,
+            conda_env=self.conda_env,
+            module=None,
+            module_root=None,
+        )
 
         self.job_ids.append(jobid)
         self.job_stdout.append(stdout)
@@ -306,7 +361,7 @@ class GridSearcher(object):
         Start an HPC job for each job in self.jobs.
 
         Parameters
-        ---------
+        ----------
         dry_run: bool
             Prepare runs without executing. Defaults to False.
         walltime: int
@@ -314,15 +369,32 @@ class GridSearcher(object):
         """
         for i, job in enumerate(self.jobs):
             i = str(i).zfill(len(str(len(self.jobs))))
-            number_hidden_layers, number_hidden_nodes, dropout, \
-                learning_rate, loss_weights_b, test_fraction, epochs_a, \
-                epochs_b, n_batch = job
+            (
+                number_hidden_layers,
+                number_hidden_nodes,
+                dropout,
+                learning_rate,
+                loss_weights_b,
+                test_fraction,
+                epochs_a,
+                epochs_b,
+                n_batch,
+            ) = job
 
             if not dry_run:
-                self.start_job(number_hidden_layers, number_hidden_nodes,
-                               dropout, learning_rate, loss_weights_b,
-                               test_fraction, epochs_a, epochs_b, n_batch,
-                               id=i, walltime=walltime)
+                self.start_job(
+                    number_hidden_layers,
+                    number_hidden_nodes,
+                    dropout,
+                    learning_rate,
+                    loss_weights_b,
+                    test_fraction,
+                    epochs_a,
+                    epochs_b,
+                    n_batch,
+                    id=i,
+                    walltime=walltime,
+                )
 
     def jobs_status(self):
         """
@@ -356,12 +428,15 @@ class GridSearcher(object):
             try:
                 id = str(i).zfill(len(str(len(self.jobs))))
                 df = pd.read_csv(self.history_fpath.format(id=id)).iloc[[-1]]
-            except IOError:
+            except OSError:
                 continue
             else:
                 idx = self.results.index == i
-                for var in ['elapsed_time', 'training_loss',
-                            'validation_loss']:
+                for var in [
+                    "elapsed_time",
+                    "training_loss",
+                    "validation_loss",
+                ]:
                     self.results.loc[idx, var] = df[var].values
 
         if fpath is not None:
@@ -370,57 +445,82 @@ class GridSearcher(object):
         return self.results
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     user = getuser()
 
-    parser = argparse.ArgumentParser(description='Conduct a hyperparameter '
-                                                 'grid search over a '
-                                                 'mlclouds Phygnn model')
-    parser.add_argument('config', type=str,
-                        help='Grid search configuration file')
-    parser.add_argument('--conda_env', type=str, default='mlclouds',
-                        help='Anaconda environment for HPC jobs. Defaults '
-                        'to mlclouds')
-    parser.add_argument('--output_ws', type=str,
-                        default=f'/scratch/{user}/mlclouds/optimization/',
-                        help='Output folder for stats, training history, '
-                        f'etc. Defaults to /scratch/{user}/mlclouds/'
-                        'optimization/.')
-    parser.add_argument('--exe_fpath', type=str,
-                        default='~/src/mlclouds/mlclouds/scripts/train.py',
-                        help='File path to train.py. Defaults to '
-                        '~/src/mlclouds/mlclouds/scripts/train.py')
-    parser.add_argument('--data_root', type=str,
-                        default='/projects/mlclouds/data_surfrad_9/',
-                        help='Surfrad data root directory. Defaults to '
-                        '/projects/mlclouds/data_surfrad_9/')
-    parser.add_argument('--walltime', type=int, default=1,
-                        help='HPC job walltime in hours. Defaults to 1')
-    parser.add_argument('--dry_run', action='store_true',
-                        help='Prepare runs without executing.')
-    parser.add_argument('--collect_results', action='store_true',
-                        help='Collect results instead of run jobs. '
-                        'Saved as {output_ws}/results.csv')
+    parser = argparse.ArgumentParser(
+        description="Conduct a hyperparameter "
+        "grid search over a "
+        "mlclouds Phygnn model"
+    )
+    parser.add_argument(
+        "config", type=str, help="Grid search configuration file"
+    )
+    parser.add_argument(
+        "--conda_env",
+        type=str,
+        default="mlclouds",
+        help="Anaconda environment for HPC jobs. Defaults " "to mlclouds",
+    )
+    parser.add_argument(
+        "--output_ws",
+        type=str,
+        default=f"/scratch/{user}/mlclouds/optimization/",
+        help="Output folder for stats, training history, "
+        f"etc. Defaults to /scratch/{user}/mlclouds/"
+        "optimization/.",
+    )
+    parser.add_argument(
+        "--exe_fpath",
+        type=str,
+        default="~/src/mlclouds/mlclouds/scripts/train.py",
+        help="File path to train.py. Defaults to "
+        "~/src/mlclouds/mlclouds/scripts/train.py",
+    )
+    parser.add_argument(
+        "--data_root",
+        type=str,
+        default="/projects/mlclouds/data_surfrad_9/",
+        help="Surfrad data root directory. Defaults to "
+        "/projects/mlclouds/data_surfrad_9/",
+    )
+    parser.add_argument(
+        "--walltime",
+        type=int,
+        default=1,
+        help="HPC job walltime in hours. Defaults to 1",
+    )
+    parser.add_argument(
+        "--dry_run",
+        action="store_true",
+        help="Prepare runs without executing.",
+    )
+    parser.add_argument(
+        "--collect_results",
+        action="store_true",
+        help="Collect results instead of run jobs. "
+        "Saved as {output_ws}/results.csv",
+    )
 
     args = parser.parse_args()
 
-    with open(args.config, 'r') as f:
+    with open(args.config) as f:
         config = json.load(f)
 
     kvals = {
-        'conda_env': args.conda_env,
-        'data_root': args.data_root,
-        'exe_fpath': args.exe_fpath,
-        'output_ws': args.output_ws,
-        'number_hidden_layers': config['number_hidden_layers'],
-        'number_hidden_nodes': config['number_hidden_nodes'],
-        'dropouts': config['dropouts'],
-        'learning_rates': config['learning_rates'],
-        'loss_weights_b': config['loss_weights_b'],
-        'test_fractions': config['test_fractions'],
-        'epochs_a': config['epochs_a'],
-        'epochs_b': config['epochs_b'],
-        'n_batches': config['n_batches']
+        "conda_env": args.conda_env,
+        "data_root": args.data_root,
+        "exe_fpath": args.exe_fpath,
+        "output_ws": args.output_ws,
+        "number_hidden_layers": config["number_hidden_layers"],
+        "number_hidden_nodes": config["number_hidden_nodes"],
+        "dropouts": config["dropouts"],
+        "learning_rates": config["learning_rates"],
+        "loss_weights_b": config["loss_weights_b"],
+        "test_fractions": config["test_fractions"],
+        "epochs_a": config["epochs_a"],
+        "epochs_b": config["epochs_b"],
+        "n_batches": config["n_batches"],
     }
 
     GS = GridSearcher(**kvals)
@@ -428,4 +528,4 @@ if __name__ == '__main__':
     if not args.collect_results:
         GS.run_grid_search(args.dry_run, walltime=args.walltime)
     else:
-        GS.collect_results(fpath=join(args.output_ws, 'results.csv'))
+        GS.collect_results(fpath=join(args.output_ws, "results.csv"))
