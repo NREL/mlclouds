@@ -1,5 +1,8 @@
+"""Data handlers for training and validation data."""
+
 import copy
 import logging
+import os
 
 import numpy as np
 import pandas as pd
@@ -35,6 +38,7 @@ class TrainData:
         config=CONFIG,
         test_fraction=None,
         nsrdb_files=None,
+        cache_pattern=None,
     ):
         """
         Parameters
@@ -55,6 +59,9 @@ class TrainData:
             is used to compute the sky class for these locations which is then
             used to filter cloud type data for false positives / negatives.
             Each file needs to have a four digit year and east / west label.
+        cache_pattern : str
+            File path pattern for saving training data. e.g. ``./df_{}.csv``.
+            This will be used to save ``self.x``, ``self.y``, and ``self.p``
         """
 
         self.fp_surfrad_data = FP_SURFRAD_DATA
@@ -76,10 +83,24 @@ class TrainData:
         self.train_files = train_files
 
         logger.info("Loading training data")
-        self._load_data(test_fraction, nsrdb_files=nsrdb_files)
+        if self.cache_exists(cache_pattern):
+            self.df_raw, self.df_all_sky = self.load_all_data(cache_pattern)
+        else:
+            self._load_data(test_fraction, nsrdb_files=nsrdb_files)
+        if cache_pattern is not None and not self.cache_exists(cache_pattern):
+            self.save_all_data(cache_pattern)
+
         logger.info("Prepping training data")
         self._prep_data(
             kwargs=config.get("training_prep_kwargs", TRAINING_PREP_KWARGS)
+        )
+
+    @staticmethod
+    def cache_exists(cache_pattern):
+        """Check if cache files for ``df_raw`` and ``df_all_sky`` exist."""
+        return cache_pattern is not None and all(
+            os.path.exists(cache_pattern.format(name))
+            for name in ["raw", "all_sky"]
         )
 
     def _load_surf(self, gid, year, area, time_step, nsrdb_files=None):
@@ -128,122 +149,11 @@ class TrainData:
         )
         return temp_surf
 
-    def _load_data(self, test_fraction, nsrdb_files=None):
-        """
-        Load training data
-
-        Parameters
-        ----------
-        test_fraction: None | float
-            Fraction of full data set to reserve for testing. Should be between
-            0 to 1. The test set is randomly selected and dropped from the
-            training set. If None, do not reserve a test set.
-        nsrdb_files : list | str
-            Nsrdb files including irradiance data for the training sites. This
-            is used to compute the sky class for these locations which is then
-            used to filter cloud type data for false positives / negatives
-        """
-        var_names = copy.deepcopy(self._config["features"])
-        var_names += self._config["y_labels"]
-
-        # cloud_type is needed for data cleaning, even if not included in
-        # training features
-        if "cloud_type" not in var_names:
-            var_names.append("cloud_type")
-
-        logger.debug("Loading vars {}".format(var_names))
-
-        df_raw = None
-        df_all_sky = None
-        df_surf = None
-        for train_file in self.train_files:
-            # ------ Grab NSRDB data for weather properties
-            logger.debug(
-                "Loading data for site(s) {}, from {}".format(
-                    self.train_sites, train_file
-                )
-            )
-            with NSRDBFeatures(train_file) as res:
-                temp_raw = res.extract_features(self.train_sites, var_names)
-                temp_all_sky = res.extract_features(
-                    self.train_sites,
-                    self._config.get("all_sky_vars", ALL_SKY_VARS),
-                )
-
-                self.observation_sources += len(temp_raw) * [train_file]
-
-                if df_raw is None:
-                    df_raw = temp_raw
-                    df_all_sky = temp_all_sky
-                else:
-                    df_raw = pd.concat([df_raw, temp_raw], ignore_index=True)
-                    df_all_sky = pd.concat(
-                        [df_all_sky, temp_all_sky], ignore_index=True
-                    )
-
-            logger.debug(
-                "\tShape temp_raw={}, temp_all_sky={}" "".format(
-                    temp_raw.shape, temp_all_sky.shape
-                )
-            )
-            time_step = calc_time_step(temp_raw.time_index)
-            logger.debug("\tTime step is {} minutes".format(time_step))
-
-            # ------ Grab surface data
-            year, area = extract_file_meta(train_file)
-            logger.debug(
-                "\tGrabbing surface data for {} and {}".format(
-                    year, self.train_sites
-                )
-            )
-            for gid in self.train_sites:
-                temp_surf = self._load_surf(
-                    gid=gid,
-                    year=year,
-                    area=area,
-                    time_step=time_step,
-                    nsrdb_files=nsrdb_files,
-                )
-                temp_surf["gid"] = gid
-                temp_surf["time_index"] = temp_surf.index.values
-
-                if df_surf is None:
-                    df_surf = temp_surf
-                else:
-                    df_surf = pd.concat(
-                        [df_surf, temp_surf], ignore_index=True
-                    )
-
-                logger.debug("\tShape: temp_surf={}".format(temp_surf.shape))
-
+    @staticmethod
+    def _add_rest2_data(df_all_sky):
+        """Add rest2 data to df_all_sky."""
         logger.debug(
-            "Data load complete. Shape df_raw={}, df_all_sky={}, "
-            "df_surf={}".format(df_raw.shape, df_all_sky.shape, df_surf.shape)
-        )
-
-        self.observation_sources = np.array(self.observation_sources)
-        assert df_raw.shape[0] == df_all_sky.shape[0]
-        assert df_raw.shape[0] == df_surf.shape[0]
-        assert len(self.observation_sources) == len(df_raw)
-        assert all(df_all_sky.gid.values == df_surf.gid.values)
-        assert all(df_all_sky.time_index.values == df_surf.time_index.values)
-        time_index_full = df_all_sky.time_index
-        df_surf.index = df_all_sky.index.values
-        df_surf = df_surf.drop(["gid", "time_index"], axis=1)
-        df_all_sky = df_all_sky.join(df_surf)
-
-        assert len(df_raw) == len(df_all_sky)
-        if test_fraction:
-            np.random.seed(self._config["phygnn_seed"])
-
-            df_raw, df_all_sky = self._test_train_split(
-                df_raw, df_all_sky, time_index_full, test_fraction
-            )
-
-        assert len(df_raw) == len(df_all_sky)
-
-        logger.debug(
-            "Extracting 2D arrays to run rest2 for " "clearsky PhyGNN inputs."
+            "Extracting 2D arrays to run rest2 for clearsky PhyGNN inputs."
         )
         n = len(df_all_sky)
         time_index = pd.DatetimeIndex(df_all_sky.time_index.astype(str))
@@ -297,6 +207,132 @@ class TrainData:
         df_all_sky["Tddclr"] = rest_data.Tddclr
         df_all_sky["Tduclr"] = rest_data.Tduclr
         logger.debug("Completed rest2 run for clearsky PhyGNN inputs.")
+
+        return df_all_sky
+
+    def _load_data(self, test_fraction, nsrdb_files=None):
+        """
+        Load training data
+
+        Parameters
+        ----------
+        test_fraction: None | float
+            Fraction of full data set to reserve for testing. Should be between
+            0 to 1. The test set is randomly selected and dropped from the
+            training set. If None, do not reserve a test set.
+        nsrdb_files : list | str
+            Nsrdb files including irradiance data for the training sites. This
+            is used to compute the sky class for these locations which is then
+            used to filter cloud type data for false positives / negatives
+        """
+        var_names = copy.deepcopy(self._config["features"])
+        var_names += self._config["y_labels"]
+
+        # cloud_type is needed for data cleaning, even if not included in
+        # training features
+        if "cloud_type" not in var_names:
+            var_names.append("cloud_type")
+
+        logger.debug("Loading vars {}".format(var_names))
+
+        df_raw = None
+        df_all_sky = None
+        df_surf = None
+        for train_file in self.train_files:
+            # ------ Grab NSRDB data for weather properties
+            logger.debug(
+                "Loading data for site(s) {}, from {}".format(
+                    self.train_sites, train_file
+                )
+            )
+            year, area = extract_file_meta(train_file)
+            train_sites = []
+            for gid in self.train_sites:
+                surfrad_file = self.fp_surfrad_data.format(
+                    year=year, code=surf_meta().loc[gid, "surfrad_id"]
+                )
+                if os.path.exists(surfrad_file):
+                    train_sites.append(gid)
+
+            with NSRDBFeatures(train_file) as res:
+                temp_raw = res.extract_features(train_sites, var_names)
+                temp_all_sky = res.extract_features(
+                    train_sites, self._config.get("all_sky_vars", ALL_SKY_VARS)
+                )
+
+                self.observation_sources += len(temp_raw) * [train_file]
+
+                if df_raw is None:
+                    df_raw = temp_raw
+                    df_all_sky = temp_all_sky
+                else:
+                    df_raw = pd.concat([df_raw, temp_raw], ignore_index=True)
+                    df_all_sky = pd.concat(
+                        [df_all_sky, temp_all_sky], ignore_index=True
+                    )
+
+            logger.debug(
+                "\tShape temp_raw={}, temp_all_sky={}" "".format(
+                    temp_raw.shape, temp_all_sky.shape
+                )
+            )
+            time_step = calc_time_step(temp_raw.time_index)
+            logger.debug("\tTime step is {} minutes".format(time_step))
+
+            # ------ Grab surface data
+            logger.debug(
+                "\tGrabbing surface data for {} and {}".format(
+                    year, self.train_sites
+                )
+            )
+            for gid in train_sites:
+                temp_surf = self._load_surf(
+                    gid=gid,
+                    year=year,
+                    area=area,
+                    time_step=time_step,
+                    nsrdb_files=nsrdb_files,
+                )
+                temp_surf["gid"] = gid
+                temp_surf["time_index"] = temp_surf.index.values
+
+                if df_surf is None:
+                    df_surf = temp_surf
+                else:
+                    df_surf = pd.concat(
+                        [df_surf, temp_surf], ignore_index=True
+                    )
+
+                logger.debug("\tShape: temp_surf={}".format(temp_surf.shape))
+
+        logger.debug(
+            "Data load complete. Shape df_raw={}, df_all_sky={}, "
+            "df_surf={}".format(df_raw.shape, df_all_sky.shape, df_surf.shape)
+        )
+
+        self.observation_sources = np.array(self.observation_sources)
+        assert df_raw.shape[0] == df_all_sky.shape[0]
+        assert df_raw.shape[0] == df_surf.shape[0]
+        assert len(self.observation_sources) == len(df_raw)
+        assert all(df_all_sky.gid.values == df_surf.gid.values)
+        assert all(df_all_sky.time_index.values == df_surf.time_index.values)
+        time_index_full = df_all_sky.time_index
+        df_surf.index = df_all_sky.index.values
+        df_surf = df_surf.drop(["gid", "time_index"], axis=1)
+        df_all_sky = df_all_sky.join(df_surf)
+
+        assert len(df_raw) == len(df_all_sky)
+
+        if test_fraction:
+            np.random.seed(self._config["phygnn_seed"])
+
+            df_raw, df_all_sky = self._test_train_split(
+                df_raw, df_all_sky, time_index_full, test_fraction
+            )
+
+        assert len(df_raw) == len(df_all_sky)
+
+        df_all_sky = self._add_rest2_data(df_all_sky)
 
         self.df_raw = df_raw
 
@@ -366,8 +402,8 @@ class TrainData:
         not_features = drop_list + list(self._config["y_labels"])
         features = [f for f in features if f not in not_features]
 
-        self.y = self.df_train[self._config["y_labels"]]
-        self.x = self.df_train[features]
+        self.y = self.df_train[self._config["y_labels"]].astype(np.float32)
+        self.x = self.df_train[features].astype(np.float32)
         self.p = self.df_all_sky
 
         logger.debug(
@@ -439,32 +475,38 @@ class TrainData:
         )
         return df_raw, df_all_sky
 
-    @property
-    def all_data(self):
-        """Get a joined dataframe of training data (x), physical feature data
-        (p), and output label data (y).
-
-        Returns
-        -------
-        pd.DataFrame
-        """
-        cols_p = [c for c in self.p.columns if c not in self.x]
-        out = self.x.join(self.p[cols_p])
-        cols_y = [c for c in self.y.columns if c not in out]
-        out = out.join(self.y[cols_y])
-        return out
-
-    def save_all_data(self, fp):
-        """Save all x/y/p data to disk
+    def save_all_data(self, fp_pattern):
+        """Save all raw / all_sky data to disk
 
         Parameters
         ----------
-        fp : str
-            .csv filepath to save data to.
+        fp_pattern : str
+            .csv filepath pattern to save data to. e.g. ./df_{}.csv
         """
-        if fp is not None:
-            logger.info("Saving training data to: {}".format(fp))
-            self.all_data.to_csv(fp)
+        if fp_pattern is not None:
+            for df, name in zip(
+                [self.df_raw, self.df_all_sky], ["raw", "all_sky"]
+            ):
+                fp = fp_pattern.format(name)
+                logger.info("Saving training data to: {}".format(fp))
+                df.to_csv(fp)
+
+    def load_all_data(self, fp_pattern):
+        """Load all df_raw / df_all_sky from csv files.
+
+        Parameters
+        ----------
+        fp_pattern : str
+            .csv filepath pattern to load data from. e.g. ./df_{}.csv
+        """
+        if fp_pattern is not None:
+            df_raw_file = fp_pattern.format("raw")
+            logger.info("Loading df_raw from %s", df_raw_file)
+            df_raw = pd.read_csv(df_raw_file, index_col=0)
+            df_all_sky_file = fp_pattern.format("all_sky")
+            logger.info("Loading df_all_sky from %s", df_all_sky_file)
+            df_all_sky = pd.read_csv(df_all_sky_file, index_col=0)
+        return df_raw, df_all_sky
 
 
 class ValidationData:

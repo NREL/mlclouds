@@ -21,7 +21,7 @@ class Trainer:
         config=CONFIG,
         test_fraction=None,
         nsrdb_files=None,
-        fp_save_data=None,
+        cache_pattern=None,
     ):
         """
         Train PHYGNN model
@@ -43,8 +43,11 @@ class Trainer:
             Nsrdb files including irradiance data for the training sites. This
             is used to compute the sky class for these locations which is then
             used to filter cloud type data for false positives / negatives
-        fp_save_data : str
-            Optional .csv filepath to save training data to
+        cache_pattern : str
+            Optional .csv filepath pattern to save data to. e.g.
+            ``./df_{}.csv``. This will be used to save
+            ``self.train_data.df_raw`` and ``self.train_data.df_all_sky``
+            before they have been split into training and validation sets
         """
 
         logger.info(
@@ -72,9 +75,8 @@ class Trainer:
             config=self._config,
             test_fraction=test_fraction,
             nsrdb_files=nsrdb_files,
+            cache_pattern=cache_pattern,
         )
-        if fp_save_data is not None:
-            self.train_data.save_all_data(fp_save_data)
 
         self.x = self.train_data.x
         self.y = self.train_data.y

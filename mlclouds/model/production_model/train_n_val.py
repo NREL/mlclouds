@@ -24,7 +24,7 @@ out_dir = "./outputs/"
 if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
-years = range(2016, 2020)
+years = range(2016, 2023)
 fp_base = (
     "/projects/pxs/mlclouds/training_data/{y}_{ew}_v322/"
     "mlclouds_surfrad_{ew}_{y}.h5"
@@ -58,7 +58,7 @@ if __name__ == "__main__":
         config=config,
         test_fraction=0.2,
         nsrdb_files=nsrdb_files,
-        fp_save_data="./mlclouds_training_data.csv",
+        cache_pattern="./mlclouds_df_{}.csv",
     )
 
     t.model.history.to_csv(fp_history)
