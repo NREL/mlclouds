@@ -100,7 +100,7 @@ class TrainData:
         if self.cache_exists(cache_pattern):
             self.df_raw, self.df_all_sky = self.load_all_data(cache_pattern)
         else:
-            self._load_data(test_fraction, nsrdb_files=nsrdb_files)
+            self._load_data(nsrdb_files=nsrdb_files)
         if cache_pattern is not None and not self.cache_exists(cache_pattern):
             self.save_all_data(cache_pattern)
 
@@ -293,7 +293,7 @@ class TrainData:
             train_sites = get_valid_surf_sites(
                 sites=self.train_sites,
                 fp_surfrad_data=self.fp_surfrad_data,
-                train_file=train_file,
+                data_file=train_file,
             )
 
             with NSRDBFeatures(train_file) as res:
