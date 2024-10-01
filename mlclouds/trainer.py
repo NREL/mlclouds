@@ -70,8 +70,8 @@ class Trainer:
         )
 
         self.train_data = TrainData(
-            self.train_sites,
-            self.train_files,
+            train_sites=self.train_sites,
+            train_files=self.train_files,
             config=self._config,
             test_fraction=test_fraction,
             nsrdb_files=nsrdb_files,

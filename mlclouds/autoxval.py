@@ -335,7 +335,8 @@ class AutoXVal:
         if val_data is None:
             logger.info("Loading validation data from {}".format(data_files))
             val_data = ValidationData(
-                data_files,
+                val_files=data_files,
+                val_sites="all",
                 features=config["features"],
                 y_labels=config["y_labels"],
                 all_sky_vars=ALL_SKY_VARS,

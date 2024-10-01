@@ -28,13 +28,27 @@ from mlclouds.utilities import (
 logger = logging.getLogger(__name__)
 
 
+def get_valid_surf_sites(sites, fp_surfrad_data, data_file):
+    """Get surfrad sites available for the given data file. This is
+    determined from the year in the data file name."""
+    year, _ = extract_file_meta(data_file)
+    valid_sites = []
+    for gid in sites:
+        surfrad_file = fp_surfrad_data.format(
+            year=year, code=surf_meta().loc[gid, "surfrad_id"]
+        )
+        if os.path.exists(surfrad_file):
+            valid_sites.append(gid)
+    return valid_sites
+
+
 class TrainData:
     """Load and prep training data"""
 
     def __init__(
         self,
-        train_sites,
         train_files,
+        train_sites="all",
         config=CONFIG,
         test_fraction=None,
         nsrdb_files=None,
@@ -43,11 +57,11 @@ class TrainData:
         """
         Parameters
         ----------
-        train_sites: 'all' | list of int
-            Surfrad gids to use for training. Use all if 'all'
         train_files: list | str
             File or list of files to use for training. Filenames must include
             the four-digit year.
+        train_sites: 'all' | list of int
+            Surfrad gids to use for training. Use all if 'all'
         config: dict
             Dict of configuration options. See CONFIG for example.
         test_fraction: None | float
@@ -89,6 +103,13 @@ class TrainData:
             self._load_data(test_fraction, nsrdb_files=nsrdb_files)
         if cache_pattern is not None and not self.cache_exists(cache_pattern):
             self.save_all_data(cache_pattern)
+
+        self._get_obs_sources()
+
+        if test_fraction:
+            self.df_raw, self.df_all_sky = self._test_train_split(
+                self.df_raw, self.df_all_sky, test_fraction
+            )
 
         logger.info("Prepping training data")
         self._prep_data(
@@ -210,7 +231,30 @@ class TrainData:
 
         return df_all_sky
 
-    def _load_data(self, test_fraction, nsrdb_files=None):
+    def _get_obs_sources(self):
+        """
+        Get list of observation sources.
+        """
+        self.observation_sources = []
+        logger.info("Getting list of observation sources.")
+        for train_file in self.train_files:
+            n_sites = len(
+                get_valid_surf_sites(
+                    sites=self.train_sites,
+                    fp_surfrad_data=self.fp_surfrad_data,
+                    data_file=train_file,
+                )
+            )
+            with NSRDBFeatures(train_file) as res:
+                self.observation_sources += n_sites * len(res) * [train_file]
+        logger.info(
+            "Got list of %s observation sources.",
+            len(self.observation_sources),
+        )
+        self.observation_sources = np.array(self.observation_sources)
+        assert len(self.observation_sources) == len(self.df_raw)
+
+    def _load_data(self, nsrdb_files=None):
         """
         Load training data
 
@@ -246,21 +290,17 @@ class TrainData:
                 )
             )
             year, area = extract_file_meta(train_file)
-            train_sites = []
-            for gid in self.train_sites:
-                surfrad_file = self.fp_surfrad_data.format(
-                    year=year, code=surf_meta().loc[gid, "surfrad_id"]
-                )
-                if os.path.exists(surfrad_file):
-                    train_sites.append(gid)
+            train_sites = get_valid_surf_sites(
+                sites=self.train_sites,
+                fp_surfrad_data=self.fp_surfrad_data,
+                train_file=train_file,
+            )
 
             with NSRDBFeatures(train_file) as res:
                 temp_raw = res.extract_features(train_sites, var_names)
                 temp_all_sky = res.extract_features(
                     train_sites, self._config.get("all_sky_vars", ALL_SKY_VARS)
                 )
-
-                self.observation_sources += len(temp_raw) * [train_file]
 
                 if df_raw is None:
                     df_raw = temp_raw
@@ -310,31 +350,14 @@ class TrainData:
             "df_surf={}".format(df_raw.shape, df_all_sky.shape, df_surf.shape)
         )
 
-        self.observation_sources = np.array(self.observation_sources)
         assert df_raw.shape[0] == df_all_sky.shape[0]
         assert df_raw.shape[0] == df_surf.shape[0]
-        assert len(self.observation_sources) == len(df_raw)
         assert all(df_all_sky.gid.values == df_surf.gid.values)
         assert all(df_all_sky.time_index.values == df_surf.time_index.values)
-        time_index_full = df_all_sky.time_index
         df_surf.index = df_all_sky.index.values
         df_surf = df_surf.drop(["gid", "time_index"], axis=1)
         df_all_sky = df_all_sky.join(df_surf)
-
-        assert len(df_raw) == len(df_all_sky)
-
-        if test_fraction:
-            np.random.seed(self._config["phygnn_seed"])
-
-            df_raw, df_all_sky = self._test_train_split(
-                df_raw, df_all_sky, time_index_full, test_fraction
-            )
-
-        assert len(df_raw) == len(df_all_sky)
-
         df_all_sky = self._add_rest2_data(df_all_sky)
-
-        self.df_raw = df_raw
 
         # Temporarily extract time_index or interpolate will break
         time_index = df_all_sky.time_index
@@ -342,6 +365,7 @@ class TrainData:
         df_all_sky = df_all_sky.drop("time_index", axis=1)
         self.df_all_sky = df_all_sky.interpolate("nearest").bfill().ffill()
         self.df_all_sky["time_index"] = time_index
+        self.df_raw = df_raw
         assert len(df_raw) == len(df_all_sky)
 
     def _prep_data(self, kwargs=TRAINING_PREP_KWARGS):
@@ -414,9 +438,7 @@ class TrainData:
         logger.debug("Training features: {}".format(features))
         assert self.y.shape[0] == self.x.shape[0] == self.p.shape[0]
 
-    def _test_train_split(
-        self, df_raw_orig, df_all_sky_orig, time_index_full, test_fraction
-    ):
+    def _test_train_split(self, df_raw_orig, df_all_sky_orig, test_fraction):
         """
         Split data into test and train sets. Return train data.
 
@@ -440,6 +462,9 @@ class TrainData:
         df_all_sky: pandas.DataFrame
             Training set of all_sky inputs
         """
+        time_index_full = df_all_sky_orig.time_index
+        np.random.seed(self._config["phygnn_seed"])
+
         logger.debug(
             "Creating test set; {}% of full data set" "".format(
                 test_fraction * 100
@@ -460,7 +485,7 @@ class TrainData:
         df_raw = df_raw_orig.sample(frac=(1 - test_fraction)).sort_index()
         self.train_set_mask = df_raw_orig.index.isin(df_raw.index)
         df_all_sky = df_all_sky_orig[self.train_set_mask]
-        self.test_set_mask = ~self.train_set_mask
+        self.test_set_mask = ~self.train_set_mask  # pylint: disable=E1130
 
         logger.debug(
             "Train set shape: df_raw={}, df_all_sky={}" "".format(
@@ -515,6 +540,7 @@ class ValidationData:
     def __init__(
         self,
         val_files,
+        val_sites="all",
         features=CONFIG["features"],
         y_labels=CONFIG["y_labels"],
         all_sky_vars=ALL_SKY_VARS,
@@ -527,6 +553,8 @@ class ValidationData:
         ----------
         val_files: str | list of str
             List of files to use for validation
+        val_sites: 'all' | list of int
+            Surfrad gids to use for validation. Use all if 'all'
         features: list of str
             Names of model input fields
         y_labels: list of str
@@ -546,11 +574,17 @@ class ValidationData:
         self.means = 0
         self.stdevs = 1
         self.fp_surfrad_meta = FP_SURFRAD_META
+        self.fp_surfrad_data = FP_SURFRAD_DATA
         self.features = features
         self.y_labels = y_labels
         self.all_sky_vars = all_sky_vars
         self.one_hot_cats = one_hot_cats
 
+        if val_sites == "all":
+            val_sites = [
+                k for k, v in surf_meta().to_dict()["surfrad_id"].items()
+            ]
+        self.val_sites = val_sites
         # dict of year, time_step, and time_step info for val_files
         self.files_meta = []
 
@@ -585,17 +619,22 @@ class ValidationData:
 
         logger.debug("Loading vars {}".format(var_names))
 
-        gids = [k for k, v in surf_meta().to_dict()["surfrad_id"].items()]
-
         for val_file in self.val_files:
+            val_sites = get_valid_surf_sites(
+                sites=self.val_sites,
+                fp_surfrad_data=self.fp_surfrad_data,
+                data_file=val_file,
+            )
             logger.debug(
                 "Loading validation data from {} for gids {}" "".format(
-                    val_file, gids
+                    val_file, val_sites
                 )
             )
             with NSRDBFeatures(val_file) as res:
-                temp_raw = res.extract_features(gids, var_names)
-                temp_all_sky = res.extract_features(gids, self.all_sky_vars)
+                temp_raw = res.extract_features(val_sites, var_names)
+                temp_all_sky = res.extract_features(
+                    val_sites, self.all_sky_vars
+                )
                 if df_raw is None:
                     df_raw = temp_raw
                     df_all_sky = temp_all_sky
