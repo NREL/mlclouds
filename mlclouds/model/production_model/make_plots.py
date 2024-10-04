@@ -1,6 +1,7 @@
 """
 Make plots of the statistics
 """
+
 import os
 
 import matplotlib.pyplot as plt
@@ -26,18 +27,23 @@ conditions = df.Condition.unique()
 metrics = ('MAE (%)', 'MBE (%)', 'RMSE (%)')
 models = ('Baseline', 'MLClouds')
 
-assert all([m in df for m in metrics]), 'Could not find: {}'.format(metrics)
-assert all([m in df.Model.unique() for m in models]), 'Could not find: {}'.format(models)
+assert all(m in df for m in metrics), 'Could not find: {}'.format(metrics)
+assert all(
+    m in df.Model.unique() for m in models
+), 'Could not find: {}'.format(models)
 
 for var in variables:
     for condition in conditions:
         for metric in metrics:
-            mask = ((df.Variable == var)
-                    & (df.Condition == condition)
-                    & df.Model.isin(models))
+            mask = (
+                (df.Variable == var)
+                & (df.Condition == condition)
+                & df.Model.isin(models)
+            )
             df_plot = df[mask]
-            sns.barplot(x='Site', y=metric, hue='Model', data=df_plot,
-                        errorbar=None)
+            sns.barplot(
+                x='Site', y=metric, hue='Model', data=df_plot, errorbar=None
+            )
             fname = 'stats_{}_{}_{}.png'.format(metric, var, condition)
             fname = fname.lower().replace(' (%)', '')
             fname = fname.replace('-', '_').replace(' ', '_')

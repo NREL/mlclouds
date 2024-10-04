@@ -60,7 +60,7 @@ def get_sky_type(model, y_true, y_predicted, p, labels=None):
     return sky_type
 
 
-def p_fun_dummy(model, y_true, y_predicted, p, labels=None, loss_terms=None):
+def p_fun_dummy(model, y_true, y_predicted, p, labels=None, loss_terms=None):  # noqa: ARG001
     """Dummy loss function to disable pfun"""
     # pylint: disable-msg=W0613
     return tf.constant(0.0, dtype=tf.float32)

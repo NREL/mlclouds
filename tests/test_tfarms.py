@@ -1,9 +1,10 @@
 """
 Test the tensor implementation of FARMS.
 """
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 from farms.farms import farms
+
 from mlclouds.tfarms import tfarms
 
 
