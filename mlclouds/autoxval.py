@@ -20,7 +20,7 @@ from mlclouds.trainer import Trainer
 from mlclouds.utilities import ALL_SKY_VARS, CONFIG, FP_DATA, surf_meta
 from mlclouds.validator import Validator
 
-RANDOM_GENERATOR = np.random.Generator(np.random.PCG64(42)
+RANDOM_GENERATOR = np.random.Generator(np.random.PCG64(42))
 
 logger = logging.getLogger(__name__)
 
