@@ -18,11 +18,12 @@ from mlclouds.utilities import CONFIG, FP_DATA, extract_file_meta
 STAT_FIELDS = ["MAE (%)", "MBE (%)", "RMSE (%)"]
 
 
-def check_for_eagle():
-    if not os.path.exists("/lustre/eaglefs/projects/pxs/mlclouds/"):
+def check_for_hpc():
+    """Check for projects directory. Skip this test if not found."""
+    if not os.path.exists("/projects/pxs/mlclouds/"):
         msg = (
             "These tests require access to /projects/pxs/mlclouds/ and "
-            "can only be run on the Eagle HPC"
+            "can only be run on the HPC"
         )
         pytest.skip(msg)
 
@@ -32,7 +33,7 @@ def test_xval():
     Test that xval creates the proper results for a simple model. Also test
     model saving and loading.
     """
-    check_for_eagle()
+    check_for_hpc()
 
     config = CONFIG
     config["epochs_a"] = 4
@@ -73,7 +74,7 @@ def test_xval_mismatched_timesteps():
     Test training and validation with 5 minute and 30 minute GOES data at
     the same time.
     """
-    check_for_eagle()
+    check_for_hpc()
 
     config = CONFIG
     config["epochs_a"] = 4

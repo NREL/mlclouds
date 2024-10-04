@@ -13,8 +13,8 @@ There were four main changes from the original code
     4) Water and Pressure were changed to vectors from scalars
 """
 
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 from farms import SOLAR_CONSTANT, SZA_LIM
 
 
