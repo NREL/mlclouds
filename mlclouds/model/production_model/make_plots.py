@@ -2,9 +2,10 @@
 Make plots of the statistics
 """
 import os
+
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
 
 plot_dir = './plots'
 
