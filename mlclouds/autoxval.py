@@ -1,9 +1,5 @@
-"""
-Automatic cross validation of PHYGNN models predicting opd and reff
-
-Mike Bannister 7/2020
-Based on code by Grant Buster
-"""
+"""Automatic cross validation of PHYGNN models predicting cloud types and
+properties"""
 
 import json
 import logging

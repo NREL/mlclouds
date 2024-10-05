@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-NSRDB feature extractor
-"""
+"""NSRDB feature extractor"""
 
 import logging
 
@@ -14,9 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class NSRDBFeatures(NSRDB):
-    """
-    NSRDB Features extractor
-    """
+    """NSRDB Features extractor"""
 
     def extract_features(self, sites, features):
         """

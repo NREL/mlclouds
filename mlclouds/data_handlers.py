@@ -1,4 +1,7 @@
-"""Data handlers for training and validation data."""
+"""Data handlers for training and validation data.
+
+TODO: Move sky class filter to cloud data cleaning?
+"""
 
 import copy
 import logging
@@ -22,24 +25,11 @@ from mlclouds.utilities import (
     TRAINING_PREP_KWARGS,
     calc_time_step,
     extract_file_meta,
+    get_valid_surf_sites,
     surf_meta,
 )
 
 logger = logging.getLogger(__name__)
-
-
-def get_valid_surf_sites(sites, fp_surfrad_data, data_file):
-    """Get surfrad sites available for the given data file. This is
-    determined from the year in the data file name."""
-    year, _ = extract_file_meta(data_file)
-    valid_sites = []
-    for gid in sites:
-        surfrad_file = fp_surfrad_data.format(
-            year=year, code=surf_meta().loc[gid, 'surfrad_id']
-        )
-        if os.path.exists(surfrad_file):
-            valid_sites.append(gid)
-    return valid_sites
 
 
 class TrainData:

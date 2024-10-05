@@ -1,24 +1,5 @@
-"""
-Tensor-based FARMS model for radiative transfer predictions by TensorFlow DNNs
-
-Created on Fri June 1 2015
-FAST Model
-Adapted from Yu Xie IDL Fast Radiative Transfer Model
-@author: Grant Buster
-
-This Fast All-sky Radiation Model for Solar applications (FARMS) was developed
-by Yu Xie (Yu.Xie@nrel.gov). Please contact him for more information.
-
-Literature
-----------
-[1] Yu Xie, Manajit Sengupta, Jimy Dudhia, "A Fast All-sky Radiation Model
-    for Solar applications (FARMS): Algorithm and performance evaluation",
-    Solar Energy, Volume 135, 2016, Pages 435-445, ISSN 0038-092X,
-    https://doi.org/10.1016/j.solener.2016.06.003.
-    (http://www.sciencedirect.com/science/article/pii/S0038092X16301827)
-"""
-
-import collections
+"""Tensor-based FARMS model for radiative transfer predictions by TensorFlow
+DNNs"""
 
 import numpy as np
 import tensorflow as tf
@@ -116,7 +97,6 @@ def tfarms(
     Tddclr,
     Tduclr,
     albedo,
-    debug=False,
 ):
     """Fast All-sky Radiation Model for Solar applications (FARMS).
 
@@ -186,12 +166,12 @@ def tfarms(
             dhi : diffuse horizontal irradiance (w/m2)
     """
     # disable divide by zero warnings
-    np.seterr(divide="ignore")
+    np.seterr(divide='ignore')
 
-    check_range(Tddclr, "Tddclr")
-    check_range(Tduclr, "Tduclr")
-    check_range(Ruuclr, "Ruuclr")
-    check_range(Tuuclr, "Tuuclr")
+    check_range(Tddclr, 'Tddclr')
+    check_range(Tduclr, 'Tduclr')
+    check_range(Ruuclr, 'Ruuclr')
+    check_range(Tuuclr, 'Tuuclr')
 
     # do not allow for negative cld optical depth
     tau = tf.where(tau < 0, 0.001, tau)
@@ -234,7 +214,6 @@ def tfarms(
     # eq 8 from [1]
     Tddcld = tf.exp(-tau / solar_zenith_angle)
 
-    Fd = solar_zenith_angle * F0 * Tddcld * Tddclr  # eq 2a from [1]
     F1 = (
         solar_zenith_angle
         * F0
@@ -242,22 +221,4 @@ def tfarms(
     )  # eq 3 from [1]
 
     # ghi eqn 6 from [1]
-    ghi = F1 / (1.0 - albedo * (Ruuclr + Ruucld * Tuuclr * Tuuclr))
-    dni = Fd / solar_zenith_angle  # eq 2b from [1]
-    dhi = ghi - Fd  # eq 7 from [1]
-
-    if debug:
-        # Return NaN if clear-sky, else return cloudy sky data
-        fast_data = collections.namedtuple(
-            "fast_data", ["ghi", "dni", "dhi", "Tddcld", "Tducld", "Ruucld"]
-        )
-        fast_data.Tddcld = Tddcld
-        fast_data.Tducld = Tducld
-        fast_data.Ruucld = Ruucld
-        fast_data.ghi = ghi
-        fast_data.dni = dni
-        fast_data.dhi = dhi
-
-        return fast_data
-    # return only GHI
-    return ghi
+    return F1 / (1.0 - albedo * (Ruuclr + Ruucld * Tuuclr * Tuuclr))

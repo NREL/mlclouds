@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
 """Tensorflow implementation of the DISC model
-
-Created on Wed Jun 25 13:26:21 2014
-
-@author: gbuster
 
 These are functions adapted from PVL_Python.
 There were four main changes from the original code

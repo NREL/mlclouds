@@ -1,8 +1,7 @@
 """
 Automatic cross validation of PhyGNN models predicting opd and reff
 
-Mike Bannister 7/2020
-Based on code by Grant Buster
+TODO: Add FARMS-DNI model?
 """
 
 import logging

@@ -1,6 +1,4 @@
-"""
-mlclouds phygnn model trainer and validator classes.
-"""
+"""MLClouds phygnn model trainer and validator classes."""
 
 import logging
 import os

@@ -3,6 +3,7 @@
 import datetime
 import json
 import logging
+import os
 import re
 
 import pandas as pd
@@ -60,6 +61,37 @@ P_FUNS = {"p_fun_all_sky": p_fun_all_sky, "p_fun_dummy": p_fun_dummy}
 # Phygnn model configuration
 with open(CONFIG_FPATH) as f:
     CONFIG = json.load(f)
+
+
+def get_valid_surf_sites(sites, fp_surfrad_data, data_file):
+    """Get surfrad sites available for the given data file. This is
+    determined from the year in the data file name.
+
+    Parameters
+    ----------
+    sites: list
+        List of surfrad gids to check. Considered valid if there exist files
+        for these sites.
+    fp_surfrad_data: str
+        File path pattern for surfrad data files. Must include {year} and
+        {code} format keys, where "code" is the string identifier for a given
+        surfrad site.
+
+    Returns
+    -------
+    valid_sites: list
+        List of surfrad site gids with existing data files.
+
+    """
+    year, _ = extract_file_meta(data_file)
+    valid_sites = []
+    for gid in sites:
+        surfrad_file = fp_surfrad_data.format(
+            year=year, code=surf_meta().loc[gid, 'surfrad_id']
+        )
+        if os.path.exists(surfrad_file):
+            valid_sites.append(gid)
+    return valid_sites
 
 
 def extract_file_meta(fname):
@@ -129,7 +161,7 @@ def calc_time_step(series):
 
 
 def surf_meta():
-    """Return data frame of surfrad gids and three letter codes"""
+    """Return dataframe of surfrad gids and three letter codes"""
     surf_meta = pd.read_csv(FP_SURFRAD_META, index_col=0)
     surf_meta.index.name = "gid"
     return surf_meta[["surfrad_id"]]

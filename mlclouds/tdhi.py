@@ -1,10 +1,4 @@
-# -*- coding: utf-8 -*-
-"""Tensorflow implementation of the DHI calculation
-
-Created on Aug 3rd 2020
-
-@author: gbuster
-"""
+"""Tensorflow implementation of the DHI calculation"""
 
 import tensorflow as tf
 
