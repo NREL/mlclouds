@@ -8,7 +8,10 @@ from mlclouds.p_fun import _get_sky_type
 
 
 class MLCloudsModel(PhygnnModel):
-    """Extended phygnn model with methods for interfacing with NSRDB."""
+    """Extended phygnn model with methods for interfacing with NSRDB. This
+    includes conversion of cloud type fraction predictions into a single
+    integer ``cloud_type`` feature, if the model predicts cloud type fractions
+    in addition to the standard cloud property predictions"""
 
     CTYPE_FRACTIONS = ('clear_fraction', 'ice_fraction', 'water_fraction')
 
@@ -18,10 +21,24 @@ class MLCloudsModel(PhygnnModel):
         return all(f in self.label_names for f in self.CTYPE_FRACTIONS)
 
     def predict(self, *args, **kwargs):
-        """Convert cloud type fractions into a integer cloud type and remove
-        cloud type fractions from output, if cloud type fractions are predicted
-        by this model. Otherwise, return output without any additional
-        processing."""
+        """First, use model to predict label from given features. Then, if
+        clould type fractions are predicted by this model, convert these
+        fractions into a integer cloud type and remove cloud type fractions
+        from output. Otherwise, return output without any additional
+        processing.
+
+        Parameters
+        ----------
+        *args : list
+            List of positional arguments for ``PhygnnModel``
+        **kwargs: Mapping
+            Mappable of keyword arguments for ``PhygnnModel``
+
+        Returns
+        -------
+        prediction : ndarray | pandas.DataFrame
+            label prediction
+        """
         out = super().predict(*args, **kwargs)
         is_array = not hasattr(out, 'columns')
         if self.predicts_cloud_fractions:
@@ -34,9 +51,17 @@ class MLCloudsModel(PhygnnModel):
 
     @property
     def output_names(self):
-        """Remove cloud type fraction labels from features and replace with
-        "cloud_type", if this model predicts cloud type fractions. Otherwise,
-        just return labels unchanged."""
+        """Ordered list of predicted features. If this model predicts cloud
+        type fractions then these are replaced with a single ``cloud_type``
+        output name. This matches the conversion from cloud type fractions to
+        ``cloud_type`` in :meth:`predict`.
+
+        Returns
+        -------
+        output_names : list
+            Ordered list of predicted features. If the model predicts cloud
+            type fractions these are replaced with ``cloud_type``
+        """
         output_names = self.label_names.copy()
         if self.predicts_cloud_fractions:
             output_names = [
