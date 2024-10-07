@@ -26,9 +26,9 @@ def test_tensor_farms():
     albedo = np.ones((n, 1)) * 0.5
 
     baseline_ghi = farms(tau, cloud_type, cloud_radius, sza, radius,
-                         Tuuclr, Ruuclr, Tddclr, Tduclr, albedo, debug=False)
+                         Tuuclr, Ruuclr, Tddclr, Tduclr, albedo)
     tensor_ghi = tfarms(ttau, cloud_type, cloud_radius, sza, radius,
-                        Tuuclr, Ruuclr, Tddclr, Tduclr, albedo, debug=False)
+                        Tuuclr, Ruuclr, Tddclr, Tduclr, albedo)
 
     # Protect against new FARMS-DNI which returns (ghi, farms-dni, dni0)
     if isinstance(baseline_ghi, (list, tuple)):
