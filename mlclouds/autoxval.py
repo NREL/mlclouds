@@ -121,7 +121,7 @@ class XVal:
         self.stats = None
         self._validator = None
 
-    def train(self, train_sites=[0, 1, 2, 3, 5, 6], train_files=FP_DATA):
+    def train(self, train_sites=(0, 1, 2, 3, 5, 6), train_files=FP_DATA):
         """
         Train PHYGNN model
 
@@ -268,7 +268,7 @@ class AutoXVal:
 
     def __init__(
         self,
-        sites=[0, 1, 2, 3, 4, 5, 6],
+        sites=(0, 1, 2, 3, 4, 5, 6),
         val_sites=None,
         data_files=FP_DATA,
         val_data=None,
@@ -455,7 +455,7 @@ class AutoXVal:
         cls,
         data_files=FP_DATA,
         val_data=None,
-        sites=[0, 1, 2, 3, 4, 5, 6],
+        sites=(0, 1, 2, 3, 4, 5, 6),
         val_sites=None,
         config=CONFIG,
         seed=None,
@@ -484,7 +484,7 @@ class AutoXVal:
         cls,
         data_files=FP_DATA,
         val_data=None,
-        sites=[0, 1, 2, 3, 4, 5, 6],
+        sites=(0, 1, 2, 3, 4, 5, 6),
         val_sites=None,
         config=CONFIG,
         shuffle_train=False,
