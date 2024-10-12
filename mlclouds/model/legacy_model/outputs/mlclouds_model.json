@@ -1,0 +1,105 @@
+{
+  "feature_names": [
+    "solar_zenith_angle",
+    "refl_0_65um_nom",
+    "refl_0_65um_nom_stddev_3x3",
+    "refl_3_75um_nom",
+    "temp_3_75um_nom",
+    "temp_11_0um_nom",
+    "temp_11_0um_nom_stddev_3x3",
+    "cloud_probability",
+    "cloud_fraction",
+    "air_temperature",
+    "dew_point",
+    "relative_humidity",
+    "total_precipitable_water",
+    "surface_albedo",
+    "clear",
+    "ice_cloud",
+    "water_cloud",
+    "bad_cloud"
+  ],
+  "label_names": [
+    "cld_opd_dcomp",
+    "cld_reff_dcomp"
+  ],
+  "norm_params": {
+    "air_temperature": {
+      "mean": 16.127986907958984,
+      "stdev": 11.84241008758545
+    },
+    "cloud_fraction": {
+      "mean": 0.5267371535301208,
+      "stdev": 0.4649295210838318
+    },
+    "cloud_probability": {
+      "mean": 0.529990017414093,
+      "stdev": 0.4775311350822449
+    },
+    "dew_point": {
+      "mean": 4.7997050285339355,
+      "stdev": 11.101767539978027
+    },
+    "refl_0_65um_nom": {
+      "mean": 37.21761703491211,
+      "stdev": 24.269180297851562
+    },
+    "refl_0_65um_nom_stddev_3x3": {
+      "mean": 4.2209153175354,
+      "stdev": 4.346174240112305
+    },
+    "refl_3_75um_nom": {
+      "mean": 11.535828590393066,
+      "stdev": 13.240983009338379
+    },
+    "relative_humidity": {
+      "mean": 54.020843505859375,
+      "stdev": 24.174379348754883
+    },
+    "solar_zenith_angle": {
+      "mean": 58.72838592529297,
+      "stdev": 18.924110412597656
+    },
+    "surface_albedo": {
+      "mean": 0.25416192412376404,
+      "stdev": 0.1859590709209442
+    },
+    "temp_11_0um_nom": {
+      "mean": 271.5301208496094,
+      "stdev": 22.87179946899414
+    },
+    "temp_11_0um_nom_stddev_3x3": {
+      "mean": 2.0206966400146484,
+      "stdev": 2.5173180103302
+    },
+    "temp_3_75um_nom": {
+      "mean": 284.4688720703125,
+      "stdev": 17.95128059387207
+    },
+    "total_precipitable_water": {
+      "mean": 1.8574331998825073,
+      "stdev": 1.297297477722168
+    }
+  },
+  "normalize": [
+    true,
+    false
+  ],
+  "one_hot_categories": {
+    "flag": [
+      "clear",
+      "ice_cloud",
+      "water_cloud",
+      "bad_cloud"
+    ]
+  },
+  "version_record": {
+    "nrel-rex": "0.2.80",
+    "numpy": "1.23.5",
+    "pandas": "2.0.0",
+    "phygnn": "0.0.23",
+    "python": "3.9.16 (main, Mar  8 2023, 14:00:05) \n[GCC 11.2.0]",
+    "sklearn": "1.2.2",
+    "tensorflow": "2.12.0"
+  }
+}

@@ -242,6 +242,7 @@ class TrainData:
             len(self.observation_sources),
         )
         self.observation_sources = np.array(self.observation_sources)
+        breakpoint()
         assert len(self.observation_sources) == len(self.df_raw)
 
     def _load_data(self, nsrdb_files=None):
@@ -388,7 +389,8 @@ class TrainData:
             'Shape after cleaning: df_all_sky={}'.format(self.df_all_sky.shape)
         )
 
-        if 'sky_class' in self.df_all_sky.columns:
+        filter_sc = kwargs.get('filter_sky_class', False)
+        if 'sky_class' in self.df_all_sky.columns and filter_sc:
             sky_class_mask = sky_class_filter(self.df_all_sky)
             self.df_train = self.df_train[sky_class_mask]
             self.df_all_sky = self.df_all_sky[sky_class_mask]
@@ -500,6 +502,7 @@ class TrainData:
             .csv filepath pattern to save data to. e.g. ./df_{}.csv
         """
         if fp_pattern is not None:
+            os.makedirs(os.path.dirname(fp_pattern), exist_ok=True)
             for df, name in zip(
                 [self.df_raw, self.df_all_sky], ['raw', 'all_sky']
             ):

@@ -51,10 +51,19 @@ parser.add_argument(
          training data cloud type is cloudy, or vice versa.""",
 )
 parser.add_argument(
+    '-cache_fps',
+    type=str,
+    default=None,
+    help="""File pattern for cached training data. Must have an empty format
+         key '{}' which will be replaced with either "all_sky" or "raw" upon
+         loading.""",
+)
+parser.add_argument(
     '-years',
     nargs='+',
-    default=range(2016, 2023),
-    help="Years to use for training data.")
+    default=[*list(range(2016, 2020)), 2021, 2022],
+    help='Years to use for training data.',
+)
 
 parser.add_argument(
     '-out_dir',
@@ -72,6 +81,7 @@ if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
 nsrdb_files = None if not args.nsrdb_fps else glob(args.nsrdb_fps)
+cache_pattern = args.cache_fps or os.path.join(out_dir, 'mlclouds_df_{}.csv')
 files = [
     args.surfrad_fps.format(year=y, area=ew)
     for y in args.years
@@ -112,7 +122,7 @@ if __name__ == '__main__':
         config=config,
         test_fraction=0.2,
         nsrdb_files=nsrdb_files,
-        cache_pattern=os.path.join(out_dir, 'mlclouds_df_{}.csv'),
+        cache_pattern=cache_pattern,
     )
 
     t.model.history.to_csv(fp_history)
