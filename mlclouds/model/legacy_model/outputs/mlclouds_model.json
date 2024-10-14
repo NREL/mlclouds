@@ -94,12 +94,12 @@
     ]
   },
   "version_record": {
-    "nrel-rex": "0.2.80",
-    "numpy": "1.23.5",
-    "pandas": "2.0.0",
-    "phygnn": "0.0.23",
-    "python": "3.9.16 (main, Mar  8 2023, 14:00:05) \n[GCC 11.2.0]",
-    "sklearn": "1.2.2",
-    "tensorflow": "2.12.0"
+    "nrel-rex": "0.2.90",
+    "numpy": "1.24.3",
+    "pandas": "2.2.2",
+    "phygnn": "0.0.29",
+    "python": "3.11.9 (main, Apr 19 2024, 16:48:06) [GCC 11.2.0]",
+    "sklearn": "1.5.1",
+    "tensorflow": "2.15.1"
   }
 }

@@ -242,7 +242,6 @@ class TrainData:
             len(self.observation_sources),
         )
         self.observation_sources = np.array(self.observation_sources)
-        breakpoint()
         assert len(self.observation_sources) == len(self.df_raw)
 
     def _load_data(self, nsrdb_files=None):
@@ -372,6 +371,7 @@ class TrainData:
         logger.debug(
             'Shape before cleaning: df_raw={}'.format(self.df_raw.shape)
         )
+        filter_sc = kwargs.pop('filter_sky_class', False)
         self.df_train = clean_cloud_df(self.df_raw, **kwargs)
         logger.debug(
             'Shape after cleaning: df_train={}'.format(self.df_train.shape)
@@ -389,7 +389,6 @@ class TrainData:
             'Shape after cleaning: df_all_sky={}'.format(self.df_all_sky.shape)
         )
 
-        filter_sc = kwargs.get('filter_sky_class', False)
         if 'sky_class' in self.df_all_sky.columns and filter_sc:
             sky_class_mask = sky_class_filter(self.df_all_sky)
             self.df_train = self.df_train[sky_class_mask]
@@ -419,7 +418,7 @@ class TrainData:
         features = [f for f in features if f not in not_features]
 
         self.y = self.df_train[self._config['y_labels']].astype(np.float32)
-        self.x = self.df_train[features].astype(np.float32)
+        self.x = self.df_train[features]
         self.p = self.df_all_sky
 
         logger.debug(
