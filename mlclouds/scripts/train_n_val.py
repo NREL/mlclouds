@@ -25,6 +25,19 @@ surfrad_fps_default = (
 )
 nsrdb_fps_default = '/projects/pxs/mlclouds/training_data/*_v322/final/*.h5'
 
+
+def int_or_str(value):
+    """Custom type for integers with an optional string value"""
+    try:
+        return int(value)
+    except ValueError as e:
+        if isinstance(value, str):
+            return value
+        raise argparse.ArgumentTypeError(
+            'Invalid value for int_or_str: {}'.format(value)
+        ) from e
+
+
 parser = argparse.ArgumentParser(description='Train and test MLClouds model.')
 parser.add_argument(
     'config_dir',
@@ -56,7 +69,7 @@ parser.add_argument(
     default=None,
     help="""File pattern for cached training data. Must have an empty format
          key '{}' which will be replaced with either "all_sky" or "raw" upon
-         loading.""",
+         loading and saving.""",
 )
 parser.add_argument(
     '-years',
@@ -67,7 +80,7 @@ parser.add_argument(
 parser.add_argument(
     '-sites',
     nargs='+',
-    type=int,
+    type=int_or_str,
     default='all',
     help='Site gids to use for training and validation.',
 )

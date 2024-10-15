@@ -79,5 +79,13 @@
   "y_labels": [
     "cld_opd_dcomp",
     "cld_reff_dcomp"
-  ]
+  ],
+  "training_prep_kwargs": {
+    "filter_daylight": true,
+    "filter_clear": false,
+    "filter_sky_class": false,
+    "add_cloud_flag": true,
+    "sza_lim": 89,
+    "nan_option": "interp"
+  }
 }
