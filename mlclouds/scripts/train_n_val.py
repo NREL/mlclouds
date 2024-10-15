@@ -61,10 +61,16 @@ parser.add_argument(
 parser.add_argument(
     '-years',
     nargs='+',
-    default=[*list(range(2016, 2020)), 2021, 2022],
+    default=range(2016, 2020),
     help='Years to use for training data.',
 )
-
+parser.add_argument(
+    '-sites',
+    nargs='+',
+    type=int,
+    default='all',
+    help='Site gids to use for training and validation.',
+)
 parser.add_argument(
     '-out_dir',
     type=str,
@@ -117,7 +123,7 @@ fp_iter = (fp_stats, fp_stats_e, fp_stats_w)
 
 if __name__ == '__main__':
     t = Trainer(
-        train_sites='all',
+        train_sites=args.sites,
         train_files=files,
         config=config,
         test_fraction=0.2,
@@ -141,6 +147,7 @@ if __name__ == '__main__':
         v = Validator(
             t.model,
             config=config,
+            val_sites=args.sites,
             val_files=val_files,
             save_timeseries=False,
             test_set_mask=test_set_mask,

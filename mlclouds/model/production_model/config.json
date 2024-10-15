@@ -44,7 +44,7 @@
       "units": 256
     }
   ],
-  "learning_rate": 0.0001,
+  "learning_rate": 0.0005,
   "loss_weights_a": [
     1,
     0
@@ -74,6 +74,7 @@
   "training_prep_kwargs": {
     "filter_daylight": true,
     "filter_clear": false,
+    "filter_sky_class": true,
     "add_cloud_flag": false,
     "sza_lim": 89,
     "nan_option": "interp"

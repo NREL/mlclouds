@@ -23,6 +23,7 @@ def test_load_and_run():
         'relative_humidity': 80,
         'total_precipitable_water': 5,
         'surface_albedo': 0.1,
+        'cld_press_acha': 500,
     }
 
     model = MLCloudsModel.load(MODEL_FPATH)
@@ -33,6 +34,11 @@ def test_load_and_run():
     assert 'clear_fraction' in model.label_names
     assert 'ice_fraction' in model.label_names
     assert 'water_fraction' in model.label_names
+
+    assert 'cld_opd_dcomp' in model.output_names
+    assert 'cld_reff_dcomp' in model.output_names
+    assert 'cloud_type' in model.output_names
+
     assert len(model.history) >= 190
     assert model.history['training_loss'].values[-1] < 1
 
@@ -49,10 +55,9 @@ def test_load_and_run():
     out = model.predict(features, table=True)
 
     assert (out['cld_opd_dcomp'] > 0).all()
-    assert (out['cld_opd_dcomp'] < 10).all()
+    assert (out['cld_opd_dcomp'] < 70).all()
 
     assert (out['cld_reff_dcomp'] > 0).all()
     assert (out['cld_reff_dcomp'] < 10).all()
 
-    assert (out['cloud_type'] >= 0).all()
-    assert (out['cloud_type'] < 10).all()
+    assert out['cloud_type'].isin([0, 3, 6]).all()
