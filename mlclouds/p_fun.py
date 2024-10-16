@@ -17,14 +17,33 @@ logger = logging.getLogger(__name__)
 
 
 def _get_sky_type(clear_fraction, ice_fraction, water_fraction):
+    """Get integer encoded sky type from cloud type fractions."""
     cloud_type = np.zeros((len(ice_fraction), 1), dtype=int)
     norm = np.sqrt(clear_fraction**2 + ice_fraction**2 + water_fraction**2)
     normed_ice = ice_fraction / norm
     normed_water = water_fraction / norm
     normed_clear = clear_fraction / norm
-    cloud_type[normed_ice > 0.5] = 6  # set as ice cloud
-    cloud_type[normed_clear > 0.5] = 0  # set as clear sky
+
+    cloud_type[normed_clear > 0.5] = 0
     cloud_type[((normed_water + normed_ice) > 0.5) & (normed_ice < 0.5)] = 3
+    cloud_type[normed_ice > 0.5] = 6
+
+    return cloud_type
+
+
+def decode_sky_type(cloud_type):
+    """Decode integer cloud types as strings."""
+    cloud_type[cloud_type == 0] = 'clear'
+    cloud_type[cloud_type == 3] = 'water_cloud'
+    cloud_type[cloud_type == 6] = 'ice_cloud'
+    return cloud_type
+
+
+def encode_sky_type(cloud_type):
+    """Encode string cloud types as integers."""
+    cloud_type[cloud_type == 'clear'] = 0
+    cloud_type[cloud_type == 'water_cloud'] = 3
+    cloud_type[cloud_type == 'ice_cloud'] = 6
     return cloud_type
 
 
@@ -35,28 +54,60 @@ def get_sky_type(model, y_true, y_predicted, p, labels=None):
     TODO: Use continuous variable for cloud type fractions to compute
     irradiance as weighted sum of clear / ice / water irradiance
     """
-    if "cloud_type" in labels:
+    if 'cloud_type' in labels:
         sky_type = (
-            p[:, labels.index("cloud_type")]
+            p[:, labels.index('cloud_type')]
             .astype(np.float32)
             .reshape((len(y_true), 1))
         )
     else:
         water_frac = tf.expand_dims(
-            y_predicted[:, model.output_names.index("water_fraction")], axis=1
+            y_predicted[:, model.output_names.index('water_fraction')], axis=1
         )
         ice_frac = tf.expand_dims(
-            y_predicted[:, model.output_names.index("ice_fraction")], axis=1
+            y_predicted[:, model.output_names.index('ice_fraction')], axis=1
         )
         clear_frac = tf.expand_dims(
-            y_predicted[:, model.output_names.index("clear_fraction")], axis=1
+            y_predicted[:, model.output_names.index('clear_fraction')], axis=1
         )
         sky_type = _get_sky_type(
             clear_fraction=clear_frac,
             ice_fraction=ice_frac,
             water_fraction=water_frac,
+            encode=True,
         )
     return sky_type
+
+
+def get_cld_opd(model, y_true, y_predicted, p, labels=None):
+    """Get opd property either from model predictions (if training a model
+    which includes cloud property prediction) or from training data."""
+    if 'cld_opd_dcomp' in model.output_names:
+        tau = tf.expand_dims(
+            y_predicted[:, model.output_names.index('cld_opd_dcomp')], axis=1
+        )
+    else:
+        tau = tf.convert_to_tensor(
+            p[:, labels.index('cld_opd_dcomp')].reshape((len(y_true), 1)),
+            dtype=tf.float32,
+        )
+
+    return tau
+
+
+def get_cld_reff(model, y_true, y_predicted, p, labels=None):
+    """Get reff property either from model predictions (if training a model
+    which includes cloud property prediction) or from training data."""
+    if 'cld_reff_dcomp' in model.output_names:
+        cld_reff = tf.expand_dims(
+            y_predicted[:, model.output_names.index('cld_reff_dcomp')], axis=1
+        )
+    else:
+        cld_reff = tf.convert_to_tensor(
+            p[:, labels.index('cld_reff_dcomp')].reshape((len(y_true), 1)),
+            dtype=tf.float32,
+        )
+    return cld_reff
 
 
 def p_fun_dummy(model, y_true, y_predicted, p, labels=None, loss_terms=None):  # noqa: ARG001
@@ -66,18 +117,14 @@ def p_fun_dummy(model, y_true, y_predicted, p, labels=None, loss_terms=None):  #
 
 
 def p_fun_all_sky(
-    model, y_true, y_predicted, p, labels=None, loss_terms=("mae_ghi",)
+    model, y_true, y_predicted, p, labels=None, loss_terms=('mae_ghi',)
 ):
     """Physics loss function"""
     # pylint: disable-msg=W0613
 
     n = len(y_true)
-    tau = tf.expand_dims(
-        y_predicted[:, model.output_names.index("cld_opd_dcomp")], axis=1
-    )
-    cld_reff = tf.expand_dims(
-        y_predicted[:, model.output_names.index("cld_reff_dcomp")], axis=1
-    )
+    tau = get_cld_opd(model, y_true, y_predicted, p, labels)
+    cld_reff = get_cld_reff(model, y_true, y_predicted, p, labels)
     cloud_type = get_sky_type(model, y_true, y_predicted, p, labels)
 
     tau = tf.where(tau < 0, 0.0001, tau)
@@ -86,35 +133,35 @@ def p_fun_all_sky(
     cld_reff = tf.where(cld_reff > 160, 160, cld_reff)
 
     solar_zenith_angle = (
-        p[:, labels.index("solar_zenith_angle")]
+        p[:, labels.index('solar_zenith_angle')]
         .astype(np.float32)
         .reshape((n, 1))
     )
-    doy = p[:, labels.index("doy")].astype(np.float32).reshape((n, 1))
-    radius = p[:, labels.index("radius")].astype(np.float32).reshape((n, 1))
-    Tuuclr = p[:, labels.index("Tuuclr")].astype(np.float32).reshape((n, 1))
-    Ruuclr = p[:, labels.index("Ruuclr")].astype(np.float32).reshape((n, 1))
-    Tddclr = p[:, labels.index("Tddclr")].astype(np.float32).reshape((n, 1))
-    Tduclr = p[:, labels.index("Tduclr")].astype(np.float32).reshape((n, 1))
+    doy = p[:, labels.index('doy')].astype(np.float32).reshape((n, 1))
+    radius = p[:, labels.index('radius')].astype(np.float32).reshape((n, 1))
+    Tuuclr = p[:, labels.index('Tuuclr')].astype(np.float32).reshape((n, 1))
+    Ruuclr = p[:, labels.index('Ruuclr')].astype(np.float32).reshape((n, 1))
+    Tddclr = p[:, labels.index('Tddclr')].astype(np.float32).reshape((n, 1))
+    Tduclr = p[:, labels.index('Tduclr')].astype(np.float32).reshape((n, 1))
     albedo = (
-        p[:, labels.index("surface_albedo")].astype(np.float32).reshape((n, 1))
+        p[:, labels.index('surface_albedo')].astype(np.float32).reshape((n, 1))
     )
     pressure = (
-        p[:, labels.index("surface_pressure")]
+        p[:, labels.index('surface_pressure')]
         .astype(np.float32)
         .reshape((n, 1))
     )
 
-    cs_dni = p[:, labels.index("clearsky_dni")]
-    cs_ghi = p[:, labels.index("clearsky_ghi")]
+    cs_dni = p[:, labels.index('clearsky_dni')]
+    cs_ghi = p[:, labels.index('clearsky_ghi')]
     cs_dni = cs_dni.astype(np.float32).reshape((n, 1))
     cs_ghi = cs_ghi.astype(np.float32).reshape((n, 1))
     cs_dni = tf.convert_to_tensor(cs_dni, dtype=tf.float32)
     cs_ghi = tf.convert_to_tensor(cs_ghi, dtype=tf.float32)
 
-    i_dhi = labels.index("surfrad_dhi")
-    i_dni = labels.index("surfrad_dni")
-    i_ghi = labels.index("surfrad_ghi")
+    i_dhi = labels.index('surfrad_dhi')
+    i_dni = labels.index('surfrad_dni')
+    i_ghi = labels.index('surfrad_ghi')
     dhi_ground = p[:, i_dhi].astype(np.float32).reshape((n, 1))
     dni_ground = p[:, i_dni].astype(np.float32).reshape((n, 1))
     ghi_ground = p[:, i_ghi].astype(np.float32).reshape((n, 1))
@@ -157,31 +204,31 @@ def p_fun_all_sky(
     err_dhi = tf.boolean_mask(err_dhi, tf.math.is_finite(err_dhi))
 
     terms = {}
-    terms["mae_ghi"] = tf.reduce_mean(tf.abs(err_ghi)) / tf.reduce_mean(
+    terms['mae_ghi'] = tf.reduce_mean(tf.abs(err_ghi)) / tf.reduce_mean(
         ghi_ground
     )
-    terms["mae_dni"] = tf.reduce_mean(tf.abs(err_dni)) / tf.reduce_mean(
+    terms['mae_dni'] = tf.reduce_mean(tf.abs(err_dni)) / tf.reduce_mean(
         dni_ground
     )
-    terms["mae_dhi"] = tf.reduce_mean(tf.abs(err_dhi)) / tf.reduce_mean(
+    terms['mae_dhi'] = tf.reduce_mean(tf.abs(err_dhi)) / tf.reduce_mean(
         dhi_ground
     )
-    terms["mbe_ghi"] = tf.abs(tf.reduce_mean(err_ghi)) / tf.reduce_mean(
+    terms['mbe_ghi'] = tf.abs(tf.reduce_mean(err_ghi)) / tf.reduce_mean(
         ghi_ground
     )
-    terms["mbe_dni"] = tf.abs(tf.reduce_mean(err_dni)) / tf.reduce_mean(
+    terms['mbe_dni'] = tf.abs(tf.reduce_mean(err_dni)) / tf.reduce_mean(
         dni_ground
     )
-    terms["mbe_dhi"] = tf.abs(tf.reduce_mean(err_dhi)) / tf.reduce_mean(
+    terms['mbe_dhi'] = tf.abs(tf.reduce_mean(err_dhi)) / tf.reduce_mean(
         dhi_ground
     )
-    terms["rmse_ghi"] = tf.sqrt(
+    terms['rmse_ghi'] = tf.sqrt(
         tf.reduce_mean(tf.square(err_ghi))
     ) / tf.reduce_mean(ghi_ground)
-    terms["rmse_dni"] = tf.sqrt(
+    terms['rmse_dni'] = tf.sqrt(
         tf.reduce_mean(tf.square(err_dni))
     ) / tf.reduce_mean(dni_ground)
-    terms["rmse_dhi"] = tf.sqrt(
+    terms['rmse_dhi'] = tf.sqrt(
         tf.reduce_sum(tf.square(err_dhi))
     ) / tf.reduce_mean(dhi_ground)
 

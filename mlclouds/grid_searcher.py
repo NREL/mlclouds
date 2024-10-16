@@ -63,7 +63,7 @@ CONFIG = {
     'loss_weights_b': [0.5, 0.5],
     'p_kwargs': {'loss_terms': ['mae_ghi', 'mae_dni', 'mbe_ghi', 'mbe_dni']},
     'p_fun': 'p_fun_all_sky',
-    'clean_training_data_kwargs': {
+    'training_prep_kwargs': {
         'filter_clear': False,
         'nan_option': 'interp',
     },
@@ -173,8 +173,8 @@ class GridSearcher:
                  "p_kwargs": {"loss_terms": ["mae_ghi", "mae_dni", "mbe_ghi",
                                              "mbe_dni"]},
                  "p_fun": "p_fun_all_sky",
-                 "clean_training_data_kwargs": {"filter_clear": False,
-                                                "nan_option": "interp"},
+                 "training_prep_kwargs": {"filter_clear": False,
+                                          "nan_option": "interp"},
                  "one_hot_categories": {"flag": ["clear", "ice_cloud",
                                                  "water_cloud", "bad_cloud"]}
                 }

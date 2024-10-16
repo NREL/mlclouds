@@ -262,10 +262,11 @@ class TrainData:
         var_names = copy.deepcopy(self._config['features'])
         var_names += self._config['y_labels']
 
-        # cloud_type is needed for data cleaning, even if not included in
-        # training features
-        if 'cloud_type' not in var_names:
-            var_names.append('cloud_type')
+        # cloud_type, cld_opd_dcomp, cld_reff_dcomp are needed for data
+        # cleaning even if not included in training features
+        for f in ('cloud_type', 'cld_opd_dcomp', 'cld_reff_dcomp'):
+            if f not in var_names:
+                var_names.append(f)
 
         logger.debug('Loading vars {}'.format(var_names))
 
@@ -400,16 +401,16 @@ class TrainData:
                 )
             )
 
-        # Inspecting features would go here
-
         # Final cleaning
-        drop_list = ['gid', 'time_index', 'cloud_type']
+        drop_list = [
+            'gid',
+            'time_index',
+            'cloud_type',
+            'cld_opd_dcomp',
+            'cld_reff_dcomp',
+        ]
         if self._config.get('one_hot_categories', None) is None:
             drop_list.append('flag')
-
-        for name in drop_list:
-            if name in self.df_train:
-                self.df_train = self.df_train.drop(name, axis=1)
 
         logger.debug('**Shape: df_train={}'.format(self.df_train.shape))
         features = self.df_train.columns.values.tolist()
@@ -605,10 +606,11 @@ class ValidationData:
         var_names = copy.deepcopy(self.features)
         var_names += self.y_labels
 
-        # cloud_type is needed for data cleaning, even if not included in
-        # training features
-        if 'cloud_type' not in var_names:
-            var_names.append('cloud_type')
+        # cloud_type, cld_opd_dcomp, cld_reff_dcomp are needed for data
+        # cleaning even if not included in training features
+        for f in ('cloud_type', 'cld_opd_dcomp', 'cld_reff_dcomp'):
+            if f not in var_names:
+                var_names.append(f)
 
         logger.debug('Loading vars {}'.format(var_names))
 

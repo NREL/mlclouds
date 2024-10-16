@@ -25,6 +25,8 @@ surfrad_fps_default = (
 )
 nsrdb_fps_default = '/projects/pxs/mlclouds/training_data/*_v322/final/*.h5'
 
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+
 
 def int_or_str(value):
     """Custom type for integers with an optional string value"""

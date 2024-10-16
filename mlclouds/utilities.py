@@ -8,7 +8,7 @@ import re
 
 import pandas as pd
 
-from mlclouds import CONFIG_FPATH
+from mlclouds import LEG_CONFIG_FPATH
 from mlclouds.p_fun import p_fun_all_sky, p_fun_dummy
 
 logger = logging.getLogger(__name__)
@@ -60,7 +60,7 @@ P_FUNS = {'p_fun_all_sky': p_fun_all_sky, 'p_fun_dummy': p_fun_dummy}
 
 
 # Phygnn model configuration
-with open(CONFIG_FPATH) as f:
+with open(LEG_CONFIG_FPATH) as f:
     CONFIG = json.load(f)
 
 

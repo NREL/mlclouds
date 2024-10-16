@@ -121,34 +121,35 @@ class Validator:
             If true, update cloud type for cloudy time steps with phygnn
             predictions
         """
-        logger.info('Predicting opd and reff')
+        logger.info('Predicting %s', model.output_names)
         predicted_raw = model.predict(self.df_x_val)
         assert not predicted_raw.isnull().values.any()
         logger.debug('Predicted data shape is {}'.format(predicted_raw.shape))
 
-        # TODO - use config['y_labels'] for this
-        opd_raw = predicted_raw['cld_opd_dcomp'].values
-        reff_raw = predicted_raw['cld_reff_dcomp'].values
+        self.df_feature_val['cld_opd_dcomp'] = 0
+        self.df_feature_val['cld_reff_dcomp'] = 0
+        self.df_all_sky_val['cld_opd_dcomp'] = 0
+        self.df_all_sky_val['cld_reff_dcomp'] = 0
 
+        # TODO: Should use labels here instead of hardcoded names.
         if 'cloud_type' in model.output_names:
             cloud_type = predicted_raw['cloud_type'].values
             self.df_feature_val.loc[self.mask, 'cloud_type'] = cloud_type
             self.df_all_sky_val.loc[self.mask, 'cloud_type'] = cloud_type
 
-        opd = np.minimum(opd_raw, 160)
-        reff = np.minimum(reff_raw, 160)
-        opd = np.maximum(opd, 0.0)
-        reff = np.maximum(reff, 0.0)
+        if 'cld_opd_dcomp' in model.output_names:
+            opd_raw = predicted_raw['cld_opd_dcomp'].values
+            opd = np.minimum(opd_raw, 160)
+            opd = np.maximum(opd, 0.0)
+            self.df_feature_val.loc[self.mask, 'cld_opd_dcomp'] = opd
+            self.df_all_sky_val.loc[self.mask, 'cld_opd_dcomp'] = opd
 
-        self.df_feature_val['cld_opd_dcomp'] = 0
-        self.df_feature_val['cld_reff_dcomp'] = 0
-        self.df_feature_val.loc[self.mask, 'cld_opd_dcomp'] = opd
-        self.df_feature_val.loc[self.mask, 'cld_reff_dcomp'] = reff
-
-        self.df_all_sky_val['cld_opd_dcomp'] = 0
-        self.df_all_sky_val['cld_reff_dcomp'] = 0
-        self.df_all_sky_val.loc[self.mask, 'cld_opd_dcomp'] = opd
-        self.df_all_sky_val.loc[self.mask, 'cld_reff_dcomp'] = reff
+        if 'cld_reff_dcomp' in model.output_names:
+            reff_raw = predicted_raw['cld_reff_dcomp'].values
+            reff = np.minimum(reff_raw, 160)
+            reff = np.maximum(reff, 0.0)
+            self.df_feature_val.loc[self.mask, 'cld_reff_dcomp'] = reff
+            self.df_all_sky_val.loc[self.mask, 'cld_reff_dcomp'] = reff
 
         if update_clear:
             mask = (
@@ -193,7 +194,7 @@ class Validator:
         assert not self.df_feature_val.isnull().values.any()
         assert not self.df_all_sky_val.isnull().values.any()
 
-    def _calc_stats(self, test_set_mask, gids=None, save_timeseries=False):
+    def _calc_stats(self, test_set_mask, gids='all', save_timeseries=False):
         """
         Calculate accuracy of PHYGNN model predictions
 
@@ -202,19 +203,16 @@ class Validator:
         test_set_mask: None | numpy.ndarray of bool
             Set of full data set in val_files to use. If None, use full
             dataset.
-        gids: list
+        gids: 'all' | list of ints
             Gids of desired surfrad site
         save_timeseries: bool
             Save time series data to disk
         """
         fp_baseline = FP_BASELINE
 
-        logger.info('Calculating statistics')
-
-        gids = gids or [
-            k for k, v in surf_meta().to_dict()['surfrad_id'].items()
-        ]
-        logger.debug('Calcing stats for gids: {}'.format(gids))
+        if gids == 'all':
+            gids = [k for k, v in surf_meta().to_dict()['surfrad_id'].items()]
+        logger.debug('Calculating stats for gids: {}'.format(gids))
 
         s_data = self._get_stats_data(self.files_meta, gids, fp_baseline)
         df_base_full, df_surf_full = s_data
