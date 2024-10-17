@@ -36,6 +36,7 @@ def decode_sky_type(cloud_type):
     """Decode integer cloud types as strings."""
     if 'cloud_type' in cloud_type:
         df = cloud_type.copy()
+        df = df.rename({'cloud_type': 'flag'}, axis=1)
     else:
         df = pd.DataFrame(columns=['flag'], data=cloud_type)
     df.loc[df['flag'] == 0, 'flag'] = 'clear'
