@@ -2,10 +2,11 @@
 Test the tensor implementation of disc
 """
 
-import tensorflow as tf
 import numpy as np
 import pandas as pd
+import tensorflow as tf
 from farms.disc import disc
+
 from mlclouds.tdisc import tdisc
 
 

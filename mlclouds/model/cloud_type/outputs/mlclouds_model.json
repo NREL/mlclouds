@@ -1,0 +1,75 @@
+{
+  "feature_names": [
+    "solar_zenith_angle",
+    "refl_0_65um_nom",
+    "temp_3_75um_nom",
+    "temp_11_0um_nom",
+    "air_temperature",
+    "cld_press_acha",
+    "dew_point",
+    "relative_humidity",
+    "total_precipitable_water",
+    "surface_albedo"
+  ],
+  "label_names": [
+    "clear_fraction",
+    "ice_fraction",
+    "water_fraction"
+  ],
+  "norm_params": {
+    "air_temperature": {
+      "mean": 15.700037632418312,
+      "stdev": 11.880159286887606
+    },
+    "cld_press_acha": {
+      "mean": 216.64493997200245,
+      "stdev": 248.5431675921889
+    },
+    "dew_point": {
+      "mean": 4.194257440063939,
+      "stdev": 10.864992890401647
+    },
+    "refl_0_65um_nom": {
+      "mean": 40.58104619485494,
+      "stdev": 25.966941672196477
+    },
+    "relative_humidity": {
+      "mean": 53.880636416903485,
+      "stdev": 24.798676332431825
+    },
+    "solar_zenith_angle": {
+      "mean": 57.11841915649449,
+      "stdev": 18.005185594022784
+    },
+    "surface_albedo": {
+      "mean": 0.25820813301527595,
+      "stdev": 0.19068339609691148
+    },
+    "temp_11_0um_nom": {
+      "mean": 269.04002981748886,
+      "stdev": 25.513954935450204
+    },
+    "temp_3_75um_nom": {
+      "mean": 283.12657366553236,
+      "stdev": 19.781322071323448
+    },
+    "total_precipitable_water": {
+      "mean": 1.8197675615909068,
+      "stdev": 1.2808601799738355
+    }
+  },
+  "normalize": [
+    true,
+    false
+  ],
+  "one_hot_categories": {},
+  "version_record": {
+    "nrel-rex": "0.2.90",
+    "numpy": "1.24.3",
+    "pandas": "2.2.2",
+    "phygnn": "0.0.29",
+    "python": "3.11.9 (main, Apr 19 2024, 16:48:06) [GCC 11.2.0]",
+    "sklearn": "1.5.1",
+    "tensorflow": "2.15.1"
+  }
+}
