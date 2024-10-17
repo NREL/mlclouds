@@ -7,6 +7,7 @@ TODO: Add FARMS-DNI model?
 import logging
 
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 
 from mlclouds.tdhi import t_calc_dhi
@@ -33,18 +34,26 @@ def _get_sky_type(clear_fraction, ice_fraction, water_fraction):
 
 def decode_sky_type(cloud_type):
     """Decode integer cloud types as strings."""
-    cloud_type[cloud_type == 0] = 'clear'
-    cloud_type[cloud_type == 3] = 'water_cloud'
-    cloud_type[cloud_type == 6] = 'ice_cloud'
-    return cloud_type
+    if 'cloud_type' in cloud_type:
+        df = cloud_type.copy()
+    else:
+        df = pd.DataFrame(columns=['flag'], data=cloud_type)
+    df.loc[df['flag'] == 0, 'flag'] = 'clear'
+    df.loc[df['flag'] == 3, 'flag'] = 'water_cloud'
+    df.loc[df['flag'] == 6, 'flag'] = 'ice_cloud'
+    return df['flag'].values
 
 
 def encode_sky_type(cloud_type):
     """Encode string cloud types as integers."""
-    cloud_type[cloud_type == 'clear'] = 0
-    cloud_type[cloud_type == 'water_cloud'] = 3
-    cloud_type[cloud_type == 'ice_cloud'] = 6
-    return cloud_type
+    if 'flag' in cloud_type:
+        df = cloud_type.copy()
+    else:
+        df = pd.DataFrame(columns=['flag'], data=cloud_type)
+    df.loc[df['flag'] == 'clear', 'flag'] = 0
+    df.loc[df['flag'] == 'water_cloud', 'flag'] = 3
+    df.loc[df['flag'] == 'ice_cloud', 'flag'] = 6
+    return df['flag'].values.astype(int)
 
 
 def get_sky_type(model, y_true, y_predicted, p, labels=None):

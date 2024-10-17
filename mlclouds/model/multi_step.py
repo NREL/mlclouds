@@ -1,5 +1,7 @@
 """Wrapped phygnn model with methods to produce needed outputs for NSRDB."""
 
+import numpy as np
+
 from mlclouds.p_fun import decode_sky_type, encode_sky_type
 
 from .base import MLCloudsModel
@@ -58,11 +60,15 @@ class MultiCloudsModel(MLCloudsModel):
         """
         if self.cloud_type_model is not None:
             out = self.cloud_type_model.predict(features, **kwargs)
-            features['flag'] = decode_sky_type(out['cloud_type'])
+            features['flag'] = decode_sky_type(out)
         out = self.model.predict(features, **kwargs)
 
         if 'flag' in features:
-            out['cloud_type'] = encode_sky_type(features['flag'])
+            ctype = encode_sky_type(features)
+            if hasattr(out, 'columns'):
+                out['cloud_type'] = ctype
+            else:
+                out = np.concatenate([out, ctype[:, None]], axis=-1)
         return out
 
     @property

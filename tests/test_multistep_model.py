@@ -11,8 +11,8 @@ from mlclouds.model.multi_step import MultiCloudsModel
 
 
 def test_multistep_load_and_run():
-    """Test that the multistep model with cloud type model and cloud property
-    model loads and runs a dummy prediction"""
+    """Test that the multistep cloud type prediction followed by cloud property
+    prediction model loads and runs a dummy prediction"""
 
     defaults = {
         'solar_zenith_angle': 10,
@@ -28,17 +28,20 @@ def test_multistep_load_and_run():
     }
 
     model = MultiCloudsModel.load(CPROP_MODEL_FPATH, CTYPE_MODEL_FPATH)
-
     assert any(fn in model.feature_names for fn in defaults)
-    assert 'cld_opd_dcomp' in model.label_names
-    assert 'cld_reff_dcomp' in model.label_names
-    assert 'clear_fraction' in model.cloud_type_model.label_names
-    assert 'ice_fraction' in model.cloud_type_model.label_names
-    assert 'water_fraction' in model.cloud_type_model.label_names
-
-    assert 'cld_opd_dcomp' in model.output_names
-    assert 'cld_reff_dcomp' in model.output_names
-    assert 'cloud_type' in model.output_names
+    cprops = (
+        'cld_opd_dcomp',
+        'cld_reff_dcomp',
+    )
+    ctypes = (
+        'clear_fraction',
+        'ice_fraction',
+        'water_fraction',
+    )
+    output_names = ('cld_opd_dcomp', 'cld_reff_dcomp', 'cloud_type')
+    assert all(cp in model.label_names for cp in cprops)
+    assert all(ct in model.cloud_type_model.label_names for ct in ctypes)
+    assert all(on in model.output_names for on in output_names)
 
     assert len(model.history) >= 190
     assert model.history['training_loss'].values[-1] < 1
