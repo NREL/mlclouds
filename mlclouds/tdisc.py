@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
 """Tensorflow implementation of the DISC model
-
-Created on Wed Jun 25 13:26:21 2014
-
-@author: gbuster
 
 These are functions adapted from PVL_Python.
 There were four main changes from the original code
@@ -13,8 +8,8 @@ There were four main changes from the original code
     4) Water and Pressure were changed to vectors from scalars
 """
 
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 from farms import SOLAR_CONSTANT, SZA_LIM
 
 

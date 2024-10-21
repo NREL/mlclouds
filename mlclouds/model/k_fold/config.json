@@ -1,5 +1,5 @@
 {
-  "clean_training_data_kwargs": {
+  "training_prep_kwargs": {
     "filter_clear": false,
     "nan_option": "interp"
   },
