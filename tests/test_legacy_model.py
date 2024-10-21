@@ -9,8 +9,6 @@ import pandas as pd
 from mlclouds import LEG_MODEL_FPATH
 from mlclouds.model.base import MLCloudsModel
 
-LEG_MODEL_FPATH = '/projects/pxs/mlclouds/nasa_model/cloud_prop_all/outputs/mlclouds_model.pkl'
-
 
 def test_load_and_run():
     """Test that the mlclouds model loads and runs a dummy prediction"""
