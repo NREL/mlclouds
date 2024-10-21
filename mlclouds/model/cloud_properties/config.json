@@ -2,14 +2,16 @@
   "epochs_a": 100,
   "epochs_b": 90,
   "features": [
+    "refl_0_65um_nom_stddev_3x3",
+    "temp_11_0um_nom_stddev_3x3",
     "solar_zenith_angle",
+    "cloud_type",
     "refl_0_65um_nom",
+    "refl_3_75um_nom",
     "temp_3_75um_nom",
     "temp_11_0um_nom",
     "air_temperature",
-    "cld_press_acha",
     "dew_point",
-    "cloud_type",
     "relative_humidity",
     "total_precipitable_water",
     "surface_albedo"
@@ -41,10 +43,10 @@
       "units": 256
     }
   ],
-  "learning_rate": 0.001,
+  "learning_rate": 0.01,
   "loss_weights_a": [
     1,
-    0 
+    0
   ],
   "loss_weights_b": [
     0.5,
@@ -75,7 +77,7 @@
   "training_prep_kwargs": {
     "filter_daylight": true,
     "filter_clear": false,
-    "filter_sky_class": true,
+    "filter_sky_class": false,
     "add_cloud_flag": true,
     "sza_lim": 89,
     "nan_option": "interp"

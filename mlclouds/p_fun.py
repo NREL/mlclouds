@@ -39,6 +39,8 @@ def decode_sky_type(cloud_type):
         df = df.rename({'cloud_type': 'flag'}, axis=1)
     else:
         df = pd.DataFrame(columns=['flag'], data=cloud_type)
+
+    df.loc[df['flag'] < 0, 'flag'] = 'bad_cloud'
     df.loc[df['flag'] == 0, 'flag'] = 'clear'
     df.loc[df['flag'] == 3, 'flag'] = 'water_cloud'
     df.loc[df['flag'] == 6, 'flag'] = 'ice_cloud'
@@ -54,6 +56,7 @@ def encode_sky_type(cloud_type):
     df.loc[df['flag'] == 'clear', 'flag'] = 0
     df.loc[df['flag'] == 'water_cloud', 'flag'] = 3
     df.loc[df['flag'] == 'ice_cloud', 'flag'] = 6
+    df.loc[df['flag'] == 'bad_cloud', 'flag'] = -15
     return df['flag'].values.astype(int)
 
 

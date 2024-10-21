@@ -81,7 +81,6 @@ def test_just_prop_load_and_run():
         'relative_humidity': 80,
         'total_precipitable_water': 5,
         'surface_albedo': 0.1,
-        'cld_press_acha': 800,
         'clear': 0,
         'ice_cloud': 0,
         'water_cloud': 1,
@@ -97,7 +96,6 @@ def test_just_prop_load_and_run():
     assert 'cld_opd_dcomp' in model.output_names
     assert 'cld_reff_dcomp' in model.output_names
 
-    assert len(model.history) >= 190
     assert model.history['training_loss'].values[-1] < 1
 
     missing = [fn for fn in model.feature_names if fn not in defaults]

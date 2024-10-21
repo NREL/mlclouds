@@ -409,11 +409,12 @@ class TrainData:
             'cld_opd_dcomp',
             'cld_reff_dcomp',
         ]
-        if self._config.get('one_hot_categories', None) is None:
+        one_hot_cats = self._config.get('one_hot_categories', None)
+        if one_hot_cats is None:
             drop_list.append('flag')
 
         logger.debug('**Shape: df_train={}'.format(self.df_train.shape))
-        features = self.df_train.columns.values.tolist()
+        features = [*self._config['features'], 'flag']
 
         not_features = drop_list + list(self._config['y_labels'])
         features = [f for f in features if f not in not_features]
@@ -719,7 +720,13 @@ class ValidationData:
             'Mask: shape={}, sum={}'.format(self.mask.shape, self.mask.sum())
         )
 
-        drop_list = ['gid', 'time_index', 'cloud_type']
+        drop_list = [
+            'gid',
+            'time_index',
+            'cloud_type',
+            'cld_opd_dcomp',
+            'cld_reff_dcomp',
+        ]
         not_features = drop_list + list(self.y_labels)
         if self.one_hot_cats is None:
             not_features.append('flag')

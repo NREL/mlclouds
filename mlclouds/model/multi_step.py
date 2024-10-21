@@ -40,6 +40,18 @@ class MultiCloudsModel(MLCloudsModel):
         )
         return cls(cloud_prop_model=cprop_model, cloud_type_model=ctype_model)
 
+    def transfer_outputs(self, out, features):
+        """Transfer output data from cloud type prediction model to input
+        features for cloud property prediction model."""
+        for i, out_name in enumerate(self.cloud_type_model.output_names):
+            if out_name in self.model.feature_names:
+                if hasattr(out, 'columns'):
+                    features[out_name] = out[out_name]
+                else:
+                    features[out_name] = out[..., i]
+        features['flag'] = decode_sky_type(out)
+        return features
+
     def predict(self, features, **kwargs):
         """First, predict cloud type if this is a composite model with a cloud
         type model. Use these as the cloud type input feature for the cloud
@@ -60,7 +72,7 @@ class MultiCloudsModel(MLCloudsModel):
         """
         if self.cloud_type_model is not None:
             out = self.cloud_type_model.predict(features, **kwargs)
-            features['flag'] = decode_sky_type(out)
+            features = self.transfer_outputs(out=out, features=features)
         out = self.model.predict(features, **kwargs)
 
         if 'flag' in features:

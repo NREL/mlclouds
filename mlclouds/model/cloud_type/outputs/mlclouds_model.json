@@ -5,7 +5,6 @@
     "temp_3_75um_nom",
     "temp_11_0um_nom",
     "air_temperature",
-    "cld_press_acha",
     "dew_point",
     "relative_humidity",
     "total_precipitable_water",
@@ -20,10 +19,6 @@
     "air_temperature": {
       "mean": 15.700037632418312,
       "stdev": 11.880159286887606
-    },
-    "cld_press_acha": {
-      "mean": 216.64493997200245,
-      "stdev": 248.5431675921889
     },
     "dew_point": {
       "mean": 4.194257440063939,
