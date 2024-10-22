@@ -1,0 +1,73 @@
+mlclouds.model.base.MLCloudsModel
+=================================
+
+.. currentmodule:: mlclouds.model.base
+
+.. autoclass:: MLCloudsModel
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MLCloudsModel.build
+      ~MLCloudsModel.build_trained
+      ~MLCloudsModel.dict_json_convert
+      ~MLCloudsModel.get_mean
+      ~MLCloudsModel.get_norm_params
+      ~MLCloudsModel.get_stdev
+      ~MLCloudsModel.load
+      ~MLCloudsModel.make_one_hot_feature_names
+      ~MLCloudsModel.normalize
+      ~MLCloudsModel.parse_features
+      ~MLCloudsModel.parse_labels
+      ~MLCloudsModel.predict
+      ~MLCloudsModel.save_model
+      ~MLCloudsModel.seed
+      ~MLCloudsModel.set_loss_weights
+      ~MLCloudsModel.train_model
+      ~MLCloudsModel.unnormalize
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MLCloudsModel.CTYPE_FRACTIONS
+      ~MLCloudsModel.bias_weights
+      ~MLCloudsModel.feature_dims
+      ~MLCloudsModel.feature_means
+      ~MLCloudsModel.feature_names
+      ~MLCloudsModel.feature_stdevs
+      ~MLCloudsModel.history
+      ~MLCloudsModel.input_feature_names
+      ~MLCloudsModel.kernel_weights
+      ~MLCloudsModel.label_dims
+      ~MLCloudsModel.label_means
+      ~MLCloudsModel.label_names
+      ~MLCloudsModel.label_stdevs
+      ~MLCloudsModel.layers
+      ~MLCloudsModel.means
+      ~MLCloudsModel.model
+      ~MLCloudsModel.model_summary
+      ~MLCloudsModel.normalization_parameters
+      ~MLCloudsModel.normalize_features
+      ~MLCloudsModel.normalize_labels
+      ~MLCloudsModel.one_hot_categories
+      ~MLCloudsModel.one_hot_feature_names
+      ~MLCloudsModel.one_hot_input_feature_names
+      ~MLCloudsModel.output_names
+      ~MLCloudsModel.predicts_cloud_fractions
+      ~MLCloudsModel.stdevs
+      ~MLCloudsModel.version_record
+      ~MLCloudsModel.weights
+   
+   

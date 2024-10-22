@@ -1,0 +1,32 @@
+mlclouds.scripts
+================
+
+.. automodule:: mlclouds.scripts
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   make_plots
+   train
+   train_n_val
+
