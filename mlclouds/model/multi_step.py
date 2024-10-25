@@ -95,4 +95,7 @@ class MultiCloudsModel(MLCloudsModel):
             Ordered list of predicted features. If the model predicts cloud
             type fractions these are replaced with ``cloud_type``
         """
-        return [*self.label_names.copy(), 'cloud_type']
+        out = self.label_names.copy()
+        if self.cloud_type_model is not None:
+            out += ['cloud_type']
+        return out

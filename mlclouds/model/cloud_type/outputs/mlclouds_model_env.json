@@ -1,1 +1,1 @@
-{"phygnn": "0.0.29", "tensorflow": "2.15.1", "sklearn": "1.5.1", "pandas": "2.2.2", "numpy": "1.24.3", "nrel-rex": "0.2.90", "python": "3.11.9 (main, Apr 19 2024, 16:48:06) [GCC 11.2.0]"}
+{"phygnn": "0.0.29", "tensorflow": "2.15.1", "sklearn": "1.5.2", "pandas": "2.2.3", "numpy": "1.26.4", "nrel-rex": "0.2.90", "python": "3.9.20 (main, Oct  3 2024, 07:27:41) \n[GCC 11.2.0]"}
