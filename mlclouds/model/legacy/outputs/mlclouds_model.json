@@ -1,14 +1,14 @@
 {
   "feature_names": [
+    "cloud_probability",
+    "cloud_fraction",
     "solar_zenith_angle",
     "refl_0_65um_nom",
     "refl_0_65um_nom_stddev_3x3",
-    "refl_3_75um_nom",
     "temp_3_75um_nom",
+    "refl_3_75um_nom",
     "temp_11_0um_nom",
     "temp_11_0um_nom_stddev_3x3",
-    "cloud_probability",
-    "cloud_fraction",
     "air_temperature",
     "dew_point",
     "relative_humidity",
@@ -95,11 +95,11 @@
   },
   "version_record": {
     "nrel-rex": "0.2.90",
-    "numpy": "1.24.3",
-    "pandas": "2.2.2",
+    "numpy": "1.23.5",
+    "pandas": "2.2.3",
     "phygnn": "0.0.29",
-    "python": "3.11.9 (main, Apr 19 2024, 16:48:06) [GCC 11.2.0]",
-    "sklearn": "1.5.1",
-    "tensorflow": "2.15.1"
+    "python": "3.9.20 (main, Oct  3 2024, 07:27:41) \n[GCC 11.2.0]",
+    "sklearn": "1.5.2",
+    "tensorflow": "2.12.1"
   }
 }
