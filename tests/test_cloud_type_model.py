@@ -10,8 +10,6 @@ from farms import CLEAR_TYPES, ICE_TYPES, WATER_TYPES
 from mlclouds import CTYPE_MODEL_FPATH
 from mlclouds.model.base import MLCloudsModel
 
-# CPROP_MODEL_FPATH = '/kfs2/projects/pxs/mlclouds/nasa_model/cloud_prop_nostd_more/outputs/mlclouds_model.pkl'
-
 
 def test_clear_cloud_type_predictions():
     """Test that the cloud type model produces reasonable outputs for zero
