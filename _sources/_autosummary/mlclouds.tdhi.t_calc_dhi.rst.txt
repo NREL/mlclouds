@@ -1,0 +1,6 @@
+mlclouds.tdhi.t\_calc\_dhi
+==========================
+
+.. currentmodule:: mlclouds.tdhi
+
+.. autofunction:: t_calc_dhi

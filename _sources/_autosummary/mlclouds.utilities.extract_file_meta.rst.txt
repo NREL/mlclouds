@@ -1,0 +1,6 @@
+mlclouds.utilities.extract\_file\_meta
+======================================
+
+.. currentmodule:: mlclouds.utilities
+
+.. autofunction:: extract_file_meta

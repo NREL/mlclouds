@@ -1,0 +1,6 @@
+mlclouds.p\_fun.get\_variable
+=============================
+
+.. currentmodule:: mlclouds.p_fun
+
+.. autofunction:: get_variable

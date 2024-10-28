@@ -1,0 +1,6 @@
+mlclouds.data\_cleaners.sky\_class\_filter
+==========================================
+
+.. currentmodule:: mlclouds.data_cleaners
+
+.. autofunction:: sky_class_filter

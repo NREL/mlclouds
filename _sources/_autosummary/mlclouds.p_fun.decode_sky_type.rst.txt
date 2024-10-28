@@ -1,0 +1,6 @@
+mlclouds.p\_fun.decode\_sky\_type
+=================================
+
+.. currentmodule:: mlclouds.p_fun
+
+.. autofunction:: decode_sky_type

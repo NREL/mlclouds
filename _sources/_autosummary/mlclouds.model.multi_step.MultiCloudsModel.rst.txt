@@ -1,0 +1,74 @@
+mlclouds.model.multi\_step.MultiCloudsModel
+===========================================
+
+.. currentmodule:: mlclouds.model.multi_step
+
+.. autoclass:: MultiCloudsModel
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MultiCloudsModel.build
+      ~MultiCloudsModel.build_trained
+      ~MultiCloudsModel.dict_json_convert
+      ~MultiCloudsModel.get_mean
+      ~MultiCloudsModel.get_norm_params
+      ~MultiCloudsModel.get_stdev
+      ~MultiCloudsModel.load
+      ~MultiCloudsModel.make_one_hot_feature_names
+      ~MultiCloudsModel.normalize
+      ~MultiCloudsModel.parse_features
+      ~MultiCloudsModel.parse_labels
+      ~MultiCloudsModel.predict
+      ~MultiCloudsModel.save_model
+      ~MultiCloudsModel.seed
+      ~MultiCloudsModel.set_loss_weights
+      ~MultiCloudsModel.train_model
+      ~MultiCloudsModel.transfer_outputs
+      ~MultiCloudsModel.unnormalize
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MultiCloudsModel.CTYPE_FRACTIONS
+      ~MultiCloudsModel.bias_weights
+      ~MultiCloudsModel.feature_dims
+      ~MultiCloudsModel.feature_means
+      ~MultiCloudsModel.feature_names
+      ~MultiCloudsModel.feature_stdevs
+      ~MultiCloudsModel.history
+      ~MultiCloudsModel.input_feature_names
+      ~MultiCloudsModel.kernel_weights
+      ~MultiCloudsModel.label_dims
+      ~MultiCloudsModel.label_means
+      ~MultiCloudsModel.label_names
+      ~MultiCloudsModel.label_stdevs
+      ~MultiCloudsModel.layers
+      ~MultiCloudsModel.means
+      ~MultiCloudsModel.model
+      ~MultiCloudsModel.model_summary
+      ~MultiCloudsModel.normalization_parameters
+      ~MultiCloudsModel.normalize_features
+      ~MultiCloudsModel.normalize_labels
+      ~MultiCloudsModel.one_hot_categories
+      ~MultiCloudsModel.one_hot_feature_names
+      ~MultiCloudsModel.one_hot_input_feature_names
+      ~MultiCloudsModel.output_names
+      ~MultiCloudsModel.predicts_cloud_fractions
+      ~MultiCloudsModel.stdevs
+      ~MultiCloudsModel.version_record
+      ~MultiCloudsModel.weights
+   
+   

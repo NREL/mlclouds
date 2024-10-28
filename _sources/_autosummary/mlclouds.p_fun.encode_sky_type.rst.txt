@@ -1,0 +1,6 @@
+mlclouds.p\_fun.encode\_sky\_type
+=================================
+
+.. currentmodule:: mlclouds.p_fun
+
+.. autofunction:: encode_sky_type

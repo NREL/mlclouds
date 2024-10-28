@@ -1,0 +1,33 @@
+mlclouds.grid\_searcher.GridSearcher
+====================================
+
+.. currentmodule:: mlclouds.grid_searcher
+
+.. autoclass:: GridSearcher
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GridSearcher.collect_results
+      ~GridSearcher.jobs_status
+      ~GridSearcher.run_grid_search
+      ~GridSearcher.start_job
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~GridSearcher.output_ws
+   
+   
