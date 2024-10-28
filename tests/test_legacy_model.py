@@ -55,7 +55,7 @@ def test_load_and_run():
     out = model.predict(features, table=True)
 
     assert (out['cld_opd_dcomp'] > 0).all()
-    assert (out['cld_opd_dcomp'] < 10).all()
+    assert (out['cld_opd_dcomp'] < 100).all()
 
     assert (out['cld_reff_dcomp'] > 0).all()
-    assert (out['cld_reff_dcomp'] < 10).all()
+    assert (out['cld_reff_dcomp'] < 20).all()

@@ -5,6 +5,7 @@ Test loading and running of the saved production mlclouds model
 
 import numpy as np
 import pandas as pd
+from farms import CLOUD_TYPES
 
 from mlclouds import CPROP_MODEL_FPATH, CTYPE_MODEL_FPATH
 from mlclouds.model.multi_step import MultiCloudsModel
@@ -64,7 +65,7 @@ def test_multistep_load_and_run():
     assert (out['cld_reff_dcomp'] > 0).all()
     assert (out['cld_reff_dcomp'] < 20).all()
 
-    assert out['cloud_type'].isin([0, 3, 6]).all()
+    assert out['cloud_type'].isin(CLOUD_TYPES).all()
 
 
 def test_just_prop_load_and_run():

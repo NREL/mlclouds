@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 def _get_sky_type(clear_fraction, ice_fraction, water_fraction):
     """Get integer encoded sky type from cloud type fractions."""
     cloud_type = np.zeros((len(ice_fraction), 1), dtype=int)
-    norm = np.sqrt(clear_fraction**2 + ice_fraction**2 + water_fraction**2)
+    norm = tf.sqrt(clear_fraction**2 + ice_fraction**2 + water_fraction**2)
     normed_ice = ice_fraction / norm
     normed_water = water_fraction / norm
     normed_clear = clear_fraction / norm
@@ -29,7 +29,7 @@ def _get_sky_type(clear_fraction, ice_fraction, water_fraction):
     cloud_type[((normed_water + normed_ice) > 0.5) & (normed_ice < 0.5)] = 3
     cloud_type[normed_ice > 0.5] = 6
 
-    return cloud_type
+    return tf.convert_to_tensor(cloud_type)
 
 
 def decode_sky_type(cloud_type):
@@ -60,7 +60,7 @@ def encode_sky_type(cloud_type):
     return df['flag'].values.astype(int)
 
 
-def get_sky_type(model, y_true, y_predicted, p, labels=None):
+def get_sky_type(model, y_predicted, p, labels=None):
     """Get sky type either from model predictions (if training a model which
     includes cloud classification) or from training data.
 
@@ -68,59 +68,34 @@ def get_sky_type(model, y_true, y_predicted, p, labels=None):
     irradiance as weighted sum of clear / ice / water irradiance
     """
     if 'cloud_type' in labels:
-        sky_type = (
-            p[:, labels.index('cloud_type')]
-            .astype(np.float32)
-            .reshape((len(y_true), 1))
-        )
+        i_ctype = labels.index('cloud_type')
+        sky_type = tf.expand_dims(p[:, i_ctype].astype(np.float32), axis=1)
     else:
-        water_frac = tf.expand_dims(
-            y_predicted[:, model.output_names.index('water_fraction')], axis=1
-        )
-        ice_frac = tf.expand_dims(
-            y_predicted[:, model.output_names.index('ice_fraction')], axis=1
-        )
-        clear_frac = tf.expand_dims(
-            y_predicted[:, model.output_names.index('clear_fraction')], axis=1
-        )
+        i_cfrac = model.output_names.index('clear_fraction')
+        i_wfrac = model.output_names.index('water_fraction')
+        i_ifrac = model.output_names.index('ice_fraction')
+        clear_frac = tf.expand_dims(y_predicted[:, i_cfrac], axis=1)
+        water_frac = tf.expand_dims(y_predicted[:, i_wfrac], axis=1)
+        ice_frac = tf.expand_dims(y_predicted[:, i_ifrac], axis=1)
         sky_type = _get_sky_type(
             clear_fraction=clear_frac,
-            ice_fraction=ice_frac,
             water_fraction=water_frac,
+            ice_fraction=ice_frac,
             encode=True,
         )
     return sky_type
 
 
-def get_cld_opd(model, y_true, y_predicted, p, labels=None):
-    """Get opd property either from model predictions (if training a model
-    which includes cloud property prediction) or from training data."""
-    if 'cld_opd_dcomp' in model.output_names:
-        tau = tf.expand_dims(
-            y_predicted[:, model.output_names.index('cld_opd_dcomp')], axis=1
-        )
+def get_variable(model, var_name, y_predicted, p, labels=None):
+    """Get variable either from model predictions (if training a model
+    which includes prediction of "var_name") or from training data."""
+    if var_name in model.output_names:
+        vidx = model.output_names.index(var_name)
+        out = tf.expand_dims(y_predicted[:, vidx], axis=1)
     else:
-        tau = tf.convert_to_tensor(
-            p[:, labels.index('cld_opd_dcomp')].reshape((len(y_true), 1)),
-            dtype=tf.float32,
-        )
-
-    return tau
-
-
-def get_cld_reff(model, y_true, y_predicted, p, labels=None):
-    """Get reff property either from model predictions (if training a model
-    which includes cloud property prediction) or from training data."""
-    if 'cld_reff_dcomp' in model.output_names:
-        cld_reff = tf.expand_dims(
-            y_predicted[:, model.output_names.index('cld_reff_dcomp')], axis=1
-        )
-    else:
-        cld_reff = tf.convert_to_tensor(
-            p[:, labels.index('cld_reff_dcomp')].reshape((len(y_true), 1)),
-            dtype=tf.float32,
-        )
-    return cld_reff
+        vidx = labels.index(var_name)
+        out = tf.expand_dims(p[:, vidx].astype(np.float32), axis=1)
+    return out
 
 
 def p_fun_dummy(model, y_true, y_predicted, p, labels=None, loss_terms=None):  # noqa: ARG001
@@ -136,51 +111,38 @@ def p_fun_all_sky(
     # pylint: disable-msg=W0613
 
     n = len(y_true)
-    tau = get_cld_opd(model, y_true, y_predicted, p, labels)
-    cld_reff = get_cld_reff(model, y_true, y_predicted, p, labels)
-    cloud_type = get_sky_type(model, y_true, y_predicted, p, labels)
+    tau = get_variable(model, 'cld_opd_dcomp', y_predicted, p, labels)
+    cld_reff = get_variable(model, 'cld_reff_dcomp', y_predicted, p, labels)
+    cloud_type = get_sky_type(model, y_predicted, p, labels)
 
-    tau = tf.where(tau < 0, 0.0001, tau)
-    tau = tf.where(tau > 160, 160, tau)
-    cld_reff = tf.where(cld_reff < 0, 0.0001, cld_reff)
-    cld_reff = tf.where(cld_reff > 160, 160, cld_reff)
+    i_albedo = labels.index('surface_albedo')
+    i_sza = labels.index('solar_zenith_angle')
+    i_pressure = labels.index('surface_pressure')
+    i_dhi = labels.index('surfrad_dhi')
+    i_dni = labels.index('surfrad_dni')
+    i_ghi = labels.index('surfrad_ghi')
+    i_cs_dni = labels.index('clearsky_dni')
+    i_cs_ghi = labels.index('clearsky_ghi')
 
-    solar_zenith_angle = (
-        p[:, labels.index('solar_zenith_angle')]
-        .astype(np.float32)
-        .reshape((n, 1))
-    )
     doy = p[:, labels.index('doy')].astype(np.float32).reshape((n, 1))
     radius = p[:, labels.index('radius')].astype(np.float32).reshape((n, 1))
     Tuuclr = p[:, labels.index('Tuuclr')].astype(np.float32).reshape((n, 1))
     Ruuclr = p[:, labels.index('Ruuclr')].astype(np.float32).reshape((n, 1))
     Tddclr = p[:, labels.index('Tddclr')].astype(np.float32).reshape((n, 1))
     Tduclr = p[:, labels.index('Tduclr')].astype(np.float32).reshape((n, 1))
-    albedo = (
-        p[:, labels.index('surface_albedo')].astype(np.float32).reshape((n, 1))
-    )
-    pressure = (
-        p[:, labels.index('surface_pressure')]
-        .astype(np.float32)
-        .reshape((n, 1))
-    )
+    solar_zenith_angle = p[:, i_sza].astype(np.float32).reshape((n, 1))
+    albedo = p[:, i_albedo].astype(np.float32).reshape((n, 1))
+    pressure = p[:, i_pressure].astype(np.float32).reshape((n, 1))
+    cs_dni = tf.expand_dims(p[:, i_cs_dni].astype(np.float32), axis=1)
+    cs_ghi = tf.expand_dims(p[:, i_cs_ghi].astype(np.float32), axis=1)
+    dhi_ground = tf.expand_dims(p[:, i_dhi].astype(np.float32), axis=1)
+    dni_ground = tf.expand_dims(p[:, i_dni].astype(np.float32), axis=1)
+    ghi_ground = tf.expand_dims(p[:, i_ghi].astype(np.float32), axis=1)
 
-    cs_dni = p[:, labels.index('clearsky_dni')]
-    cs_ghi = p[:, labels.index('clearsky_ghi')]
-    cs_dni = cs_dni.astype(np.float32).reshape((n, 1))
-    cs_ghi = cs_ghi.astype(np.float32).reshape((n, 1))
-    cs_dni = tf.convert_to_tensor(cs_dni, dtype=tf.float32)
-    cs_ghi = tf.convert_to_tensor(cs_ghi, dtype=tf.float32)
-
-    i_dhi = labels.index('surfrad_dhi')
-    i_dni = labels.index('surfrad_dni')
-    i_ghi = labels.index('surfrad_ghi')
-    dhi_ground = p[:, i_dhi].astype(np.float32).reshape((n, 1))
-    dni_ground = p[:, i_dni].astype(np.float32).reshape((n, 1))
-    ghi_ground = p[:, i_ghi].astype(np.float32).reshape((n, 1))
-    dhi_ground = tf.convert_to_tensor(dhi_ground, dtype=tf.float32)
-    dni_ground = tf.convert_to_tensor(dni_ground, dtype=tf.float32)
-    ghi_ground = tf.convert_to_tensor(ghi_ground, dtype=tf.float32)
+    tau = tf.where(tau < 0, 0.0001, tau)
+    tau = tf.where(tau > 160, 160, tau)
+    cld_reff = tf.where(cld_reff < 0, 0.0001, cld_reff)
+    cld_reff = tf.where(cld_reff > 160, 160, cld_reff)
 
     ghi_predicted = tfarms(
         tau,
