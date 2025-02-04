@@ -25,12 +25,11 @@ classifiers=[
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.12"
 ]
 
 dependencies = [
-  "NREL-nsrdb>=3.0",
+  "NREL-nsrdb>=4.0",
   "NREL-phygnn>=0.0.24",
   "tensorflow>=2.12",
   "plotly"
