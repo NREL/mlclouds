@@ -1,0 +1,23 @@
+mlclouds.trainer.Trainer
+========================
+
+.. currentmodule:: mlclouds.trainer
+
+.. autoclass:: Trainer
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+   
+   
+
+   
+   
+   

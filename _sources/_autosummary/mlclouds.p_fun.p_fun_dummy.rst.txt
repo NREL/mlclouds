@@ -1,0 +1,6 @@
+mlclouds.p\_fun.p\_fun\_dummy
+=============================
+
+.. currentmodule:: mlclouds.p_fun
+
+.. autofunction:: p_fun_dummy

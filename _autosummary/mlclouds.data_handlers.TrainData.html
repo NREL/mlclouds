@@ -1,0 +1,341 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mlclouds.data_handlers.TrainData &mdash; mlclouds 0.0.6.dev1+gbd8a6f9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=a1098538"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mlclouds.data_handlers.ValidationData" href="mlclouds.data_handlers.ValidationData.html" />
+    <link rel="prev" title="mlclouds.data_handlers" href="mlclouds.data_handlers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            mlclouds
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc/installation_usage.html">Installation and Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc/installation.html">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="mlclouds.html">API reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.autoxval.html">mlclouds.autoxval</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.autoxval.AutoXVal.html">mlclouds.autoxval.AutoXVal</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.autoxval.AutoXVal.html#mlclouds.autoxval.AutoXVal"><code class="docutils literal notranslate"><span class="pre">AutoXVal</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.autoxval.TrainTest.html">mlclouds.autoxval.TrainTest</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.autoxval.TrainTest.html#mlclouds.autoxval.TrainTest"><code class="docutils literal notranslate"><span class="pre">TrainTest</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.autoxval.XVal.html">mlclouds.autoxval.XVal</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.autoxval.XVal.html#mlclouds.autoxval.XVal"><code class="docutils literal notranslate"><span class="pre">XVal</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.data_cleaners.html">mlclouds.data_cleaners</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.data_cleaners.clean_cloud_df.html">mlclouds.data_cleaners.clean_cloud_df</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.data_cleaners.clean_cloud_df.html#mlclouds.data_cleaners.clean_cloud_df"><code class="docutils literal notranslate"><span class="pre">clean_cloud_df()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.data_cleaners.sky_class_filter.html">mlclouds.data_cleaners.sky_class_filter</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.data_cleaners.sky_class_filter.html#mlclouds.data_cleaners.sky_class_filter"><code class="docutils literal notranslate"><span class="pre">sky_class_filter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="mlclouds.data_handlers.html">mlclouds.data_handlers</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">mlclouds.data_handlers.TrainData</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mlclouds.data_handlers.TrainData"><code class="docutils literal notranslate"><span class="pre">TrainData</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.data_handlers.ValidationData.html">mlclouds.data_handlers.ValidationData</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.data_handlers.ValidationData.html#mlclouds.data_handlers.ValidationData"><code class="docutils literal notranslate"><span class="pre">ValidationData</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.grid_searcher.html">mlclouds.grid_searcher</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.grid_searcher.GridSearcher.html">mlclouds.grid_searcher.GridSearcher</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.grid_searcher.GridSearcher.html#mlclouds.grid_searcher.GridSearcher"><code class="docutils literal notranslate"><span class="pre">GridSearcher</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.model.html">mlclouds.model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.model.base.html">mlclouds.model.base</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.model.base.MLCloudsModel.html">mlclouds.model.base.MLCloudsModel</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.model.k_fold.html">mlclouds.model.k_fold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.model.multi_step.html">mlclouds.model.multi_step</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.model.multi_step.MultiCloudsModel.html">mlclouds.model.multi_step.MultiCloudsModel</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.nsrdb.html">mlclouds.nsrdb</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.nsrdb.NSRDBFeatures.html">mlclouds.nsrdb.NSRDBFeatures</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.nsrdb.NSRDBFeatures.html#mlclouds.nsrdb.NSRDBFeatures"><code class="docutils literal notranslate"><span class="pre">NSRDBFeatures</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.p_fun.html">mlclouds.p_fun</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.decode_sky_type.html">mlclouds.p_fun.decode_sky_type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.decode_sky_type.html#mlclouds.p_fun.decode_sky_type"><code class="docutils literal notranslate"><span class="pre">decode_sky_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.encode_sky_type.html">mlclouds.p_fun.encode_sky_type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.encode_sky_type.html#mlclouds.p_fun.encode_sky_type"><code class="docutils literal notranslate"><span class="pre">encode_sky_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.get_sky_type.html">mlclouds.p_fun.get_sky_type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.get_sky_type.html#mlclouds.p_fun.get_sky_type"><code class="docutils literal notranslate"><span class="pre">get_sky_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.get_variable.html">mlclouds.p_fun.get_variable</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.get_variable.html#mlclouds.p_fun.get_variable"><code class="docutils literal notranslate"><span class="pre">get_variable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.p_fun_all_sky.html">mlclouds.p_fun.p_fun_all_sky</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.p_fun_all_sky.html#mlclouds.p_fun.p_fun_all_sky"><code class="docutils literal notranslate"><span class="pre">p_fun_all_sky()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.p_fun_dummy.html">mlclouds.p_fun.p_fun_dummy</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.p_fun_dummy.html#mlclouds.p_fun.p_fun_dummy"><code class="docutils literal notranslate"><span class="pre">p_fun_dummy()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.scripts.html">mlclouds.scripts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.scripts.train.html">mlclouds.scripts.train</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.tdhi.html">mlclouds.tdhi</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.tdhi.t_calc_dhi.html">mlclouds.tdhi.t_calc_dhi</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.tdhi.t_calc_dhi.html#mlclouds.tdhi.t_calc_dhi"><code class="docutils literal notranslate"><span class="pre">t_calc_dhi()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.tdisc.html">mlclouds.tdisc</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.tdisc.tdisc.html">mlclouds.tdisc.tdisc</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.tdisc.tdisc.html#mlclouds.tdisc.tdisc"><code class="docutils literal notranslate"><span class="pre">tdisc()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.tfarms.html">mlclouds.tfarms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.tfarms.ice_phase.html">mlclouds.tfarms.ice_phase</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.tfarms.ice_phase.html#mlclouds.tfarms.ice_phase"><code class="docutils literal notranslate"><span class="pre">ice_phase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.tfarms.tfarms.html">mlclouds.tfarms.tfarms</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.tfarms.tfarms.html#mlclouds.tfarms.tfarms"><code class="docutils literal notranslate"><span class="pre">tfarms()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.tfarms.water_phase.html">mlclouds.tfarms.water_phase</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.tfarms.water_phase.html#mlclouds.tfarms.water_phase"><code class="docutils literal notranslate"><span class="pre">water_phase()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.trainer.html">mlclouds.trainer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.trainer.Trainer.html">mlclouds.trainer.Trainer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.trainer.Trainer.html#mlclouds.trainer.Trainer"><code class="docutils literal notranslate"><span class="pre">Trainer</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.utilities.html">mlclouds.utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.utilities.calc_time_step.html">mlclouds.utilities.calc_time_step</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.utilities.calc_time_step.html#mlclouds.utilities.calc_time_step"><code class="docutils literal notranslate"><span class="pre">calc_time_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.utilities.extract_file_meta.html">mlclouds.utilities.extract_file_meta</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.utilities.extract_file_meta.html#mlclouds.utilities.extract_file_meta"><code class="docutils literal notranslate"><span class="pre">extract_file_meta()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.utilities.get_valid_surf_sites.html">mlclouds.utilities.get_valid_surf_sites</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.utilities.get_valid_surf_sites.html#mlclouds.utilities.get_valid_surf_sites"><code class="docutils literal notranslate"><span class="pre">get_valid_surf_sites()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.utilities.surf_meta.html">mlclouds.utilities.surf_meta</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.utilities.surf_meta.html#mlclouds.utilities.surf_meta"><code class="docutils literal notranslate"><span class="pre">surf_meta()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.validator.html">mlclouds.validator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.validator.Validator.html">mlclouds.validator.Validator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.validator.Validator.html#mlclouds.validator.Validator"><code class="docutils literal notranslate"><span class="pre">Validator</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">mlclouds</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="mlclouds.html">mlclouds</a></li>
+          <li class="breadcrumb-item"><a href="mlclouds.data_handlers.html">mlclouds.data_handlers</a></li>
+      <li class="breadcrumb-item active">mlclouds.data_handlers.TrainData</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/nrel/mlclouds/blob/main/docs/source/_autosummary/mlclouds.data_handlers.TrainData.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mlclouds-data-handlers-traindata">
+<h1>mlclouds.data_handlers.TrainData<a class="headerlink" href="#mlclouds-data-handlers-traindata" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="mlclouds.data_handlers.TrainData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TrainData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_sites</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'epochs_a':</span> <span class="pre">100,</span> <span class="pre">'epochs_b':</span> <span class="pre">90,</span> <span class="pre">'features':</span> <span class="pre">['solar_zenith_angle',</span> <span class="pre">'cloud_type',</span> <span class="pre">'refl_0_65um_nom',</span> <span class="pre">'refl_0_65um_nom_stddev_3x3',</span> <span class="pre">'refl_3_75um_nom',</span> <span class="pre">'temp_3_75um_nom',</span> <span class="pre">'temp_11_0um_nom',</span> <span class="pre">'temp_11_0um_nom_stddev_3x3',</span> <span class="pre">'cloud_probability',</span> <span class="pre">'cloud_fraction',</span> <span class="pre">'air_temperature',</span> <span class="pre">'dew_point',</span> <span class="pre">'relative_humidity',</span> <span class="pre">'total_precipitable_water',</span> <span class="pre">'surface_albedo'],</span> <span class="pre">'hidden_layers':</span> <span class="pre">[{'activation':</span> <span class="pre">'relu',</span> <span class="pre">'dropout':</span> <span class="pre">0.1,</span> <span class="pre">'units':</span> <span class="pre">256},</span> <span class="pre">{'activation':</span> <span class="pre">'relu',</span> <span class="pre">'dropout':</span> <span class="pre">0.1,</span> <span class="pre">'units':</span> <span class="pre">256},</span> <span class="pre">{'activation':</span> <span class="pre">'relu',</span> <span class="pre">'dropout':</span> <span class="pre">0.1,</span> <span class="pre">'units':</span> <span class="pre">256},</span> <span class="pre">{'activation':</span> <span class="pre">'relu',</span> <span class="pre">'dropout':</span> <span class="pre">0.1,</span> <span class="pre">'units':</span> <span class="pre">256},</span> <span class="pre">{'activation':</span> <span class="pre">'relu',</span> <span class="pre">'dropout':</span> <span class="pre">0.1,</span> <span class="pre">'units':</span> <span class="pre">256}],</span> <span class="pre">'learning_rate':</span> <span class="pre">0.0005,</span> <span class="pre">'loss_weights_a':</span> <span class="pre">[1,</span> <span class="pre">0],</span> <span class="pre">'loss_weights_b':</span> <span class="pre">[0.5,</span> <span class="pre">0.5],</span> <span class="pre">'metric':</span> <span class="pre">'relative_mae',</span> <span class="pre">'n_batch':</span> <span class="pre">64,</span> <span class="pre">'one_hot_categories':</span> <span class="pre">{'flag':</span> <span class="pre">['clear',</span> <span class="pre">'ice_cloud',</span> <span class="pre">'water_cloud',</span> <span class="pre">'bad_cloud']},</span> <span class="pre">'p_fun':</span> <span class="pre">'p_fun_all_sky',</span> <span class="pre">'p_kwargs':</span> <span class="pre">{'loss_terms':</span> <span class="pre">['mae_ghi']},</span> <span class="pre">'phygnn_seed':</span> <span class="pre">0,</span> <span class="pre">'surfrad_window_minutes':</span> <span class="pre">15,</span> <span class="pre">'training_prep_kwargs':</span> <span class="pre">{'add_cloud_flag':</span> <span class="pre">True,</span> <span class="pre">'filter_clear':</span> <span class="pre">False,</span> <span class="pre">'filter_daylight':</span> <span class="pre">True,</span> <span class="pre">'filter_sky_class':</span> <span class="pre">False,</span> <span class="pre">'nan_option':</span> <span class="pre">'interp',</span> <span class="pre">'sza_lim':</span> <span class="pre">89},</span> <span class="pre">'y_labels':</span> <span class="pre">['cld_opd_dcomp',</span> <span class="pre">'cld_reff_dcomp']}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsrdb_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_pattern</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mlclouds/data_handlers.html#TrainData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlclouds.data_handlers.TrainData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Load and prep training data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>train_files</strong> (<em>list | str</em>) – File or list of files to use for training. Filenames must include
+the four-digit year.</p></li>
+<li><p><strong>train_sites</strong> (<em>‘all’ | list of int</em>) – Surfrad gids to use for training. Use all if ‘all’</p></li>
+<li><p><strong>config</strong> (<em>dict</em>) – Dict of configuration options. See CONFIG for example.</p></li>
+<li><p><strong>test_fraction</strong> (<em>None | float</em>) – Fraction of full data set to reserve for testing. Should be between
+0 to 1. The test set is randomly selected and dropped from the
+training set. If None, do not reserve a test set.</p></li>
+<li><p><strong>nsrdb_files</strong> (<em>list</em>) – Nsrdb files including irradiance data for the training sites. This
+is used to compute the sky class for these locations which is then
+used to filter cloud type data for false positives / negatives.
+Each file needs to have a four digit year and east / west label.</p></li>
+<li><p><strong>cache_pattern</strong> (<em>str</em>) – File path pattern for saving training data. e.g. <code class="docutils literal notranslate"><span class="pre">./df_{}.csv</span></code>.
+This will be used to save <code class="docutils literal notranslate"><span class="pre">self.x</span></code>, <code class="docutils literal notranslate"><span class="pre">self.y</span></code>, and <code class="docutils literal notranslate"><span class="pre">self.p</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.data_handlers.TrainData.cache_exists" title="mlclouds.data_handlers.TrainData.cache_exists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cache_exists</span></code></a>(cache_pattern)</p></td>
+<td><p>Check if cache files for <code class="docutils literal notranslate"><span class="pre">df_raw</span></code> and <code class="docutils literal notranslate"><span class="pre">df_all_sky</span></code> exist.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.data_handlers.TrainData.load_all_data" title="mlclouds.data_handlers.TrainData.load_all_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_all_data</span></code></a>(fp_pattern)</p></td>
+<td><p>Load all df_raw / df_all_sky from csv files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.data_handlers.TrainData.save_all_data" title="mlclouds.data_handlers.TrainData.save_all_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_all_data</span></code></a>(fp_pattern)</p></td>
+<td><p>Save all raw / all_sky data to disk</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.data_handlers.TrainData.cache_exists">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cache_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cache_pattern</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mlclouds/data_handlers.html#TrainData.cache_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlclouds.data_handlers.TrainData.cache_exists" title="Link to this definition"></a></dt>
+<dd><p>Check if cache files for <code class="docutils literal notranslate"><span class="pre">df_raw</span></code> and <code class="docutils literal notranslate"><span class="pre">df_all_sky</span></code> exist.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.data_handlers.TrainData.save_all_data">
+<span class="sig-name descname"><span class="pre">save_all_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fp_pattern</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mlclouds/data_handlers.html#TrainData.save_all_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlclouds.data_handlers.TrainData.save_all_data" title="Link to this definition"></a></dt>
+<dd><p>Save all raw / all_sky data to disk</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fp_pattern</strong> (<em>str</em>) – .csv filepath pattern to save data to. e.g. ./df_{}.csv</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.data_handlers.TrainData.load_all_data">
+<span class="sig-name descname"><span class="pre">load_all_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fp_pattern</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mlclouds/data_handlers.html#TrainData.load_all_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlclouds.data_handlers.TrainData.load_all_data" title="Link to this definition"></a></dt>
+<dd><p>Load all df_raw / df_all_sky from csv files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fp_pattern</strong> (<em>str</em>) – .csv filepath pattern to load data from. e.g. ./df_{}.csv</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mlclouds.data_handlers.html" class="btn btn-neutral float-left" title="mlclouds.data_handlers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mlclouds.data_handlers.ValidationData.html" class="btn btn-neutral float-right" title="mlclouds.data_handlers.ValidationData" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Alliance for Sustainable Energy, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

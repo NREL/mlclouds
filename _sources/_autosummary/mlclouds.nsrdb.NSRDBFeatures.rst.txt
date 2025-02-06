@@ -1,0 +1,69 @@
+mlclouds.nsrdb.NSRDBFeatures
+============================
+
+.. currentmodule:: mlclouds.nsrdb
+
+.. autoclass:: NSRDBFeatures
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~NSRDBFeatures.close
+      ~NSRDBFeatures.df_str_decode
+      ~NSRDBFeatures.extract_features
+      ~NSRDBFeatures.get_SAM_df
+      ~NSRDBFeatures.get_attrs
+      ~NSRDBFeatures.get_dset_properties
+      ~NSRDBFeatures.get_meta_arr
+      ~NSRDBFeatures.get_scale_factor
+      ~NSRDBFeatures.get_units
+      ~NSRDBFeatures.is_hsds_file
+      ~NSRDBFeatures.is_s3_file
+      ~NSRDBFeatures.open_dataset
+      ~NSRDBFeatures.open_file
+      ~NSRDBFeatures.preload_SAM
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~NSRDBFeatures.ADD_ATTR
+      ~NSRDBFeatures.INTERPOLABLE_DSETS
+      ~NSRDBFeatures.LAPSE_RATES
+      ~NSRDBFeatures.SCALE_ATTR
+      ~NSRDBFeatures.UNIT_ATTR
+      ~NSRDBFeatures.VARIABLE_NAME
+      ~NSRDBFeatures.VARIABLE_UNIT
+      ~NSRDBFeatures.adders
+      ~NSRDBFeatures.attrs
+      ~NSRDBFeatures.chunks
+      ~NSRDBFeatures.coordinates
+      ~NSRDBFeatures.data_version
+      ~NSRDBFeatures.datasets
+      ~NSRDBFeatures.dsets
+      ~NSRDBFeatures.dtypes
+      ~NSRDBFeatures.global_attrs
+      ~NSRDBFeatures.groups
+      ~NSRDBFeatures.h5
+      ~NSRDBFeatures.lat_lon
+      ~NSRDBFeatures.meta
+      ~NSRDBFeatures.res_dsets
+      ~NSRDBFeatures.resource_datasets
+      ~NSRDBFeatures.scale_factors
+      ~NSRDBFeatures.shape
+      ~NSRDBFeatures.shapes
+      ~NSRDBFeatures.time_index
+      ~NSRDBFeatures.units
+   
+   

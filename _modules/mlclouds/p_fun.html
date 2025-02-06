@@ -1,0 +1,492 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mlclouds.p_fun &mdash; mlclouds 0.0.6.dev1+gbd8a6f9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=a1098538"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            mlclouds
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc/installation_usage.html">Installation and Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../misc/installation.html">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/mlclouds.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.autoxval.html">mlclouds.autoxval</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.autoxval.AutoXVal.html">mlclouds.autoxval.AutoXVal</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.autoxval.AutoXVal.html#mlclouds.autoxval.AutoXVal"><code class="docutils literal notranslate"><span class="pre">AutoXVal</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.autoxval.TrainTest.html">mlclouds.autoxval.TrainTest</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.autoxval.TrainTest.html#mlclouds.autoxval.TrainTest"><code class="docutils literal notranslate"><span class="pre">TrainTest</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.autoxval.XVal.html">mlclouds.autoxval.XVal</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.autoxval.XVal.html#mlclouds.autoxval.XVal"><code class="docutils literal notranslate"><span class="pre">XVal</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.data_cleaners.html">mlclouds.data_cleaners</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.data_cleaners.clean_cloud_df.html">mlclouds.data_cleaners.clean_cloud_df</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.data_cleaners.clean_cloud_df.html#mlclouds.data_cleaners.clean_cloud_df"><code class="docutils literal notranslate"><span class="pre">clean_cloud_df()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.data_cleaners.sky_class_filter.html">mlclouds.data_cleaners.sky_class_filter</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.data_cleaners.sky_class_filter.html#mlclouds.data_cleaners.sky_class_filter"><code class="docutils literal notranslate"><span class="pre">sky_class_filter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.data_handlers.html">mlclouds.data_handlers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.data_handlers.TrainData.html">mlclouds.data_handlers.TrainData</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.data_handlers.TrainData.html#mlclouds.data_handlers.TrainData"><code class="docutils literal notranslate"><span class="pre">TrainData</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.data_handlers.ValidationData.html">mlclouds.data_handlers.ValidationData</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.data_handlers.ValidationData.html#mlclouds.data_handlers.ValidationData"><code class="docutils literal notranslate"><span class="pre">ValidationData</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.grid_searcher.html">mlclouds.grid_searcher</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.grid_searcher.GridSearcher.html">mlclouds.grid_searcher.GridSearcher</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.grid_searcher.GridSearcher.html#mlclouds.grid_searcher.GridSearcher"><code class="docutils literal notranslate"><span class="pre">GridSearcher</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.model.html">mlclouds.model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.model.base.html">mlclouds.model.base</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.model.base.MLCloudsModel.html">mlclouds.model.base.MLCloudsModel</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.model.k_fold.html">mlclouds.model.k_fold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.model.multi_step.html">mlclouds.model.multi_step</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.model.multi_step.MultiCloudsModel.html">mlclouds.model.multi_step.MultiCloudsModel</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.nsrdb.html">mlclouds.nsrdb</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.nsrdb.NSRDBFeatures.html">mlclouds.nsrdb.NSRDBFeatures</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.nsrdb.NSRDBFeatures.html#mlclouds.nsrdb.NSRDBFeatures"><code class="docutils literal notranslate"><span class="pre">NSRDBFeatures</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.html">mlclouds.p_fun</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.decode_sky_type.html">mlclouds.p_fun.decode_sky_type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.decode_sky_type.html#mlclouds.p_fun.decode_sky_type"><code class="docutils literal notranslate"><span class="pre">decode_sky_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.encode_sky_type.html">mlclouds.p_fun.encode_sky_type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.encode_sky_type.html#mlclouds.p_fun.encode_sky_type"><code class="docutils literal notranslate"><span class="pre">encode_sky_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.get_sky_type.html">mlclouds.p_fun.get_sky_type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.get_sky_type.html#mlclouds.p_fun.get_sky_type"><code class="docutils literal notranslate"><span class="pre">get_sky_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.get_variable.html">mlclouds.p_fun.get_variable</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.get_variable.html#mlclouds.p_fun.get_variable"><code class="docutils literal notranslate"><span class="pre">get_variable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.p_fun_all_sky.html">mlclouds.p_fun.p_fun_all_sky</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.p_fun_all_sky.html#mlclouds.p_fun.p_fun_all_sky"><code class="docutils literal notranslate"><span class="pre">p_fun_all_sky()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.p_fun_dummy.html">mlclouds.p_fun.p_fun_dummy</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.p_fun_dummy.html#mlclouds.p_fun.p_fun_dummy"><code class="docutils literal notranslate"><span class="pre">p_fun_dummy()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.scripts.html">mlclouds.scripts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.scripts.train.html">mlclouds.scripts.train</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.tdhi.html">mlclouds.tdhi</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.tdhi.t_calc_dhi.html">mlclouds.tdhi.t_calc_dhi</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.tdhi.t_calc_dhi.html#mlclouds.tdhi.t_calc_dhi"><code class="docutils literal notranslate"><span class="pre">t_calc_dhi()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.tdisc.html">mlclouds.tdisc</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.tdisc.tdisc.html">mlclouds.tdisc.tdisc</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.tdisc.tdisc.html#mlclouds.tdisc.tdisc"><code class="docutils literal notranslate"><span class="pre">tdisc()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.tfarms.html">mlclouds.tfarms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.tfarms.ice_phase.html">mlclouds.tfarms.ice_phase</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.tfarms.ice_phase.html#mlclouds.tfarms.ice_phase"><code class="docutils literal notranslate"><span class="pre">ice_phase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.tfarms.tfarms.html">mlclouds.tfarms.tfarms</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.tfarms.tfarms.html#mlclouds.tfarms.tfarms"><code class="docutils literal notranslate"><span class="pre">tfarms()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.tfarms.water_phase.html">mlclouds.tfarms.water_phase</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.tfarms.water_phase.html#mlclouds.tfarms.water_phase"><code class="docutils literal notranslate"><span class="pre">water_phase()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.trainer.html">mlclouds.trainer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.trainer.Trainer.html">mlclouds.trainer.Trainer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.trainer.Trainer.html#mlclouds.trainer.Trainer"><code class="docutils literal notranslate"><span class="pre">Trainer</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.html">mlclouds.utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.calc_time_step.html">mlclouds.utilities.calc_time_step</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.calc_time_step.html#mlclouds.utilities.calc_time_step"><code class="docutils literal notranslate"><span class="pre">calc_time_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.extract_file_meta.html">mlclouds.utilities.extract_file_meta</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.extract_file_meta.html#mlclouds.utilities.extract_file_meta"><code class="docutils literal notranslate"><span class="pre">extract_file_meta()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.get_valid_surf_sites.html">mlclouds.utilities.get_valid_surf_sites</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.get_valid_surf_sites.html#mlclouds.utilities.get_valid_surf_sites"><code class="docutils literal notranslate"><span class="pre">get_valid_surf_sites()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.surf_meta.html">mlclouds.utilities.surf_meta</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.surf_meta.html#mlclouds.utilities.surf_meta"><code class="docutils literal notranslate"><span class="pre">surf_meta()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.validator.html">mlclouds.validator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.validator.Validator.html">mlclouds.validator.Validator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.validator.Validator.html#mlclouds.validator.Validator"><code class="docutils literal notranslate"><span class="pre">Validator</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">mlclouds</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mlclouds.p_fun</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mlclouds.p_fun</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Automatic cross validation of PhyGNN models predicting opd and reff</span>
+
+<span class="sd">TODO: Add FARMS-DNI model?</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">mlclouds.tdhi</span><span class="w"> </span><span class="kn">import</span> <span class="n">t_calc_dhi</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mlclouds.tdisc</span><span class="w"> </span><span class="kn">import</span> <span class="n">tdisc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mlclouds.tfarms</span><span class="w"> </span><span class="kn">import</span> <span class="n">tfarms</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_sky_type</span><span class="p">(</span><span class="n">clear_fraction</span><span class="p">,</span> <span class="n">ice_fraction</span><span class="p">,</span> <span class="n">water_fraction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get integer encoded sky type from cloud type fractions.&quot;&quot;&quot;</span>
+    <span class="n">cloud_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">ice_fraction</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">clear_fraction</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">ice_fraction</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">water_fraction</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">normed_ice</span> <span class="o">=</span> <span class="n">ice_fraction</span> <span class="o">/</span> <span class="n">norm</span>
+    <span class="n">normed_water</span> <span class="o">=</span> <span class="n">water_fraction</span> <span class="o">/</span> <span class="n">norm</span>
+    <span class="n">normed_clear</span> <span class="o">=</span> <span class="n">clear_fraction</span> <span class="o">/</span> <span class="n">norm</span>
+
+    <span class="n">cloud_type</span><span class="p">[</span><span class="n">normed_clear</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">cloud_type</span><span class="p">[((</span><span class="n">normed_water</span> <span class="o">+</span> <span class="n">normed_ice</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">normed_ice</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">cloud_type</span><span class="p">[</span><span class="n">normed_ice</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
+
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">cloud_type</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="decode_sky_type">
+<a class="viewcode-back" href="../../_autosummary/mlclouds.p_fun.decode_sky_type.html#mlclouds.p_fun.decode_sky_type">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_sky_type</span><span class="p">(</span><span class="n">cloud_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decode integer cloud types as strings.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;cloud_type&#39;</span> <span class="ow">in</span> <span class="n">cloud_type</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">cloud_type</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;cloud_type&#39;</span><span class="p">:</span> <span class="s1">&#39;flag&#39;</span><span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;flag&#39;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">cloud_type</span><span class="p">)</span>
+
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;bad_cloud&#39;</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;clear&#39;</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;water_cloud&#39;</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ice_cloud&#39;</span>
+    <span class="k">return</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;flag&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span></div>
+
+
+
+<div class="viewcode-block" id="encode_sky_type">
+<a class="viewcode-back" href="../../_autosummary/mlclouds.p_fun.encode_sky_type.html#mlclouds.p_fun.encode_sky_type">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_sky_type</span><span class="p">(</span><span class="n">cloud_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode string cloud types as integers.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;flag&#39;</span> <span class="ow">in</span> <span class="n">cloud_type</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">cloud_type</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;flag&#39;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">cloud_type</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;clear&#39;</span><span class="p">,</span> <span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;water_cloud&#39;</span><span class="p">,</span> <span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ice_cloud&#39;</span><span class="p">,</span> <span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;bad_cloud&#39;</span><span class="p">,</span> <span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">15</span>
+    <span class="k">return</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;flag&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_sky_type">
+<a class="viewcode-back" href="../../_autosummary/mlclouds.p_fun.get_sky_type.html#mlclouds.p_fun.get_sky_type">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_sky_type</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">y_predicted</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get sky type either from model predictions (if training a model which</span>
+<span class="sd">    includes cloud classification) or from training data.</span>
+
+<span class="sd">    TODO: Use continuous variable for cloud type fractions to compute</span>
+<span class="sd">    irradiance as weighted sum of clear / ice / water irradiance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;cloud_type&#39;</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+        <span class="n">i_ctype</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;cloud_type&#39;</span><span class="p">)</span>
+        <span class="n">sky_type</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">p</span><span class="p">[:,</span> <span class="n">i_ctype</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">i_cfrac</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;clear_fraction&#39;</span><span class="p">)</span>
+        <span class="n">i_wfrac</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;water_fraction&#39;</span><span class="p">)</span>
+        <span class="n">i_ifrac</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;ice_fraction&#39;</span><span class="p">)</span>
+        <span class="n">clear_frac</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">[:,</span> <span class="n">i_cfrac</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">water_frac</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">[:,</span> <span class="n">i_wfrac</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ice_frac</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">[:,</span> <span class="n">i_ifrac</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">sky_type</span> <span class="o">=</span> <span class="n">_get_sky_type</span><span class="p">(</span>
+            <span class="n">clear_fraction</span><span class="o">=</span><span class="n">clear_frac</span><span class="p">,</span>
+            <span class="n">water_fraction</span><span class="o">=</span><span class="n">water_frac</span><span class="p">,</span>
+            <span class="n">ice_fraction</span><span class="o">=</span><span class="n">ice_frac</span><span class="p">,</span>
+            <span class="n">encode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">sky_type</span></div>
+
+
+
+<div class="viewcode-block" id="get_variable">
+<a class="viewcode-back" href="../../_autosummary/mlclouds.p_fun.get_variable.html#mlclouds.p_fun.get_variable">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_variable</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">y_predicted</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get variable either from model predictions (if training a model</span>
+<span class="sd">    which includes prediction of &quot;var_name&quot;) or from training data.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="p">:</span>
+        <span class="n">vidx</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">var_name</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">[:,</span> <span class="n">vidx</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">vidx</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">var_name</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">p</span><span class="p">[:,</span> <span class="n">vidx</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<div class="viewcode-block" id="p_fun_dummy">
+<a class="viewcode-back" href="../../_autosummary/mlclouds.p_fun.p_fun_dummy.html#mlclouds.p_fun.p_fun_dummy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">p_fun_dummy</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">y_predicted</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">loss_terms</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># noqa: ARG001</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dummy loss function to disable pfun&quot;&quot;&quot;</span>
+    <span class="c1"># pylint: disable-msg=W0613</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="p_fun_all_sky">
+<a class="viewcode-back" href="../../_autosummary/mlclouds.p_fun.p_fun_all_sky.html#mlclouds.p_fun.p_fun_all_sky">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">p_fun_all_sky</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">y_predicted</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">loss_terms</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;mae_ghi&#39;</span><span class="p">,)</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Physics loss function&quot;&quot;&quot;</span>
+    <span class="c1"># pylint: disable-msg=W0613</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_true</span><span class="p">)</span>
+    <span class="n">tau</span> <span class="o">=</span> <span class="n">get_variable</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;cld_opd_dcomp&#39;</span><span class="p">,</span> <span class="n">y_predicted</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+    <span class="n">cld_reff</span> <span class="o">=</span> <span class="n">get_variable</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;cld_reff_dcomp&#39;</span><span class="p">,</span> <span class="n">y_predicted</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+    <span class="n">cloud_type</span> <span class="o">=</span> <span class="n">get_sky_type</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">y_predicted</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+
+    <span class="n">i_albedo</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;surface_albedo&#39;</span><span class="p">)</span>
+    <span class="n">i_sza</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;solar_zenith_angle&#39;</span><span class="p">)</span>
+    <span class="n">i_pressure</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;surface_pressure&#39;</span><span class="p">)</span>
+    <span class="n">i_dhi</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;surfrad_dhi&#39;</span><span class="p">)</span>
+    <span class="n">i_dni</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;surfrad_dni&#39;</span><span class="p">)</span>
+    <span class="n">i_ghi</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;surfrad_ghi&#39;</span><span class="p">)</span>
+    <span class="n">i_cs_dni</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;clearsky_dni&#39;</span><span class="p">)</span>
+    <span class="n">i_cs_ghi</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;clearsky_ghi&#39;</span><span class="p">)</span>
+
+    <span class="n">doy</span> <span class="o">=</span> <span class="n">p</span><span class="p">[:,</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;doy&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">radius</span> <span class="o">=</span> <span class="n">p</span><span class="p">[:,</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;radius&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">Tuuclr</span> <span class="o">=</span> <span class="n">p</span><span class="p">[:,</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;Tuuclr&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">Ruuclr</span> <span class="o">=</span> <span class="n">p</span><span class="p">[:,</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;Ruuclr&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">Tddclr</span> <span class="o">=</span> <span class="n">p</span><span class="p">[:,</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;Tddclr&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">Tduclr</span> <span class="o">=</span> <span class="n">p</span><span class="p">[:,</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;Tduclr&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">solar_zenith_angle</span> <span class="o">=</span> <span class="n">p</span><span class="p">[:,</span> <span class="n">i_sza</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">albedo</span> <span class="o">=</span> <span class="n">p</span><span class="p">[:,</span> <span class="n">i_albedo</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">pressure</span> <span class="o">=</span> <span class="n">p</span><span class="p">[:,</span> <span class="n">i_pressure</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">cs_dni</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">p</span><span class="p">[:,</span> <span class="n">i_cs_dni</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cs_ghi</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">p</span><span class="p">[:,</span> <span class="n">i_cs_ghi</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">dhi_ground</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">p</span><span class="p">[:,</span> <span class="n">i_dhi</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">dni_ground</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">p</span><span class="p">[:,</span> <span class="n">i_dni</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ghi_ground</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">p</span><span class="p">[:,</span> <span class="n">i_ghi</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">tau</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tau</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="n">tau</span><span class="p">)</span>
+    <span class="n">tau</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tau</span> <span class="o">&gt;</span> <span class="mi">160</span><span class="p">,</span> <span class="mi">160</span><span class="p">,</span> <span class="n">tau</span><span class="p">)</span>
+    <span class="n">cld_reff</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cld_reff</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="n">cld_reff</span><span class="p">)</span>
+    <span class="n">cld_reff</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cld_reff</span> <span class="o">&gt;</span> <span class="mi">160</span><span class="p">,</span> <span class="mi">160</span><span class="p">,</span> <span class="n">cld_reff</span><span class="p">)</span>
+
+    <span class="n">ghi_predicted</span> <span class="o">=</span> <span class="n">tfarms</span><span class="p">(</span>
+        <span class="n">tau</span><span class="p">,</span>
+        <span class="n">cloud_type</span><span class="p">,</span>
+        <span class="n">cld_reff</span><span class="p">,</span>
+        <span class="n">solar_zenith_angle</span><span class="p">,</span>
+        <span class="n">radius</span><span class="p">,</span>
+        <span class="n">Tuuclr</span><span class="p">,</span>
+        <span class="n">Ruuclr</span><span class="p">,</span>
+        <span class="n">Tddclr</span><span class="p">,</span>
+        <span class="n">Tduclr</span><span class="p">,</span>
+        <span class="n">albedo</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">dni_predicted</span> <span class="o">=</span> <span class="n">tdisc</span><span class="p">(</span>
+        <span class="n">ghi_predicted</span><span class="p">,</span> <span class="n">solar_zenith_angle</span><span class="p">,</span> <span class="n">doy</span><span class="p">,</span> <span class="n">pressure</span><span class="o">=</span><span class="n">pressure</span>
+    <span class="p">)</span>
+
+    <span class="n">dni_predicted</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tau</span> <span class="o">==</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="n">cs_dni</span><span class="p">,</span> <span class="n">dni_predicted</span><span class="p">)</span>
+    <span class="n">ghi_predicted</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tau</span> <span class="o">==</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="n">cs_ghi</span><span class="p">,</span> <span class="n">ghi_predicted</span><span class="p">)</span>
+    <span class="n">dhi_predicted</span><span class="p">,</span> <span class="n">dni_predicted</span> <span class="o">=</span> <span class="n">t_calc_dhi</span><span class="p">(</span>
+        <span class="n">dni_predicted</span><span class="p">,</span> <span class="n">ghi_predicted</span><span class="p">,</span> <span class="n">solar_zenith_angle</span>
+    <span class="p">)</span>
+
+    <span class="n">err_ghi</span> <span class="o">=</span> <span class="n">ghi_predicted</span> <span class="o">-</span> <span class="n">ghi_ground</span>
+    <span class="n">err_ghi</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">boolean_mask</span><span class="p">(</span><span class="n">err_ghi</span><span class="p">,</span> <span class="o">~</span><span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">is_nan</span><span class="p">(</span><span class="n">err_ghi</span><span class="p">))</span>
+    <span class="n">err_ghi</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">boolean_mask</span><span class="p">(</span><span class="n">err_ghi</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">is_finite</span><span class="p">(</span><span class="n">err_ghi</span><span class="p">))</span>
+
+    <span class="n">err_dni</span> <span class="o">=</span> <span class="n">dni_predicted</span> <span class="o">-</span> <span class="n">dni_ground</span>
+    <span class="n">err_dni</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">boolean_mask</span><span class="p">(</span><span class="n">err_dni</span><span class="p">,</span> <span class="o">~</span><span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">is_nan</span><span class="p">(</span><span class="n">err_dni</span><span class="p">))</span>
+    <span class="n">err_dni</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">boolean_mask</span><span class="p">(</span><span class="n">err_dni</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">is_finite</span><span class="p">(</span><span class="n">err_dni</span><span class="p">))</span>
+
+    <span class="n">err_dhi</span> <span class="o">=</span> <span class="n">dhi_predicted</span> <span class="o">-</span> <span class="n">dhi_ground</span>
+    <span class="n">err_dhi</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">boolean_mask</span><span class="p">(</span><span class="n">err_dhi</span><span class="p">,</span> <span class="o">~</span><span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">is_nan</span><span class="p">(</span><span class="n">err_dhi</span><span class="p">))</span>
+    <span class="n">err_dhi</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">boolean_mask</span><span class="p">(</span><span class="n">err_dhi</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">is_finite</span><span class="p">(</span><span class="n">err_dhi</span><span class="p">))</span>
+
+    <span class="n">terms</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">terms</span><span class="p">[</span><span class="s1">&#39;mae_ghi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">err_ghi</span><span class="p">))</span> <span class="o">/</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span>
+        <span class="n">ghi_ground</span>
+    <span class="p">)</span>
+    <span class="n">terms</span><span class="p">[</span><span class="s1">&#39;mae_dni&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">err_dni</span><span class="p">))</span> <span class="o">/</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span>
+        <span class="n">dni_ground</span>
+    <span class="p">)</span>
+    <span class="n">terms</span><span class="p">[</span><span class="s1">&#39;mae_dhi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">err_dhi</span><span class="p">))</span> <span class="o">/</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span>
+        <span class="n">dhi_ground</span>
+    <span class="p">)</span>
+    <span class="n">terms</span><span class="p">[</span><span class="s1">&#39;mbe_ghi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">err_ghi</span><span class="p">))</span> <span class="o">/</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span>
+        <span class="n">ghi_ground</span>
+    <span class="p">)</span>
+    <span class="n">terms</span><span class="p">[</span><span class="s1">&#39;mbe_dni&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">err_dni</span><span class="p">))</span> <span class="o">/</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span>
+        <span class="n">dni_ground</span>
+    <span class="p">)</span>
+    <span class="n">terms</span><span class="p">[</span><span class="s1">&#39;mbe_dhi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">err_dhi</span><span class="p">))</span> <span class="o">/</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span>
+        <span class="n">dhi_ground</span>
+    <span class="p">)</span>
+    <span class="n">terms</span><span class="p">[</span><span class="s1">&#39;rmse_ghi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">err_ghi</span><span class="p">))</span>
+    <span class="p">)</span> <span class="o">/</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">ghi_ground</span><span class="p">)</span>
+    <span class="n">terms</span><span class="p">[</span><span class="s1">&#39;rmse_dni&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">err_dni</span><span class="p">))</span>
+    <span class="p">)</span> <span class="o">/</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">dni_ground</span><span class="p">)</span>
+    <span class="n">terms</span><span class="p">[</span><span class="s1">&#39;rmse_dhi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">err_dhi</span><span class="p">))</span>
+    <span class="p">)</span> <span class="o">/</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">dhi_ground</span><span class="p">)</span>
+
+    <span class="n">p_loss</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">terms</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">loss_terms</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p_loss</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Alliance for Sustainable Energy, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

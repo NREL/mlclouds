@@ -1,0 +1,6 @@
+mlclouds.tfarms.tfarms
+======================
+
+.. currentmodule:: mlclouds.tfarms
+
+.. autofunction:: tfarms

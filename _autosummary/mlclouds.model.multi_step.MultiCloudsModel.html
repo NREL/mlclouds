@@ -1,0 +1,1234 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mlclouds.model.multi_step.MultiCloudsModel &mdash; mlclouds 0.0.6.dev1+gbd8a6f9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=a1098538"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mlclouds.nsrdb" href="mlclouds.nsrdb.html" />
+    <link rel="prev" title="mlclouds.model.multi_step" href="mlclouds.model.multi_step.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            mlclouds
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc/installation_usage.html">Installation and Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc/installation.html">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="mlclouds.html">API reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.autoxval.html">mlclouds.autoxval</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.autoxval.AutoXVal.html">mlclouds.autoxval.AutoXVal</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.autoxval.AutoXVal.html#mlclouds.autoxval.AutoXVal"><code class="docutils literal notranslate"><span class="pre">AutoXVal</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.autoxval.TrainTest.html">mlclouds.autoxval.TrainTest</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.autoxval.TrainTest.html#mlclouds.autoxval.TrainTest"><code class="docutils literal notranslate"><span class="pre">TrainTest</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.autoxval.XVal.html">mlclouds.autoxval.XVal</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.autoxval.XVal.html#mlclouds.autoxval.XVal"><code class="docutils literal notranslate"><span class="pre">XVal</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.data_cleaners.html">mlclouds.data_cleaners</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.data_cleaners.clean_cloud_df.html">mlclouds.data_cleaners.clean_cloud_df</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.data_cleaners.clean_cloud_df.html#mlclouds.data_cleaners.clean_cloud_df"><code class="docutils literal notranslate"><span class="pre">clean_cloud_df()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.data_cleaners.sky_class_filter.html">mlclouds.data_cleaners.sky_class_filter</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.data_cleaners.sky_class_filter.html#mlclouds.data_cleaners.sky_class_filter"><code class="docutils literal notranslate"><span class="pre">sky_class_filter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.data_handlers.html">mlclouds.data_handlers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.data_handlers.TrainData.html">mlclouds.data_handlers.TrainData</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.data_handlers.TrainData.html#mlclouds.data_handlers.TrainData"><code class="docutils literal notranslate"><span class="pre">TrainData</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.data_handlers.ValidationData.html">mlclouds.data_handlers.ValidationData</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.data_handlers.ValidationData.html#mlclouds.data_handlers.ValidationData"><code class="docutils literal notranslate"><span class="pre">ValidationData</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.grid_searcher.html">mlclouds.grid_searcher</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.grid_searcher.GridSearcher.html">mlclouds.grid_searcher.GridSearcher</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.grid_searcher.GridSearcher.html#mlclouds.grid_searcher.GridSearcher"><code class="docutils literal notranslate"><span class="pre">GridSearcher</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="mlclouds.model.html">mlclouds.model</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.model.base.html">mlclouds.model.base</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.model.base.MLCloudsModel.html">mlclouds.model.base.MLCloudsModel</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.model.k_fold.html">mlclouds.model.k_fold</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="mlclouds.model.multi_step.html">mlclouds.model.multi_step</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">mlclouds.model.multi_step.MultiCloudsModel</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.nsrdb.html">mlclouds.nsrdb</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.nsrdb.NSRDBFeatures.html">mlclouds.nsrdb.NSRDBFeatures</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.nsrdb.NSRDBFeatures.html#mlclouds.nsrdb.NSRDBFeatures"><code class="docutils literal notranslate"><span class="pre">NSRDBFeatures</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.p_fun.html">mlclouds.p_fun</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.decode_sky_type.html">mlclouds.p_fun.decode_sky_type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.decode_sky_type.html#mlclouds.p_fun.decode_sky_type"><code class="docutils literal notranslate"><span class="pre">decode_sky_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.encode_sky_type.html">mlclouds.p_fun.encode_sky_type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.encode_sky_type.html#mlclouds.p_fun.encode_sky_type"><code class="docutils literal notranslate"><span class="pre">encode_sky_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.get_sky_type.html">mlclouds.p_fun.get_sky_type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.get_sky_type.html#mlclouds.p_fun.get_sky_type"><code class="docutils literal notranslate"><span class="pre">get_sky_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.get_variable.html">mlclouds.p_fun.get_variable</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.get_variable.html#mlclouds.p_fun.get_variable"><code class="docutils literal notranslate"><span class="pre">get_variable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.p_fun_all_sky.html">mlclouds.p_fun.p_fun_all_sky</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.p_fun_all_sky.html#mlclouds.p_fun.p_fun_all_sky"><code class="docutils literal notranslate"><span class="pre">p_fun_all_sky()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.p_fun_dummy.html">mlclouds.p_fun.p_fun_dummy</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.p_fun_dummy.html#mlclouds.p_fun.p_fun_dummy"><code class="docutils literal notranslate"><span class="pre">p_fun_dummy()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.scripts.html">mlclouds.scripts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.scripts.train.html">mlclouds.scripts.train</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.tdhi.html">mlclouds.tdhi</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.tdhi.t_calc_dhi.html">mlclouds.tdhi.t_calc_dhi</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.tdhi.t_calc_dhi.html#mlclouds.tdhi.t_calc_dhi"><code class="docutils literal notranslate"><span class="pre">t_calc_dhi()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.tdisc.html">mlclouds.tdisc</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.tdisc.tdisc.html">mlclouds.tdisc.tdisc</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.tdisc.tdisc.html#mlclouds.tdisc.tdisc"><code class="docutils literal notranslate"><span class="pre">tdisc()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.tfarms.html">mlclouds.tfarms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.tfarms.ice_phase.html">mlclouds.tfarms.ice_phase</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.tfarms.ice_phase.html#mlclouds.tfarms.ice_phase"><code class="docutils literal notranslate"><span class="pre">ice_phase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.tfarms.tfarms.html">mlclouds.tfarms.tfarms</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.tfarms.tfarms.html#mlclouds.tfarms.tfarms"><code class="docutils literal notranslate"><span class="pre">tfarms()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.tfarms.water_phase.html">mlclouds.tfarms.water_phase</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.tfarms.water_phase.html#mlclouds.tfarms.water_phase"><code class="docutils literal notranslate"><span class="pre">water_phase()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.trainer.html">mlclouds.trainer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.trainer.Trainer.html">mlclouds.trainer.Trainer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.trainer.Trainer.html#mlclouds.trainer.Trainer"><code class="docutils literal notranslate"><span class="pre">Trainer</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.utilities.html">mlclouds.utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.utilities.calc_time_step.html">mlclouds.utilities.calc_time_step</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.utilities.calc_time_step.html#mlclouds.utilities.calc_time_step"><code class="docutils literal notranslate"><span class="pre">calc_time_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.utilities.extract_file_meta.html">mlclouds.utilities.extract_file_meta</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.utilities.extract_file_meta.html#mlclouds.utilities.extract_file_meta"><code class="docutils literal notranslate"><span class="pre">extract_file_meta()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.utilities.get_valid_surf_sites.html">mlclouds.utilities.get_valid_surf_sites</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.utilities.get_valid_surf_sites.html#mlclouds.utilities.get_valid_surf_sites"><code class="docutils literal notranslate"><span class="pre">get_valid_surf_sites()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.utilities.surf_meta.html">mlclouds.utilities.surf_meta</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.utilities.surf_meta.html#mlclouds.utilities.surf_meta"><code class="docutils literal notranslate"><span class="pre">surf_meta()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.validator.html">mlclouds.validator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.validator.Validator.html">mlclouds.validator.Validator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.validator.Validator.html#mlclouds.validator.Validator"><code class="docutils literal notranslate"><span class="pre">Validator</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">mlclouds</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="mlclouds.html">mlclouds</a></li>
+          <li class="breadcrumb-item"><a href="mlclouds.model.html">mlclouds.model</a></li>
+          <li class="breadcrumb-item"><a href="mlclouds.model.multi_step.html">mlclouds.model.multi_step</a></li>
+      <li class="breadcrumb-item active">mlclouds.model.multi_step.MultiCloudsModel</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/nrel/mlclouds/blob/main/docs/source/_autosummary/mlclouds.model.multi_step.MultiCloudsModel.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mlclouds-model-multi-step-multicloudsmodel">
+<h1>mlclouds.model.multi_step.MultiCloudsModel<a class="headerlink" href="#mlclouds-model-multi-step-multicloudsmodel" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultiCloudsModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cloud_prop_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cloud_type_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mlclouds/model/multi_step.html#MultiCloudsModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="mlclouds.model.base.MLCloudsModel.html#mlclouds.model.base.MLCloudsModel" title="mlclouds.model.base.MLCloudsModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">MLCloudsModel</span></code></a></p>
+<p>Composite MLCloudsModel with a model that predicts cloud type and a
+second model which uses the predicted cloud type to predict cloud
+properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>PhysicsGuidedNeuralNetwork</em>) – PhysicsGuidedNeuralNetwork Model instance</p></li>
+<li><p><strong>feature_names</strong> (<em>list</em>) – Ordered list of feature names.</p></li>
+<li><p><strong>label_names</strong> (<em>list</em>) – Ordered list of label (output) names.</p></li>
+<li><p><strong>norm_params</strong> (<em>dict, optional</em>) – Dictionary mapping feature and label names (keys) to normalization
+parameters (mean, stdev), by default None</p></li>
+<li><p><strong>normalize</strong> (<em>bool | tuple, optional</em>) – Boolean flag(s) as to whether features and labels should be
+normalized. Possible values:
+- True means normalize both
+- False means don’t normalize either
+- Tuple of flags (normalize_feature, normalize_label)
+by default True</p></li>
+<li><p><strong>one_hot_categories</strong> (<em>dict, optional</em>) – Features to one-hot encode using given categories, if None do
+not run one-hot encoding, by default None</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.build" title="mlclouds.model.multi_step.MultiCloudsModel.build"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build</span></code></a>(p_fun, feature_names, label_names[, ...])</p></td>
+<td><p>Build phygnn model from given features, layers and kwargs</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.build_trained" title="mlclouds.model.multi_step.MultiCloudsModel.build_trained"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_trained</span></code></a>(p_fun, features, labels, p[, ...])</p></td>
+<td><p>Build phygnn model from given features, layers and kwargs and then train with given labels and kwargs</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.dict_json_convert" title="mlclouds.model.multi_step.MultiCloudsModel.dict_json_convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict_json_convert</span></code></a>(inp)</p></td>
+<td><p>Recursively convert numeric values in dict to work with json dump</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.get_mean" title="mlclouds.model.multi_step.MultiCloudsModel.get_mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mean</span></code></a>(name)</p></td>
+<td><p>Get feature | label mean</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.get_norm_params" title="mlclouds.model.multi_step.MultiCloudsModel.get_norm_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_norm_params</span></code></a>(names)</p></td>
+<td><p>Get means and stdevs for given feature/label names</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.get_stdev" title="mlclouds.model.multi_step.MultiCloudsModel.get_stdev"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_stdev</span></code></a>(name)</p></td>
+<td><p>Get feature | label stdev</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.load" title="mlclouds.model.multi_step.MultiCloudsModel.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(cloud_prop_model_path[, ...])</p></td>
+<td><p>Load cloud property model path and optionally a cloud type model path.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.make_one_hot_feature_names" title="mlclouds.model.multi_step.MultiCloudsModel.make_one_hot_feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_one_hot_feature_names</span></code></a>(feature_names, ...)</p></td>
+<td><p>Update feature_names after one-hot encoding</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.normalize" title="mlclouds.model.multi_step.MultiCloudsModel.normalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize</span></code></a>(data[, names])</p></td>
+<td><p>Normalize given data</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.parse_features" title="mlclouds.model.multi_step.MultiCloudsModel.parse_features"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_features</span></code></a>(features[, names])</p></td>
+<td><p>Parse features - preprocessing of feature data before training or prediction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.parse_labels" title="mlclouds.model.multi_step.MultiCloudsModel.parse_labels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_labels</span></code></a>(labels[, names])</p></td>
+<td><p>Parse labels and normalize if desired</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.predict" title="mlclouds.model.multi_step.MultiCloudsModel.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(features, **kwargs)</p></td>
+<td><p>First, predict cloud type if this is a composite model with a cloud type model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.save_model" title="mlclouds.model.multi_step.MultiCloudsModel.save_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_model</span></code></a>(path)</p></td>
+<td><p>Save phygnn model to path.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.seed" title="mlclouds.model.multi_step.MultiCloudsModel.seed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seed</span></code></a>([s])</p></td>
+<td><p>Set the random seed for reproducible results.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.set_loss_weights" title="mlclouds.model.multi_step.MultiCloudsModel.set_loss_weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_loss_weights</span></code></a>(loss_weights)</p></td>
+<td><p>Set new loss weights</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.train_model" title="mlclouds.model.multi_step.MultiCloudsModel.train_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_model</span></code></a>(features, labels, p[, n_batch, ...])</p></td>
+<td><p>Train the model with the provided features and label</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.transfer_outputs" title="mlclouds.model.multi_step.MultiCloudsModel.transfer_outputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transfer_outputs</span></code></a>(out, features)</p></td>
+<td><p>Transfer output data from cloud type prediction model to input features for cloud property prediction model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.unnormalize" title="mlclouds.model.multi_step.MultiCloudsModel.unnormalize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unnormalize</span></code></a>(data[, names])</p></td>
+<td><p>Un-normalize given data</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">CTYPE_FRACTIONS</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.bias_weights" title="mlclouds.model.multi_step.MultiCloudsModel.bias_weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bias_weights</span></code></a></p></td>
+<td><p>Get a list of the NN bias weights (tensors)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.feature_dims" title="mlclouds.model.multi_step.MultiCloudsModel.feature_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">feature_dims</span></code></a></p></td>
+<td><p>Number of features</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.feature_means" title="mlclouds.model.multi_step.MultiCloudsModel.feature_means"><code class="xref py py-obj docutils literal notranslate"><span class="pre">feature_means</span></code></a></p></td>
+<td><p>Feature means, used for (un)normalization</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.feature_names" title="mlclouds.model.multi_step.MultiCloudsModel.feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">feature_names</span></code></a></p></td>
+<td><p>List of the feature variable names.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.feature_stdevs" title="mlclouds.model.multi_step.MultiCloudsModel.feature_stdevs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">feature_stdevs</span></code></a></p></td>
+<td><p>Feature stdevs, used for (un)normalization</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.history" title="mlclouds.model.multi_step.MultiCloudsModel.history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">history</span></code></a></p></td>
+<td><p>Model training history DataFrame (None if not yet trained)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.input_feature_names" title="mlclouds.model.multi_step.MultiCloudsModel.input_feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_feature_names</span></code></a></p></td>
+<td><p>Input feature names</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.kernel_weights" title="mlclouds.model.multi_step.MultiCloudsModel.kernel_weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kernel_weights</span></code></a></p></td>
+<td><p>Get a list of the NN kernel weights (tensors)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.label_dims" title="mlclouds.model.multi_step.MultiCloudsModel.label_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">label_dims</span></code></a></p></td>
+<td><p>Number of labels</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.label_means" title="mlclouds.model.multi_step.MultiCloudsModel.label_means"><code class="xref py py-obj docutils literal notranslate"><span class="pre">label_means</span></code></a></p></td>
+<td><p>label means, used for (un)normalization</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.label_names" title="mlclouds.model.multi_step.MultiCloudsModel.label_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">label_names</span></code></a></p></td>
+<td><p>label variable names</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.label_stdevs" title="mlclouds.model.multi_step.MultiCloudsModel.label_stdevs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">label_stdevs</span></code></a></p></td>
+<td><p>label stdevs, used for (un)normalization</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.layers" title="mlclouds.model.multi_step.MultiCloudsModel.layers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">layers</span></code></a></p></td>
+<td><p>Model layers</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.means" title="mlclouds.model.multi_step.MultiCloudsModel.means"><code class="xref py py-obj docutils literal notranslate"><span class="pre">means</span></code></a></p></td>
+<td><p>Mapping feature/label names to the mean values for (un)normalization</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.model" title="mlclouds.model.multi_step.MultiCloudsModel.model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">model</span></code></a></p></td>
+<td><p>Trained model</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.model_summary" title="mlclouds.model.multi_step.MultiCloudsModel.model_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">model_summary</span></code></a></p></td>
+<td><p>Tensorflow model summary</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.normalization_parameters" title="mlclouds.model.multi_step.MultiCloudsModel.normalization_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalization_parameters</span></code></a></p></td>
+<td><p>Features and label (un)normalization parameters</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.normalize_features" title="mlclouds.model.multi_step.MultiCloudsModel.normalize_features"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_features</span></code></a></p></td>
+<td><p>Flag to normalize features</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.normalize_labels" title="mlclouds.model.multi_step.MultiCloudsModel.normalize_labels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalize_labels</span></code></a></p></td>
+<td><p>Flag to normalize labels</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.one_hot_categories" title="mlclouds.model.multi_step.MultiCloudsModel.one_hot_categories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">one_hot_categories</span></code></a></p></td>
+<td><p>categories to use for one-hot encoding</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.one_hot_feature_names" title="mlclouds.model.multi_step.MultiCloudsModel.one_hot_feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">one_hot_feature_names</span></code></a></p></td>
+<td><p>One-hot encoded feature names</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.one_hot_input_feature_names" title="mlclouds.model.multi_step.MultiCloudsModel.one_hot_input_feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">one_hot_input_feature_names</span></code></a></p></td>
+<td><p>Input feature names to be one-hot encoded</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.output_names" title="mlclouds.model.multi_step.MultiCloudsModel.output_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_names</span></code></a></p></td>
+<td><p>Ordered list of predicted features.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.predicts_cloud_fractions" title="mlclouds.model.multi_step.MultiCloudsModel.predicts_cloud_fractions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predicts_cloud_fractions</span></code></a></p></td>
+<td><p>Check if this model predicts cloud type fractions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.stdevs" title="mlclouds.model.multi_step.MultiCloudsModel.stdevs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stdevs</span></code></a></p></td>
+<td><p>Mapping feature/label names to the stdev values for (un)normalization</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.version_record" title="mlclouds.model.multi_step.MultiCloudsModel.version_record"><code class="xref py py-obj docutils literal notranslate"><span class="pre">version_record</span></code></a></p></td>
+<td><p>A record of important versions that this model was built with.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.model.multi_step.MultiCloudsModel.weights" title="mlclouds.model.multi_step.MultiCloudsModel.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a></p></td>
+<td><p>Get a list of layer weights for gradient calculations.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.load">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cloud_prop_model_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cloud_type_model_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mlclouds/model/multi_step.html#MultiCloudsModel.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.load" title="Link to this definition"></a></dt>
+<dd><p>Load cloud property model path and optionally a cloud type model
+path.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.transfer_outputs">
+<span class="sig-name descname"><span class="pre">transfer_outputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mlclouds/model/multi_step.html#MultiCloudsModel.transfer_outputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.transfer_outputs" title="Link to this definition"></a></dt>
+<dd><p>Transfer output data from cloud type prediction model to input
+features for cloud property prediction model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.MODEL_CLASS">
+<span class="sig-name descname"><span class="pre">MODEL_CLASS</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.MODEL_CLASS" title="Link to this definition"></a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">PhysicsGuidedNeuralNetwork</span></code></p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.bias_weights">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bias_weights</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.bias_weights" title="Link to this definition"></a></dt>
+<dd><p>Get a list of the NN bias weights (tensors)</p>
+<p>(can be used for bias regularization).</p>
+<p>Does not include input layer or dropout layers.
+Does include the output layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.build">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_fun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(True,</span> <span class="pre">False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_hot_categories</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.5,</span> <span class="pre">0.5)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers_obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mae'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_reg_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_reg_power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_reg_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_reg_power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.build" title="Link to this definition"></a></dt>
+<dd><p>Build phygnn model from given features, layers and kwargs</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>p_fun</strong> (<em>function</em>) – Physics function to guide the neural network loss function.
+This fun must take (phygnn, y_true, y_predicted, p, <a href="#id1"><span class="problematic" id="id2">**</span></a>p_kwargs)
+as arguments with datatypes (PhysicsGuidedNeuralNetwork, tf.Tensor,
+np.ndarray, np.ndarray). The function must return a tf.Tensor
+object with a single numeric loss value (output.ndim == 0).</p></li>
+<li><p><strong>feature_names</strong> (<em>list</em>) – Ordered list of feature names.</p></li>
+<li><p><strong>label_names</strong> (<em>list</em>) – Ordered list of label (output) names.</p></li>
+<li><p><strong>normalize</strong> (<em>bool | tuple, optional</em>) – Boolean flag(s) as to whether features and labels should be
+normalized. Possible values:
+- True means normalize both
+- False means don’t normalize either
+- Tuple of flags (normalize_feature, normalize_label)
+by default True</p></li>
+<li><p><strong>one_hot_categories</strong> (<em>dict, optional</em>) – Features to one-hot encode using given categories, if None do
+not run one-hot encoding, by default None</p></li>
+<li><p><strong>loss_weights</strong> (<em>tuple, optional</em>) – Loss weights for the neural network y_true vs y_predicted
+and for the p_fun loss, respectively. For example,
+loss_weights=(0.0, 1.0) would simplify the phygnn loss function
+to just the p_fun output.</p></li>
+<li><p><strong>hidden_layers</strong> (<em>list, optional</em>) – List of dictionaries of key word arguments for each hidden
+layer in the NN. Dense linear layers can be input with their
+activations or separately for more explicit control over the layer
+ordering. For example, this is a valid input for hidden_layers that
+will yield 8 hidden layers (10 layers including input+output):</p>
+<blockquote>
+<div><dl class="simple">
+<dt>[{‘units’: 64, ‘activation’: ‘relu’, ‘dropout’: 0.01},</dt><dd><p>{‘units’: 64},
+{‘batch_normalization’: {‘axis’: -1}},
+{‘activation’: ‘relu’},
+{‘dropout’: 0.01},
+{‘class’: ‘Flatten’},
+]</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p><strong>input_layer</strong> (<em>None | bool | dict</em>) – Input layer. specification. Can be a dictionary similar to
+hidden_layers specifying a dense / conv / lstm layer.  Will
+default to a keras InputLayer with input shape = n_features.
+Can be False if the input layer will be included in the
+hidden_layers input.</p></li>
+<li><p><strong>output_layer</strong> (<em>None | bool | list | dict</em>) – Output layer specification. Can be a list/dict similar to
+hidden_layers input specifying a dense layer with activation.
+For example, for a classfication problem with a single output,
+output_layer should be [{‘units’: 1}, {‘activation’: ‘sigmoid’}].
+This defaults to a single dense layer with no activation
+(best for regression problems).  Can be False if the output layer
+will be included in the hidden_layers input.</p></li>
+<li><p><strong>layers_obj</strong> (<em>None | phygnn.utilities.tf_layers.Layers</em>) – Optional initialized Layers object to set as the model layers
+including pre-set weights. This option will override the
+hidden_layers, input_layer, and output_layer arguments.</p></li>
+<li><p><strong>metric</strong> (<em>str, optional</em>) – Loss metric option for the NN loss function (not the physical
+loss function). Must be a valid key in phygnn.loss_metrics.METRICS</p></li>
+<li><p><strong>optimizer</strong> (<em>tensorflow.keras.optimizers | dict | None</em>) – Instantiated tf.keras.optimizers object or a dict optimizer config
+from tf.keras.optimizers.get_config(). None defaults to Adam.</p></li>
+<li><p><strong>learning_rate</strong> (<em>float, optional</em>) – Optimizer learning rate. Not used if optimizer input arg is a
+pre-initialized object or if optimizer input arg is a config dict.</p></li>
+<li><p><strong>history</strong> (<em>None | pd.DataFrame, optional</em>) – Learning history if continuing a training session.</p></li>
+<li><p><strong>kernel_reg_rate</strong> (<em>float, optional</em>) – Kernel regularization rate. Increasing this value above zero will
+add a structural loss term to the loss function that
+disincentivizes large hidden layer weights and should reduce
+model complexity. Setting this to 0.0 will disable kernel
+regularization.</p></li>
+<li><p><strong>kernel_reg_power</strong> (<em>int, optional</em>) – Kernel regularization power. kernel_reg_power=1 is L1
+regularization (lasso regression), and kernel_reg_power=2 is L2
+regularization (ridge regression).</p></li>
+<li><p><strong>bias_reg_rate</strong> (<em>float, optional</em>) – Bias regularization rate. Increasing this value above zero will
+add a structural loss term to the loss function that
+disincentivizes large hidden layer biases and should reduce
+model complexity. Setting this to 0.0 will disable bias
+regularization.</p></li>
+<li><p><strong>bias_reg_power</strong> (<em>int, optional</em>) – Bias regularization power. bias_reg_power=1 is L1
+regularization (lasso regression), and bias_reg_power=2 is L2
+regularization (ridge regression).</p></li>
+<li><p><strong>name</strong> (<em>None | str</em>) – Optional model name for debugging.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>model</strong> (<em>PhygnnModel</em>) – Initialized PhygnnModel instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.build_trained">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_trained</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_fun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(True,</span> <span class="pre">False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_hot_categories</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.5,</span> <span class="pre">0.5)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layers_obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mae'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">history</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_reg_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_reg_power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_reg_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_reg_power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_preflight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_diagnostics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.build_trained" title="Link to this definition"></a></dt>
+<dd><p>Build phygnn model from given features, layers and
+kwargs and then train with given labels and kwargs</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul>
+<li><p><strong>p_fun</strong> (<em>function</em>) – Physics function to guide the neural network loss function.
+This fun must take (phygnn, y_true, y_predicted, p, <a href="#id3"><span class="problematic" id="id4">**</span></a>p_kwargs)
+as arguments with datatypes (PhysicsGuidedNeuralNetwork, tf.Tensor,
+np.ndarray, np.ndarray). The function must return a tf.Tensor
+object with a single numeric loss value (output.ndim == 0).</p></li>
+<li><p><strong>features</strong> (<em>np.ndarray | pd.DataFrame</em>) – Feature data in a &gt;=2D array or DataFrame. If this is a DataFrame,
+the index is ignored, the columns are used with self.feature_names,
+and the df is converted into a numpy array for batching and passing
+to the training algorithm. A 2D input should have the shape:
+(n_observations, n_features). A 3D input should have the shape:
+(n_observations, n_timesteps, n_features). 4D inputs have not been
+tested and should be used with caution.</p></li>
+<li><p><strong>labels</strong> (<em>np.ndarray | pd.DataFrame</em>) – Known output data in a 2D array or DataFrame.
+Same dimension rules as features.</p></li>
+<li><p><strong>p</strong> (<em>np.ndarray | pd.DataFrame</em>) – Supplemental feature data for the physics loss function in 2D array
+or DataFrame. Same dimension rules as features.</p></li>
+<li><p><strong>normalize</strong> (<em>bool | tuple, optional</em>) – Boolean flag(s) as to whether features and labels should be
+normalized. Possible values:
+- True means normalize both
+- False means don’t normalize either
+- Tuple of flags (normalize_feature, normalize_label)
+by default True</p></li>
+<li><p><strong>one_hot_categories</strong> (<em>dict, optional</em>) – Features to one-hot encode using given categories, if None do
+not run one-hot encoding, by default None</p></li>
+<li><p><strong>loss_weights</strong> (<em>tuple, optional</em>) – Loss weights for the neural network y_true vs y_predicted
+and for the p_fun loss, respectively. For example,
+loss_weights=(0.0, 1.0) would simplify the phygnn loss function
+to just the p_fun output.</p></li>
+<li><p><strong>hidden_layers</strong> (<em>list, optional</em>) – List of dictionaries of key word arguments for each hidden
+layer in the NN. Dense linear layers can be input with their
+activations or separately for more explicit control over the layer
+ordering. For example, this is a valid input for hidden_layers that
+will yield 8 hidden layers (10 layers including input+output):</p>
+<blockquote>
+<div><dl class="simple">
+<dt>[{‘units’: 64, ‘activation’: ‘relu’, ‘dropout’: 0.01},</dt><dd><p>{‘units’: 64},
+{‘batch_normalization’: {‘axis’: -1}},
+{‘activation’: ‘relu’},
+{‘dropout’: 0.01},
+{‘class’: ‘Flatten’},
+]</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p><strong>input_layer</strong> (<em>None | bool | dict</em>) – Input layer. specification. Can be a dictionary similar to
+hidden_layers specifying a dense / conv / lstm layer.  Will
+default to a keras InputLayer with input shape = n_features.
+Can be False if the input layer will be included in the
+hidden_layers input.</p></li>
+<li><p><strong>output_layer</strong> (<em>None } bool | list | dict</em>) – Output layer specification. Can be a list/dict similar to
+hidden_layers input specifying a dense layer with activation.
+For example, for a classfication problem with a single output,
+output_layer should be [{‘units’: 1}, {‘activation’: ‘sigmoid’}].
+This defaults to a single dense layer with no activation
+(best for regression problems).  Can be False if the output layer
+will be included in the hidden_layers input.</p></li>
+<li><p><strong>layers_obj</strong> (<em>None | phygnn.utilities.tf_layers.Layers</em>) – Optional initialized Layers object to set as the model layers
+including pre-set weights. This option will override the
+hidden_layers, input_layer, and output_layer arguments.</p></li>
+<li><p><strong>metric</strong> (<em>str, optional</em>) – Loss metric option for the NN loss function (not the physical
+loss function). Must be a valid key in phygnn.loss_metrics.METRICS</p></li>
+<li><p><strong>optimizer</strong> (<em>tensorflow.keras.optimizers | dict | None</em>) – Instantiated tf.keras.optimizers object or a dict optimizer config
+from tf.keras.optimizers.get_config(). None defaults to Adam.</p></li>
+<li><p><strong>learning_rate</strong> (<em>float, optional</em>) – Optimizer learning rate. Not used if optimizer input arg is a
+pre-initialized object or if optimizer input arg is a config dict.</p></li>
+<li><p><strong>history</strong> (<em>None | pd.DataFrame, optional</em>) – Learning history if continuing a training session.</p></li>
+<li><p><strong>kernel_reg_rate</strong> (<em>float, optional</em>) – Kernel regularization rate. Increasing this value above zero will
+add a structural loss term to the loss function that
+disincentivizes large hidden layer weights and should reduce
+model complexity. Setting this to 0.0 will disable kernel
+regularization.</p></li>
+<li><p><strong>kernel_reg_power</strong> (<em>int, optional</em>) – Kernel regularization power. kernel_reg_power=1 is L1
+regularization (lasso regression), and kernel_reg_power=2 is L2
+regularization (ridge regression).</p></li>
+<li><p><strong>bias_reg_rate</strong> (<em>float, optional</em>) – Bias regularization rate. Increasing this value above zero will
+add a structural loss term to the loss function that
+disincentivizes large hidden layer biases and should reduce
+model complexity. Setting this to 0.0 will disable bias
+regularization.</p></li>
+<li><p><strong>bias_reg_power</strong> (<em>int, optional</em>) – Bias regularization power. bias_reg_power=1 is L1
+regularization (lasso regression), and bias_reg_power=2 is L2
+regularization (ridge regression).</p></li>
+<li><p><strong>n_batch</strong> (<em>int</em>) – Number of times to update the NN weights per epoch (number of
+mini-batches). The training data will be split into this many
+mini-batches and the NN will train on each mini-batch, update
+weights, then move onto the next mini-batch.</p></li>
+<li><p><strong>batch_size</strong> (<em>int | None</em>) – Number of training samples per batch. This input is redundant to
+n_batch and will not be used if n_batch is not None.</p></li>
+<li><p><strong>n_epoch</strong> (<em>int</em>) – Number of times to iterate on the training data.</p></li>
+<li><p><strong>shuffle</strong> (<em>bool</em>) – Flag to randomly subset the validation data and batch selection
+from features and labels.</p></li>
+<li><p><strong>validation_split</strong> (<em>float</em>)</p></li>
+<li><p><strong>run_preflight</strong> (<em>bool</em>) – Flag to run preflight checks.</p></li>
+<li><p><strong>return_diagnostics</strong> (<em>bool</em>) – Flag to return training diagnostics dictionary.
+Fraction of features and labels to use for validation.</p></li>
+<li><p><strong>p_kwargs</strong> (<em>None | dict</em>) – Optional kwargs for the physical loss function p_fun.</p></li>
+<li><p><strong>parse_kwargs</strong> (<em>dict</em>) – kwargs for cls.parse_features</p></li>
+<li><p><strong>norm_labels</strong> (<em>bool, optional</em>) – Flag to normalize label, by default True</p></li>
+<li><p><strong>save_path</strong> (<em>str, optional</em>) – Directory path to save model to. The tensorflow model will be
+saved to the directory while the framework parameters will be
+saved in json, by default None</p></li>
+<li><p><strong>name</strong> (<em>None | str</em>) – Optional model name for debugging.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>model</strong> (<em>TfModel</em>) – Initialized and trained TfModel obj</p></li>
+<li><p><strong>diagnostics</strong> (<em>dict, optional</em>) – Namespace of training parameters that can be used for diagnostics.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.dict_json_convert">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dict_json_convert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.dict_json_convert" title="Link to this definition"></a></dt>
+<dd><p>Recursively convert numeric values in dict to work with json dump</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inp</strong> (<em>dict</em>) – Dictionary to convert.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>out</strong> (<em>dict</em>) – Copy of dict input with all nested numeric values converted to
+base python int or float and all arrays converted to lists.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.feature_dims">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_dims</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.feature_dims" title="Link to this definition"></a></dt>
+<dd><p>Number of features</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>int</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.feature_means">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_means</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.feature_means" title="Link to this definition"></a></dt>
+<dd><p>Feature means, used for (un)normalization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.feature_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_names</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.feature_names" title="Link to this definition"></a></dt>
+<dd><p>List of the feature variable names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.feature_stdevs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">feature_stdevs</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.feature_stdevs" title="Link to this definition"></a></dt>
+<dd><p>Feature stdevs, used for (un)normalization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.get_mean">
+<span class="sig-name descname"><span class="pre">get_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.get_mean" title="Link to this definition"></a></dt>
+<dd><p>Get feature | label mean</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – feature | label name</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>mean</strong> (<em>float</em>) – Mean value used for normalization</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.get_norm_params">
+<span class="sig-name descname"><span class="pre">get_norm_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.get_norm_params" title="Link to this definition"></a></dt>
+<dd><p>Get means and stdevs for given feature/label names</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<em>list</em>) – list of feature/label names to get normalization params for</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>means</strong> (<em>list</em>) – List of means to use for (un)normalization</p></li>
+<li><p><strong>stdevs</strong> (<em>list</em>) – List of stdevs to use for (un)normalization</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.get_stdev">
+<span class="sig-name descname"><span class="pre">get_stdev</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.get_stdev" title="Link to this definition"></a></dt>
+<dd><p>Get feature | label stdev</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – feature | label name</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>stdev</strong> (<em>float</em>) – Stdev value used for normalization</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.history">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">history</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.history" title="Link to this definition"></a></dt>
+<dd><p>Model training history DataFrame (None if not yet trained)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>pandas.DataFrame | None</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.input_feature_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_feature_names</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.input_feature_names" title="Link to this definition"></a></dt>
+<dd><p>Input feature names</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.kernel_weights">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kernel_weights</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.kernel_weights" title="Link to this definition"></a></dt>
+<dd><p>Get a list of the NN kernel weights (tensors)</p>
+<p>(can be used for kernel regularization).</p>
+<p>Does not include input layer or dropout layers.
+Does include the output layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.label_dims">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">label_dims</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.label_dims" title="Link to this definition"></a></dt>
+<dd><p>Number of labels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>int</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.label_means">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">label_means</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.label_means" title="Link to this definition"></a></dt>
+<dd><p>label means, used for (un)normalization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.label_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">label_names</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.label_names" title="Link to this definition"></a></dt>
+<dd><p>label variable names</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.label_stdevs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">label_stdevs</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.label_stdevs" title="Link to this definition"></a></dt>
+<dd><p>label stdevs, used for (un)normalization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.layers">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">layers</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.layers" title="Link to this definition"></a></dt>
+<dd><p>Model layers</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.make_one_hot_feature_names">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_one_hot_feature_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_hot_categories</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.make_one_hot_feature_names" title="Link to this definition"></a></dt>
+<dd><p>Update feature_names after one-hot encoding</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>feature_names</strong> (<em>list</em>) – Input feature names</p></li>
+<li><p><strong>one_hot_categories</strong> (<em>dict</em>) – Features to one-hot encode using given categories</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>one_hot_feature_names</strong> (<em>list</em>) – Updated list of feature names with one_hot categories</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.means">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">means</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.means" title="Link to this definition"></a></dt>
+<dd><p>Mapping feature/label names to the mean values for
+(un)normalization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.model" title="Link to this definition"></a></dt>
+<dd><p>Trained model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>tensorflow.keras.models</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.model_summary">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_summary</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.model_summary" title="Link to this definition"></a></dt>
+<dd><p>Tensorflow model summary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>str</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.normalization_parameters">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalization_parameters</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.normalization_parameters" title="Link to this definition"></a></dt>
+<dd><p>Features and label (un)normalization parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.normalize">
+<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.normalize" title="Link to this definition"></a></dt>
+<dd><p>Normalize given data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>dict | pandas.DataFrame | ndarray</em>) – Data to normalize</p></li>
+<li><p><strong>names</strong> (<em>list, optional</em>) – List of data item names, needed to normalized ndarrays,
+by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>data</strong> (<em>dict | pandas.DataFrame | ndarray</em>) – Normalized data in same format as input</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.normalize_features">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalize_features</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.normalize_features" title="Link to this definition"></a></dt>
+<dd><p>Flag to normalize features</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>bool</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.normalize_labels">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalize_labels</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.normalize_labels" title="Link to this definition"></a></dt>
+<dd><p>Flag to normalize labels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>bool</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.one_hot_categories">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">one_hot_categories</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.one_hot_categories" title="Link to this definition"></a></dt>
+<dd><p>categories to use for one-hot encoding</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.one_hot_feature_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">one_hot_feature_names</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.one_hot_feature_names" title="Link to this definition"></a></dt>
+<dd><p>One-hot encoded feature names</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.one_hot_input_feature_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">one_hot_input_feature_names</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.one_hot_input_feature_names" title="Link to this definition"></a></dt>
+<dd><p>Input feature names to be one-hot encoded</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.parse_features">
+<span class="sig-name descname"><span class="pre">parse_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.parse_features" title="Link to this definition"></a></dt>
+<dd><p>Parse features - preprocessing of feature data before training or
+prediction. This will do one-hot encoding based on
+self.one_hot_categories, and feature normalization based on
+self.normalize_features</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>pandas.DataFrame | dict | ndarray</em>) – Features to train on or predict from</p></li>
+<li><p><strong>names</strong> (<em>list, optional</em>) – List of feature names, by default None</p></li>
+<li><p><strong>kwargs</strong> (<em>dict, optional</em>) – kwargs for PreProcess.one_hot</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>features</strong> (<em>ndarray</em>) – Parsed features array normalized and with str columns converted
+to one hot vectors if desired</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.parse_labels">
+<span class="sig-name descname"><span class="pre">parse_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.parse_labels" title="Link to this definition"></a></dt>
+<dd><p>Parse labels and normalize if desired</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>labels</strong> (<em>pandas.DataFrame | dict | ndarray</em>) – Features to train on or predict from</p></li>
+<li><p><strong>names</strong> (<em>list, optional</em>) – List of label names, by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>labels</strong> (<em>ndarray</em>) – Parsed labels array, normalized if desired</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mlclouds/model/multi_step.html#MultiCloudsModel.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.predict" title="Link to this definition"></a></dt>
+<dd><p>First, predict cloud type if this is a composite model with a cloud
+type model. Use these as the cloud type input feature for the cloud
+property model. If there is no cloud type model just use the cloud
+property model directly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>dict | pd.DataFrame</em>) – Input features used for cloud property / cloud type predictions</p></li>
+<li><p><strong>**kwargs</strong> (<em>Mapping</em>) – Mappable of keyword arguments for <code class="docutils literal notranslate"><span class="pre">PhygnnModel</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>prediction</strong> (<em>ndarray | pandas.DataFrame</em>) – label prediction</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.predicts_cloud_fractions">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">predicts_cloud_fractions</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.predicts_cloud_fractions" title="Link to this definition"></a></dt>
+<dd><p>Check if this model predicts cloud type fractions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.save_model">
+<span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.save_model" title="Link to this definition"></a></dt>
+<dd><p>Save phygnn model to path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Target model save path. Can be a target .json, .pkl, or a directory
+that will be created+populated with a pkl model file and json
+parameters file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.seed">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.seed" title="Link to this definition"></a></dt>
+<dd><p>Set the random seed for reproducible results.
+:Parameters: <strong>s</strong> (<em>int</em>) – Random number generator seed</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.set_loss_weights">
+<span class="sig-name descname"><span class="pre">set_loss_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loss_weights</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.set_loss_weights" title="Link to this definition"></a></dt>
+<dd><p>Set new loss weights</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>loss_weights</strong> (<em>tuple</em>) – Loss weights for the neural network y_true vs y_predicted
+and for the p_fun loss, respectively. For example,
+loss_weights=(0.0, 1.0) would simplify the phygnn loss function
+to just the p_fun output.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.stdevs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stdevs</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.stdevs" title="Link to this definition"></a></dt>
+<dd><p>Mapping feature/label names to the stdev values for
+(un)normalization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.train_model">
+<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_preflight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_diagnostics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.train_model" title="Link to this definition"></a></dt>
+<dd><p>Train the model with the provided features and label</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>np.ndarray | pd.DataFrame</em>) – Feature data in a &gt;=2D array or DataFrame. If this is a DataFrame,
+the index is ignored, the columns are used with self.feature_names,
+and the df is converted into a numpy array for batching and passing
+to the training algorithm. A 2D input should have the shape:
+(n_observations, n_features). A 3D input should have the shape:
+(n_observations, n_timesteps, n_features). 4D inputs have not been
+tested and should be used with caution.</p></li>
+<li><p><strong>labels</strong> (<em>np.ndarray | pd.DataFrame</em>) – Known output data in a 2D array or DataFrame.
+Same dimension rules as features.</p></li>
+<li><p><strong>p</strong> (<em>np.ndarray | pd.DataFrame</em>) – Supplemental feature data for the physics loss function in 2D array
+or DataFrame. Same dimension rules as features.</p></li>
+<li><p><strong>n_batch</strong> (<em>int</em>) – Number of times to update the NN weights per epoch (number of
+mini-batches). The training data will be split into this many
+mini-batches and the NN will train on each mini-batch, update
+weights, then move onto the next mini-batch.</p></li>
+<li><p><strong>batch_size</strong> (<em>int | None</em>) – Number of training samples per batch. This input is redundant to
+n_batch and will not be used if n_batch is not None.</p></li>
+<li><p><strong>n_epoch</strong> (<em>int</em>) – Number of times to iterate on the training data.</p></li>
+<li><p><strong>shuffle</strong> (<em>bool</em>) – Flag to randomly subset the validation data and batch selection
+from features, labels, and p.</p></li>
+<li><p><strong>validation_split</strong> (<em>float</em>) – Fraction of features and labels to use for validation.</p></li>
+<li><p><strong>p_kwargs</strong> (<em>None | dict</em>) – Optional kwargs for the physical loss function p_fun.</p></li>
+<li><p><strong>run_preflight</strong> (<em>bool</em>) – Flag to run preflight checks.</p></li>
+<li><p><strong>return_diagnostics</strong> (<em>bool</em>) – Flag to return training diagnostics dictionary.</p></li>
+<li><p><strong>parse_kwargs</strong> (<em>dict</em>) – kwargs for cls.parse_features</p></li>
+<li><p><strong>norm_labels</strong> (<em>bool, optional</em>) – Flag to normalize label, by default True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>diagnostics</strong> (<em>dict, optional</em>) – Namespace of training parameters that can be used for diagnostics.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.unnormalize">
+<span class="sig-name descname"><span class="pre">unnormalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.unnormalize" title="Link to this definition"></a></dt>
+<dd><p>Un-normalize given data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>dict | pandas.DataFrame | ndarray</em>) – Data to un-normalize</p></li>
+<li><p><strong>names</strong> (<em>list, optional</em>) – List of data item names, needed to un-normalized ndarrays,
+by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>data</strong> (<em>dict | pandas.DataFrame | ndarray</em>) – Native data in same format as input</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.version_record">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">version_record</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.version_record" title="Link to this definition"></a></dt>
+<dd><p>A record of important versions that this model was built with.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.weights">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.weights" title="Link to this definition"></a></dt>
+<dd><p>Get a list of layer weights for gradient calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.model.multi_step.MultiCloudsModel.output_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_names</span></span><a class="headerlink" href="#mlclouds.model.multi_step.MultiCloudsModel.output_names" title="Link to this definition"></a></dt>
+<dd><p>Ordered list of predicted features. We include cloud_type which is
+predicted if this is a composite model with a cloud type model and
+passed through from input features otherwise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_names</strong> (<em>list</em>) – Ordered list of predicted features. If the model predicts cloud
+type fractions these are replaced with <code class="docutils literal notranslate"><span class="pre">cloud_type</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mlclouds.model.multi_step.html" class="btn btn-neutral float-left" title="mlclouds.model.multi_step" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mlclouds.nsrdb.html" class="btn btn-neutral float-right" title="mlclouds.nsrdb" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Alliance for Sustainable Energy, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

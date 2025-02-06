@@ -1,0 +1,774 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mlclouds.validator &mdash; mlclouds 0.0.6.dev1+gbd8a6f9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=a1098538"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            mlclouds
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc/installation_usage.html">Installation and Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../misc/installation.html">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/mlclouds.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.autoxval.html">mlclouds.autoxval</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.autoxval.AutoXVal.html">mlclouds.autoxval.AutoXVal</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.autoxval.AutoXVal.html#mlclouds.autoxval.AutoXVal"><code class="docutils literal notranslate"><span class="pre">AutoXVal</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.autoxval.TrainTest.html">mlclouds.autoxval.TrainTest</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.autoxval.TrainTest.html#mlclouds.autoxval.TrainTest"><code class="docutils literal notranslate"><span class="pre">TrainTest</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.autoxval.XVal.html">mlclouds.autoxval.XVal</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.autoxval.XVal.html#mlclouds.autoxval.XVal"><code class="docutils literal notranslate"><span class="pre">XVal</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.data_cleaners.html">mlclouds.data_cleaners</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.data_cleaners.clean_cloud_df.html">mlclouds.data_cleaners.clean_cloud_df</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.data_cleaners.clean_cloud_df.html#mlclouds.data_cleaners.clean_cloud_df"><code class="docutils literal notranslate"><span class="pre">clean_cloud_df()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.data_cleaners.sky_class_filter.html">mlclouds.data_cleaners.sky_class_filter</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.data_cleaners.sky_class_filter.html#mlclouds.data_cleaners.sky_class_filter"><code class="docutils literal notranslate"><span class="pre">sky_class_filter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.data_handlers.html">mlclouds.data_handlers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.data_handlers.TrainData.html">mlclouds.data_handlers.TrainData</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.data_handlers.TrainData.html#mlclouds.data_handlers.TrainData"><code class="docutils literal notranslate"><span class="pre">TrainData</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.data_handlers.ValidationData.html">mlclouds.data_handlers.ValidationData</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.data_handlers.ValidationData.html#mlclouds.data_handlers.ValidationData"><code class="docutils literal notranslate"><span class="pre">ValidationData</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.grid_searcher.html">mlclouds.grid_searcher</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.grid_searcher.GridSearcher.html">mlclouds.grid_searcher.GridSearcher</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.grid_searcher.GridSearcher.html#mlclouds.grid_searcher.GridSearcher"><code class="docutils literal notranslate"><span class="pre">GridSearcher</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.model.html">mlclouds.model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.model.base.html">mlclouds.model.base</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.model.base.MLCloudsModel.html">mlclouds.model.base.MLCloudsModel</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.model.k_fold.html">mlclouds.model.k_fold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.model.multi_step.html">mlclouds.model.multi_step</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.model.multi_step.MultiCloudsModel.html">mlclouds.model.multi_step.MultiCloudsModel</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.nsrdb.html">mlclouds.nsrdb</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.nsrdb.NSRDBFeatures.html">mlclouds.nsrdb.NSRDBFeatures</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.nsrdb.NSRDBFeatures.html#mlclouds.nsrdb.NSRDBFeatures"><code class="docutils literal notranslate"><span class="pre">NSRDBFeatures</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.html">mlclouds.p_fun</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.decode_sky_type.html">mlclouds.p_fun.decode_sky_type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.decode_sky_type.html#mlclouds.p_fun.decode_sky_type"><code class="docutils literal notranslate"><span class="pre">decode_sky_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.encode_sky_type.html">mlclouds.p_fun.encode_sky_type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.encode_sky_type.html#mlclouds.p_fun.encode_sky_type"><code class="docutils literal notranslate"><span class="pre">encode_sky_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.get_sky_type.html">mlclouds.p_fun.get_sky_type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.get_sky_type.html#mlclouds.p_fun.get_sky_type"><code class="docutils literal notranslate"><span class="pre">get_sky_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.get_variable.html">mlclouds.p_fun.get_variable</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.get_variable.html#mlclouds.p_fun.get_variable"><code class="docutils literal notranslate"><span class="pre">get_variable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.p_fun_all_sky.html">mlclouds.p_fun.p_fun_all_sky</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.p_fun_all_sky.html#mlclouds.p_fun.p_fun_all_sky"><code class="docutils literal notranslate"><span class="pre">p_fun_all_sky()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.p_fun_dummy.html">mlclouds.p_fun.p_fun_dummy</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.p_fun.p_fun_dummy.html#mlclouds.p_fun.p_fun_dummy"><code class="docutils literal notranslate"><span class="pre">p_fun_dummy()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.scripts.html">mlclouds.scripts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.scripts.train.html">mlclouds.scripts.train</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.tdhi.html">mlclouds.tdhi</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.tdhi.t_calc_dhi.html">mlclouds.tdhi.t_calc_dhi</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.tdhi.t_calc_dhi.html#mlclouds.tdhi.t_calc_dhi"><code class="docutils literal notranslate"><span class="pre">t_calc_dhi()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.tdisc.html">mlclouds.tdisc</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.tdisc.tdisc.html">mlclouds.tdisc.tdisc</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.tdisc.tdisc.html#mlclouds.tdisc.tdisc"><code class="docutils literal notranslate"><span class="pre">tdisc()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.tfarms.html">mlclouds.tfarms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.tfarms.ice_phase.html">mlclouds.tfarms.ice_phase</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.tfarms.ice_phase.html#mlclouds.tfarms.ice_phase"><code class="docutils literal notranslate"><span class="pre">ice_phase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.tfarms.tfarms.html">mlclouds.tfarms.tfarms</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.tfarms.tfarms.html#mlclouds.tfarms.tfarms"><code class="docutils literal notranslate"><span class="pre">tfarms()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.tfarms.water_phase.html">mlclouds.tfarms.water_phase</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.tfarms.water_phase.html#mlclouds.tfarms.water_phase"><code class="docutils literal notranslate"><span class="pre">water_phase()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.trainer.html">mlclouds.trainer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.trainer.Trainer.html">mlclouds.trainer.Trainer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.trainer.Trainer.html#mlclouds.trainer.Trainer"><code class="docutils literal notranslate"><span class="pre">Trainer</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.html">mlclouds.utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.calc_time_step.html">mlclouds.utilities.calc_time_step</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.calc_time_step.html#mlclouds.utilities.calc_time_step"><code class="docutils literal notranslate"><span class="pre">calc_time_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.extract_file_meta.html">mlclouds.utilities.extract_file_meta</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.extract_file_meta.html#mlclouds.utilities.extract_file_meta"><code class="docutils literal notranslate"><span class="pre">extract_file_meta()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.get_valid_surf_sites.html">mlclouds.utilities.get_valid_surf_sites</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.get_valid_surf_sites.html#mlclouds.utilities.get_valid_surf_sites"><code class="docutils literal notranslate"><span class="pre">get_valid_surf_sites()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.surf_meta.html">mlclouds.utilities.surf_meta</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.utilities.surf_meta.html#mlclouds.utilities.surf_meta"><code class="docutils literal notranslate"><span class="pre">surf_meta()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../_autosummary/mlclouds.validator.html">mlclouds.validator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_autosummary/mlclouds.validator.Validator.html">mlclouds.validator.Validator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_autosummary/mlclouds.validator.Validator.html#mlclouds.validator.Validator"><code class="docutils literal notranslate"><span class="pre">Validator</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">mlclouds</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mlclouds.validator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mlclouds.validator</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;MLClouds phygnn model trainer and validator classes.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">farms</span><span class="w"> </span><span class="kn">import</span> <span class="n">CLEAR_TYPES</span><span class="p">,</span> <span class="n">ICE_TYPES</span><span class="p">,</span> <span class="n">WATER_TYPES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nsrdb.all_sky.all_sky</span><span class="w"> </span><span class="kn">import</span> <span class="n">all_sky</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nsrdb.file_handlers.surfrad</span><span class="w"> </span><span class="kn">import</span> <span class="n">Surfrad</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nsrdb.utilities.statistics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mae_perc</span><span class="p">,</span> <span class="n">mbe_perc</span><span class="p">,</span> <span class="n">rmse_perc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rex.multi_file_resource</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiFileResource</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">mlclouds.data_handlers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mlclouds.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ALL_SKY_VARS</span><span class="p">,</span>
+    <span class="n">CONFIG</span><span class="p">,</span>
+    <span class="n">FP_BASELINE</span><span class="p">,</span>
+    <span class="n">FP_SURFRAD_DATA</span><span class="p">,</span>
+    <span class="n">surf_meta</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Validator">
+<a class="viewcode-back" href="../../_autosummary/mlclouds.validator.Validator.html#mlclouds.validator.Validator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Validator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run PhygnnModel predictions, run allsky using predicted cloud properties</span>
+<span class="sd">    and compare to NSRDB baseline irradiance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">val_sites</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span>
+        <span class="n">val_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">=</span><span class="n">CONFIG</span><span class="p">,</span>
+        <span class="n">val_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">update_clear</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">update_cloudy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">test_set_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">save_timeseries</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model: Phygnn instance</span>
+<span class="sd">            Trained or loaded Phygnn model</span>
+<span class="sd">        val_sites: &#39;all&#39; | list of int</span>
+<span class="sd">            Surfrad gids to use for validation. Use all if &#39;all&#39;</span>
+<span class="sd">        val_files: str | list of str | None</span>
+<span class="sd">            File or list of file to use for validation from config file.</span>
+<span class="sd">            Filenames must include the four-digit year and east/west text to</span>
+<span class="sd">            indicate satellite. Must be None if val_data is set.</span>
+<span class="sd">        config: dict</span>
+<span class="sd">            Phygnn configuration dict</span>
+<span class="sd">        val_data: None | ValidationData instance</span>
+<span class="sd">            Use preloaded validation data or load from val_files if None. Must</span>
+<span class="sd">            be none if val_files is set.</span>
+<span class="sd">        update_clear: bool</span>
+<span class="sd">            If true, update cloud type for clear time steps with phygnn</span>
+<span class="sd">            predictions</span>
+<span class="sd">        update_cloudy: bool</span>
+<span class="sd">            If true, update cloud type for cloudy time steps with phygnn</span>
+<span class="sd">            predictions</span>
+<span class="sd">        test_set_mask: None | numpy.ndarray of bool</span>
+<span class="sd">            Set of full data set in val_files to use. If None, use full</span>
+<span class="sd">            dataset.</span>
+<span class="sd">        save_timeseries: bool</span>
+<span class="sd">            Save time series data to disk</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">val_files</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">val_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">val_files</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">val_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Either val_files or val_data must be set, but not both&#39;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">config</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val_files</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">val_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">val_files</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">val_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">all_sky_vars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;all_sky_vars&#39;</span><span class="p">,</span> <span class="n">ALL_SKY_VARS</span><span class="p">)</span>
+            <span class="n">vd</span> <span class="o">=</span> <span class="n">ValidationData</span><span class="p">(</span>
+                <span class="n">val_files</span><span class="o">=</span><span class="n">val_files</span><span class="p">,</span>
+                <span class="n">val_sites</span><span class="o">=</span><span class="n">val_sites</span><span class="p">,</span>
+                <span class="n">features</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">],</span>
+                <span class="n">y_labels</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;y_labels&#39;</span><span class="p">],</span>
+                <span class="n">all_sky_vars</span><span class="o">=</span><span class="n">all_sky_vars</span><span class="p">,</span>
+                <span class="n">one_hot_cats</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;one_hot_categories&#39;</span><span class="p">],</span>
+                <span class="n">test_set_mask</span><span class="o">=</span><span class="n">test_set_mask</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">val_data</span> <span class="o">=</span> <span class="n">vd</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_x_val</span> <span class="o">=</span> <span class="n">val_data</span><span class="o">.</span><span class="n">df_x_val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span> <span class="o">=</span> <span class="n">val_data</span><span class="o">.</span><span class="n">df_all_sky_val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span> <span class="o">=</span> <span class="n">val_data</span><span class="o">.</span><span class="n">df_feature_val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">val_data</span><span class="o">.</span><span class="n">mask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files_meta</span> <span class="o">=</span> <span class="n">val_data</span><span class="o">.</span><span class="n">files_meta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_data</span> <span class="o">=</span> <span class="n">val_data</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">update_clear</span><span class="p">,</span> <span class="n">update_cloudy</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calc_stats</span><span class="p">(</span>
+            <span class="n">test_set_mask</span><span class="p">,</span> <span class="n">gids</span><span class="o">=</span><span class="n">val_sites</span><span class="p">,</span> <span class="n">save_timeseries</span><span class="o">=</span><span class="n">save_timeseries</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">update_clear</span><span class="p">,</span> <span class="n">update_cloudy</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Use PHYGNN model to predict cloud properties.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model: Phygnn instance</span>
+<span class="sd">            Trained or loaded Phygnn model</span>
+<span class="sd">        update_clear: bool</span>
+<span class="sd">            If true, update cloud type for clear time steps with phygnn</span>
+<span class="sd">            predictions</span>
+<span class="sd">        update_cloudy: bool</span>
+<span class="sd">            If true, update cloud type for cloudy time steps with phygnn</span>
+<span class="sd">            predictions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Predicting </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="p">)</span>
+        <span class="n">predicted_raw</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_x_val</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">predicted_raw</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Predicted data shape is </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">predicted_raw</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="p">[</span><span class="s1">&#39;cld_opd_dcomp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="p">[</span><span class="s1">&#39;cld_reff_dcomp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="p">[</span><span class="s1">&#39;cld_opd_dcomp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="p">[</span><span class="s1">&#39;cld_reff_dcomp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># TODO: Should use labels here instead of hardcoded names.</span>
+        <span class="k">if</span> <span class="s1">&#39;cloud_type&#39;</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="p">:</span>
+            <span class="n">cloud_type</span> <span class="o">=</span> <span class="n">predicted_raw</span><span class="p">[</span><span class="s1">&#39;cloud_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;cloud_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cloud_type</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;cloud_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cloud_type</span>
+
+        <span class="k">if</span> <span class="s1">&#39;cld_opd_dcomp&#39;</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="p">:</span>
+            <span class="n">opd_raw</span> <span class="o">=</span> <span class="n">predicted_raw</span><span class="p">[</span><span class="s1">&#39;cld_opd_dcomp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">opd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">opd_raw</span><span class="p">,</span> <span class="mi">160</span><span class="p">)</span>
+            <span class="n">opd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">opd</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;cld_opd_dcomp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">opd</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;cld_opd_dcomp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">opd</span>
+
+        <span class="k">if</span> <span class="s1">&#39;cld_reff_dcomp&#39;</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="p">:</span>
+            <span class="n">reff_raw</span> <span class="o">=</span> <span class="n">predicted_raw</span><span class="p">[</span><span class="s1">&#39;cld_reff_dcomp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">reff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">reff_raw</span><span class="p">,</span> <span class="mi">160</span><span class="p">)</span>
+            <span class="n">reff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">reff</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;cld_reff_dcomp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reff</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;cld_reff_dcomp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reff</span>
+
+        <span class="k">if</span> <span class="n">update_clear</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="p">[</span><span class="s1">&#39;solar_zenith_angle&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">89</span><span class="p">)</span>
+                <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="p">[</span><span class="s1">&#39;cld_opd_dcomp&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">)</span>
+                <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="p">[</span><span class="s1">&#39;cloud_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
+                    <span class="n">ICE_TYPES</span> <span class="o">+</span> <span class="n">WATER_TYPES</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;cloud_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;cloud_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s1">&#39;The Phygnn predicted </span><span class="si">{}</span><span class="s1"> additional clear timesteps&#39;</span>
+                <span class="s1">&#39;(</span><span class="si">{:.2f}</span><span class="s1">%)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">update_cloudy</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="p">[</span><span class="s1">&#39;solar_zenith_angle&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">89</span><span class="p">)</span>
+                <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="p">[</span><span class="s1">&#39;cld_opd_dcomp&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span>
+                <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="p">[</span><span class="s1">&#39;cloud_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">CLEAR_TYPES</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;cloud_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">8</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;cloud_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">8</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s1">&#39;The Phygnn predicted </span><span class="si">{}</span><span class="s1"> additional cloudy timesteps &#39;</span>
+                <span class="s1">&#39;(</span><span class="si">{:.2f}</span><span class="s1">%)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">))</span>
+            <span class="p">)</span>
+
+        <span class="n">clear_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="p">[</span><span class="s1">&#39;cloud_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">CLEAR_TYPES</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">clear_mask</span><span class="p">,</span> <span class="s1">&#39;cld_opd_dcomp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">clear_mask</span><span class="p">,</span> <span class="s1">&#39;cld_reff_dcomp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">clear_mask</span><span class="p">,</span> <span class="s1">&#39;cld_opd_dcomp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">clear_mask</span><span class="p">,</span> <span class="s1">&#39;cld_reff_dcomp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># end TODO</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s1">&#39;shapes: df_feature_val=</span><span class="si">{}</span><span class="s1">, df_all_sky_val=</span><span class="si">{}</span><span class="s1">&#39;</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="o">.</span><span class="n">shape</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_feature_val</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calc_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_set_mask</span><span class="p">,</span> <span class="n">gids</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">save_timeseries</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate accuracy of PHYGNN model predictions</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        test_set_mask: None | numpy.ndarray of bool</span>
+<span class="sd">            Set of full data set in val_files to use. If None, use full</span>
+<span class="sd">            dataset.</span>
+<span class="sd">        gids: &#39;all&#39; | list of ints</span>
+<span class="sd">            Gids of desired surfrad site</span>
+<span class="sd">        save_timeseries: bool</span>
+<span class="sd">            Save time series data to disk</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fp_baseline</span> <span class="o">=</span> <span class="n">FP_BASELINE</span>
+
+        <span class="k">if</span> <span class="n">gids</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="n">gids</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">surf_meta</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s1">&#39;surfrad_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Calculating stats for gids: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gids</span><span class="p">))</span>
+
+        <span class="n">s_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_stats_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files_meta</span><span class="p">,</span> <span class="n">gids</span><span class="p">,</span> <span class="n">fp_baseline</span><span class="p">)</span>
+        <span class="n">df_base_full</span><span class="p">,</span> <span class="n">df_surf_full</span> <span class="o">=</span> <span class="n">s_data</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s1">&#39;Shapes: df_base_full=</span><span class="si">{}</span><span class="s1">, &#39;</span> <span class="s1">&#39;df_surf_full=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">df_base_full</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">df_surf_full</span><span class="o">.</span><span class="n">shape</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">test_set_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df_base_full</span> <span class="o">=</span> <span class="n">df_base_full</span><span class="p">[</span><span class="n">test_set_mask</span><span class="p">]</span>
+            <span class="n">df_surf_full</span> <span class="o">=</span> <span class="n">df_surf_full</span><span class="p">[</span><span class="n">test_set_mask</span><span class="p">]</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s1">&#39;Test set shapes: df_base_full=</span><span class="si">{}</span><span class="s1">, &#39;</span> <span class="s1">&#39;df_surf_full=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">df_base_full</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">df_surf_full</span><span class="o">.</span><span class="n">shape</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Model&#39;</span><span class="p">,</span> <span class="s1">&#39;Site&#39;</span><span class="p">,</span> <span class="s1">&#39;Variable&#39;</span><span class="p">,</span> <span class="s1">&#39;Condition&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">gid</span> <span class="ow">in</span> <span class="n">gids</span><span class="p">:</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="n">surf_meta</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gid</span><span class="p">,</span> <span class="s1">&#39;surfrad_id&#39;</span><span class="p">]</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Computing stats for gid: </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gid</span><span class="p">,</span> <span class="n">code</span><span class="p">))</span>
+
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">df_base_full</span><span class="o">.</span><span class="n">gid</span> <span class="o">==</span> <span class="n">gid</span>
+            <span class="n">df_baseline</span> <span class="o">=</span> <span class="n">df_base_full</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">df_surf</span> <span class="o">=</span> <span class="n">df_surf_full</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s1">&#39;Shapes: df_baseline=</span><span class="si">{}</span><span class="s1">, &#39;</span> <span class="s1">&#39;df_surf=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">df_baseline</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">df_surf</span><span class="o">.</span><span class="n">shape</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Run all_sky for current gid</span>
+            <span class="n">all_sky_vars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;all_sky_vars&#39;</span><span class="p">,</span> <span class="n">ALL_SKY_VARS</span><span class="p">)</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_all_sky_args</span><span class="p">(</span>
+                <span class="n">gid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="p">,</span> <span class="n">all_sky_vars</span><span class="o">=</span><span class="n">all_sky_vars</span>
+            <span class="p">)</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">all_sky</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;time_index&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">tz_localize</span><span class="p">(</span><span class="s1">&#39;utc&#39;</span><span class="p">)</span>
+            <span class="n">all_sky_out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span>
+            <span class="p">)</span>
+
+            <span class="n">gid_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="o">.</span><span class="n">gid</span> <span class="o">==</span> <span class="n">gid</span>
+            <span class="n">val_daylight_mask</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gid_mask</span><span class="p">,</span> <span class="s1">&#39;solar_zenith_angle&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">89</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">val_cloudy_mask</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">val_daylight_mask</span>
+                <span class="o">&amp;</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gid_mask</span><span class="p">,</span> <span class="s1">&#39;cloud_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
+                        <span class="n">ICE_TYPES</span> <span class="o">+</span> <span class="n">WATER_TYPES</span>
+                    <span class="p">)</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">values</span>
+            <span class="p">)</span>
+            <span class="n">val_clear_mask</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">val_daylight_mask</span>
+                <span class="o">&amp;</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gid_mask</span><span class="p">,</span> <span class="s1">&#39;cloud_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
+                        <span class="n">CLEAR_TYPES</span>
+                    <span class="p">)</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">values</span>
+            <span class="p">)</span>
+            <span class="n">val_bad_cloud_mask</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">val_cloudy_mask</span>
+                <span class="o">&amp;</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">df_all_sky_val</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gid_mask</span><span class="p">,</span> <span class="s1">&#39;flag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;bad_cloud&#39;</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">values</span>
+            <span class="p">)</span>
+
+            <span class="n">m_iter</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">[</span><span class="n">val_daylight_mask</span><span class="p">,</span> <span class="s1">&#39;All-Sky&#39;</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">val_cloudy_mask</span><span class="p">,</span> <span class="s1">&#39;Cloudy&#39;</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">val_clear_mask</span><span class="p">,</span> <span class="s1">&#39;Clear&#39;</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">val_bad_cloud_mask</span><span class="p">,</span> <span class="s1">&#39;Missing Cloud Data&#39;</span><span class="p">],</span>
+            <span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">save_timeseries</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;dni&#39;</span><span class="p">,</span> <span class="s1">&#39;ghi&#39;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_timeseries_to_csv</span><span class="p">(</span>
+                        <span class="n">gid</span><span class="p">,</span>
+                        <span class="n">var</span><span class="p">,</span>
+                        <span class="n">df_baseline</span><span class="p">[</span><span class="n">var</span><span class="p">],</span>
+                        <span class="n">all_sky_out</span><span class="p">[</span><span class="n">var</span><span class="p">],</span>
+                        <span class="n">df_surf</span><span class="p">[</span><span class="s1">&#39;surfrad_&#39;</span> <span class="o">+</span> <span class="n">var</span><span class="p">],</span>
+                    <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">mask</span><span class="p">,</span> <span class="n">condition</span> <span class="ow">in</span> <span class="n">m_iter</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;dni&#39;</span><span class="p">,</span> <span class="s1">&#39;ghi&#39;</span><span class="p">]:</span>
+                    <span class="n">baseline</span> <span class="o">=</span> <span class="n">df_baseline</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                    <span class="n">surf</span> <span class="o">=</span> <span class="n">df_surf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;surfrad_&#39;</span> <span class="o">+</span> <span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                    <span class="n">mlclouds</span> <span class="o">=</span> <span class="n">all_sky_out</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+                    <span class="n">mae_baseline</span> <span class="o">=</span> <span class="n">mae_perc</span><span class="p">(</span><span class="n">baseline</span><span class="p">,</span> <span class="n">surf</span><span class="p">)</span>
+                    <span class="n">mbe_baseline</span> <span class="o">=</span> <span class="n">mbe_perc</span><span class="p">(</span><span class="n">baseline</span><span class="p">,</span> <span class="n">surf</span><span class="p">)</span>
+                    <span class="n">rmse_baseline</span> <span class="o">=</span> <span class="n">rmse_perc</span><span class="p">(</span><span class="n">baseline</span><span class="p">,</span> <span class="n">surf</span><span class="p">)</span>
+
+                    <span class="n">mae_ml</span> <span class="o">=</span> <span class="n">mae_perc</span><span class="p">(</span><span class="n">mlclouds</span><span class="p">,</span> <span class="n">surf</span><span class="p">)</span>
+                    <span class="n">mbe_ml</span> <span class="o">=</span> <span class="n">mbe_perc</span><span class="p">(</span><span class="n">mlclouds</span><span class="p">,</span> <span class="n">surf</span><span class="p">)</span>
+                    <span class="n">rmse_ml</span> <span class="o">=</span> <span class="n">rmse_perc</span><span class="p">(</span><span class="n">mlclouds</span><span class="p">,</span> <span class="n">surf</span><span class="p">)</span>
+
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;Model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Baseline&#39;</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;Site&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;Variable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;Condition&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">condition</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;MAE (%)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mae_baseline</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;MBE (%)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mbe_baseline</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;RMSE (%)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rmse_baseline</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;Model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;MLClouds&#39;</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;Site&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;Variable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;Condition&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">condition</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;MAE (%)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mae_ml</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;MBE (%)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mbe_ml</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;RMSE (%)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rmse_ml</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stats</span> <span class="o">=</span> <span class="n">stats</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Finished computing stats.&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_timeseries_to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gid</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">baseline</span><span class="p">,</span> <span class="n">mlclouds</span><span class="p">,</span> <span class="n">surf</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save irradiance timseries data to disk for later analysis</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gid: int</span>
+<span class="sd">            Gid of site excluded from training, only used for file naming</span>
+<span class="sd">        var: str</span>
+<span class="sd">            Irradiance type of data: dni or ghi</span>
+<span class="sd">        baseline: pd.Series</span>
+<span class="sd">            Baseline NSRDB irradiance</span>
+<span class="sd">        mlclouds: pd.Series</span>
+<span class="sd">            Irradiance as predicted by PHYGNN</span>
+<span class="sd">        surf: pd.Series</span>
+<span class="sd">            Ground measured irradiance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span><span class="s1">&#39;Baseline&#39;</span><span class="p">:</span> <span class="n">baseline</span><span class="p">,</span> <span class="s1">&#39;PHYGNN&#39;</span><span class="p">:</span> <span class="n">mlclouds</span><span class="p">,</span> <span class="s1">&#39;Surfrad&#39;</span><span class="p">:</span> <span class="n">surf</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">tdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;timeseries_dir&#39;</span><span class="p">,</span> <span class="s1">&#39;timeseries/&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tdir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">tdir</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tdir</span><span class="p">,</span> <span class="s1">&#39;timeseries_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">gid</span><span class="p">)))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_stats_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files_meta</span><span class="p">,</span> <span class="n">gids</span><span class="p">,</span> <span class="n">fp_baseline</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Grab baseline and surfrad for stats. Adjust time</span>
+<span class="sd">        steps as necessary to match validation satellite data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        files_meta: dict</span>
+<span class="sd">            Year, time step, and time_index for all satellite validation files</span>
+<span class="sd">        gids: list</span>
+<span class="sd">            Gids of desired surfrad site</span>
+<span class="sd">        fp_baseline: str</span>
+<span class="sd">            Full path of NSRDB baseline irradiance</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        df_base: pd.Dataframe</span>
+<span class="sd">            NSRDB irradiance</span>
+<span class="sd">        df_surf: pd.Dataframe</span>
+<span class="sd">            Ground measured irradiance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df_base</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">df_surf</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">year_meta</span> <span class="ow">in</span> <span class="n">files_meta</span><span class="p">:</span>
+            <span class="n">year</span> <span class="o">=</span> <span class="n">year_meta</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="n">year_meta</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">]</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Loading data for </span><span class="si">{}</span><span class="s1"> / </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">area</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">gid</span> <span class="ow">in</span> <span class="n">gids</span><span class="p">:</span>
+                <span class="n">tmp_base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_baseline_df</span><span class="p">(</span><span class="n">fp_baseline</span><span class="p">,</span> <span class="n">gid</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">area</span><span class="p">)</span>
+                <span class="n">tmp_surf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_surfrad_df</span><span class="p">(</span>
+                    <span class="n">gid</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">tstep</span><span class="o">=</span><span class="n">year_meta</span><span class="p">[</span><span class="s1">&#39;time_step&#39;</span><span class="p">]</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">df_base</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">df_base</span> <span class="o">=</span> <span class="n">tmp_base</span>
+                    <span class="n">df_surf</span> <span class="o">=</span> <span class="n">tmp_surf</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">df_base</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_base</span><span class="p">,</span> <span class="n">tmp_base</span><span class="p">])</span>
+                    <span class="n">df_surf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_surf</span><span class="p">,</span> <span class="n">tmp_surf</span><span class="p">])</span>
+
+        <span class="k">assert</span> <span class="p">(</span><span class="n">df_base</span><span class="o">.</span><span class="n">gid</span> <span class="o">==</span> <span class="n">df_surf</span><span class="o">.</span><span class="n">gid</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">df_base</span><span class="p">,</span> <span class="n">df_surf</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_surfrad_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gid</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">tstep</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">window_default</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get ground measured irradiance data for location and year</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gid: int</span>
+<span class="sd">            Gid of desired surfrad site</span>
+<span class="sd">        year: int</span>
+<span class="sd">            Four digit year</span>
+<span class="sd">        tstep: int</span>
+<span class="sd">            timestep size for output (minutes)</span>
+<span class="sd">        window_default: int</span>
+<span class="sd">            Minutes that the moving average window will be over</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        df_surf: pandas.DataFrame</span>
+<span class="sd">            Surfrad data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="n">surf_meta</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gid</span><span class="p">,</span> <span class="s1">&#39;surfrad_id&#39;</span><span class="p">]</span>
+        <span class="n">fp_surf</span> <span class="o">=</span> <span class="n">FP_SURFRAD_DATA</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span> <span class="n">year</span><span class="o">=</span><span class="n">year</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Getting surfrad data for </span><span class="si">{}</span><span class="s1"> from </span><span class="si">{}</span><span class="s1">&#39;</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">gid</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fp_surf</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;surfrad_window_minutes&#39;</span><span class="p">,</span> <span class="n">window_default</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">Surfrad</span><span class="p">(</span><span class="n">fp_surf</span><span class="p">)</span> <span class="k">as</span> <span class="n">surf</span><span class="p">:</span>
+            <span class="n">df_surf</span> <span class="o">=</span> <span class="n">surf</span><span class="o">.</span><span class="n">get_df</span><span class="p">(</span>
+                <span class="n">dt_out</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">min&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tstep</span><span class="p">),</span> <span class="n">window_minutes</span><span class="o">=</span><span class="n">w</span>
+            <span class="p">)</span>
+
+        <span class="c1"># add prefix to avoid confusion</span>
+        <span class="n">df_surf</span> <span class="o">=</span> <span class="n">df_surf</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+            <span class="p">{</span><span class="s1">&#39;ghi&#39;</span><span class="p">:</span> <span class="s1">&#39;surfrad_ghi&#39;</span><span class="p">,</span> <span class="s1">&#39;dni&#39;</span><span class="p">:</span> <span class="s1">&#39;surfrad_dni&#39;</span><span class="p">,</span> <span class="s1">&#39;dhi&#39;</span><span class="p">:</span> <span class="s1">&#39;surfrad_dhi&#39;</span><span class="p">},</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">df_surf</span><span class="p">[</span><span class="s1">&#39;gid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gid</span>
+        <span class="k">return</span> <span class="n">df_surf</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_baseline_df</span><span class="p">(</span><span class="n">fp_baseline</span><span class="p">,</span> <span class="n">gid</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">area</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get baseline NSRDB irradiance for surfrad site, area, and satellite</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fp_baseline: str</span>
+<span class="sd">            Full path to h5 file with data</span>
+<span class="sd">        gid: int</span>
+<span class="sd">            Desired surfrad site</span>
+<span class="sd">        year: int</span>
+<span class="sd">            Desired year</span>
+<span class="sd">        area: str</span>
+<span class="sd">            Desired satellite, east or west</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        df : pandas.DataFrame</span>
+<span class="sd">            Data frame with ghi, dni, cloud_type, fill_flag, and sza</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">fp_baseline</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="n">year</span><span class="p">,</span> <span class="n">yy</span><span class="o">=</span><span class="n">year</span> <span class="o">%</span> <span class="mi">100</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Getting gid </span><span class="si">{}</span><span class="s1"> from </span><span class="si">{}</span><span class="s1">&#39;</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gid</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fname</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="k">with</span> <span class="n">MultiFileResource</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="k">as</span> <span class="n">res</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;ghi&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;ghi&#39;</span><span class="p">,</span> <span class="p">:,</span> <span class="n">gid</span><span class="p">],</span>
+                    <span class="s1">&#39;dni&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;dni&#39;</span><span class="p">,</span> <span class="p">:,</span> <span class="n">gid</span><span class="p">],</span>
+                    <span class="s1">&#39;cloud_type&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;cloud_type&#39;</span><span class="p">,</span> <span class="p">:,</span> <span class="n">gid</span><span class="p">],</span>
+                    <span class="s1">&#39;fill_flag&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;fill_flag&#39;</span><span class="p">,</span> <span class="p">:,</span> <span class="n">gid</span><span class="p">],</span>
+                    <span class="s1">&#39;solar_zenith_angle&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;solar_zenith_angle&#39;</span><span class="p">,</span> <span class="p">:,</span> <span class="n">gid</span><span class="p">],</span>
+                <span class="p">},</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">time_index</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;gid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gid</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_all_sky_args</span><span class="p">(</span><span class="n">gid</span><span class="p">,</span> <span class="n">df_all_sky</span><span class="p">,</span> <span class="n">all_sky_vars</span><span class="o">=</span><span class="n">ALL_SKY_VARS</span><span class="p">):</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">all_sky_vars</span><span class="p">:</span>
+            <span class="n">gid_mask</span> <span class="o">=</span> <span class="n">df_all_sky</span><span class="o">.</span><span class="n">gid</span> <span class="o">==</span> <span class="n">gid</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">df_all_sky</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gid_mask</span><span class="p">,</span> <span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">args</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr</span>
+
+        <span class="n">args</span><span class="p">[</span><span class="s1">&#39;time_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_all_sky</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="n">gid_mask</span><span class="p">,</span> <span class="s1">&#39;time_index&#39;</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">args</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Alliance for Sustainable Energy, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

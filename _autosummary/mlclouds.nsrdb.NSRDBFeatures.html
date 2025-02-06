@@ -1,0 +1,933 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mlclouds.nsrdb.NSRDBFeatures &mdash; mlclouds 0.0.6.dev1+gbd8a6f9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=a1098538"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mlclouds.p_fun" href="mlclouds.p_fun.html" />
+    <link rel="prev" title="mlclouds.nsrdb" href="mlclouds.nsrdb.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            mlclouds
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc/installation_usage.html">Installation and Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc/installation.html">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="mlclouds.html">API reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.autoxval.html">mlclouds.autoxval</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.autoxval.AutoXVal.html">mlclouds.autoxval.AutoXVal</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.autoxval.AutoXVal.html#mlclouds.autoxval.AutoXVal"><code class="docutils literal notranslate"><span class="pre">AutoXVal</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.autoxval.TrainTest.html">mlclouds.autoxval.TrainTest</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.autoxval.TrainTest.html#mlclouds.autoxval.TrainTest"><code class="docutils literal notranslate"><span class="pre">TrainTest</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.autoxval.XVal.html">mlclouds.autoxval.XVal</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.autoxval.XVal.html#mlclouds.autoxval.XVal"><code class="docutils literal notranslate"><span class="pre">XVal</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.data_cleaners.html">mlclouds.data_cleaners</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.data_cleaners.clean_cloud_df.html">mlclouds.data_cleaners.clean_cloud_df</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.data_cleaners.clean_cloud_df.html#mlclouds.data_cleaners.clean_cloud_df"><code class="docutils literal notranslate"><span class="pre">clean_cloud_df()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.data_cleaners.sky_class_filter.html">mlclouds.data_cleaners.sky_class_filter</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.data_cleaners.sky_class_filter.html#mlclouds.data_cleaners.sky_class_filter"><code class="docutils literal notranslate"><span class="pre">sky_class_filter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.data_handlers.html">mlclouds.data_handlers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.data_handlers.TrainData.html">mlclouds.data_handlers.TrainData</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.data_handlers.TrainData.html#mlclouds.data_handlers.TrainData"><code class="docutils literal notranslate"><span class="pre">TrainData</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.data_handlers.ValidationData.html">mlclouds.data_handlers.ValidationData</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.data_handlers.ValidationData.html#mlclouds.data_handlers.ValidationData"><code class="docutils literal notranslate"><span class="pre">ValidationData</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.grid_searcher.html">mlclouds.grid_searcher</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.grid_searcher.GridSearcher.html">mlclouds.grid_searcher.GridSearcher</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.grid_searcher.GridSearcher.html#mlclouds.grid_searcher.GridSearcher"><code class="docutils literal notranslate"><span class="pre">GridSearcher</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.model.html">mlclouds.model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.model.base.html">mlclouds.model.base</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.model.base.MLCloudsModel.html">mlclouds.model.base.MLCloudsModel</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.model.k_fold.html">mlclouds.model.k_fold</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.model.multi_step.html">mlclouds.model.multi_step</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.model.multi_step.MultiCloudsModel.html">mlclouds.model.multi_step.MultiCloudsModel</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="mlclouds.nsrdb.html">mlclouds.nsrdb</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">mlclouds.nsrdb.NSRDBFeatures</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures"><code class="docutils literal notranslate"><span class="pre">NSRDBFeatures</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.p_fun.html">mlclouds.p_fun</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.decode_sky_type.html">mlclouds.p_fun.decode_sky_type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.decode_sky_type.html#mlclouds.p_fun.decode_sky_type"><code class="docutils literal notranslate"><span class="pre">decode_sky_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.encode_sky_type.html">mlclouds.p_fun.encode_sky_type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.encode_sky_type.html#mlclouds.p_fun.encode_sky_type"><code class="docutils literal notranslate"><span class="pre">encode_sky_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.get_sky_type.html">mlclouds.p_fun.get_sky_type</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.get_sky_type.html#mlclouds.p_fun.get_sky_type"><code class="docutils literal notranslate"><span class="pre">get_sky_type()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.get_variable.html">mlclouds.p_fun.get_variable</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.get_variable.html#mlclouds.p_fun.get_variable"><code class="docutils literal notranslate"><span class="pre">get_variable()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.p_fun_all_sky.html">mlclouds.p_fun.p_fun_all_sky</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.p_fun_all_sky.html#mlclouds.p_fun.p_fun_all_sky"><code class="docutils literal notranslate"><span class="pre">p_fun_all_sky()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.p_fun.p_fun_dummy.html">mlclouds.p_fun.p_fun_dummy</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.p_fun.p_fun_dummy.html#mlclouds.p_fun.p_fun_dummy"><code class="docutils literal notranslate"><span class="pre">p_fun_dummy()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.scripts.html">mlclouds.scripts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.scripts.train.html">mlclouds.scripts.train</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.tdhi.html">mlclouds.tdhi</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.tdhi.t_calc_dhi.html">mlclouds.tdhi.t_calc_dhi</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.tdhi.t_calc_dhi.html#mlclouds.tdhi.t_calc_dhi"><code class="docutils literal notranslate"><span class="pre">t_calc_dhi()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.tdisc.html">mlclouds.tdisc</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.tdisc.tdisc.html">mlclouds.tdisc.tdisc</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.tdisc.tdisc.html#mlclouds.tdisc.tdisc"><code class="docutils literal notranslate"><span class="pre">tdisc()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.tfarms.html">mlclouds.tfarms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.tfarms.ice_phase.html">mlclouds.tfarms.ice_phase</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.tfarms.ice_phase.html#mlclouds.tfarms.ice_phase"><code class="docutils literal notranslate"><span class="pre">ice_phase()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.tfarms.tfarms.html">mlclouds.tfarms.tfarms</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.tfarms.tfarms.html#mlclouds.tfarms.tfarms"><code class="docutils literal notranslate"><span class="pre">tfarms()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.tfarms.water_phase.html">mlclouds.tfarms.water_phase</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.tfarms.water_phase.html#mlclouds.tfarms.water_phase"><code class="docutils literal notranslate"><span class="pre">water_phase()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.trainer.html">mlclouds.trainer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.trainer.Trainer.html">mlclouds.trainer.Trainer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.trainer.Trainer.html#mlclouds.trainer.Trainer"><code class="docutils literal notranslate"><span class="pre">Trainer</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.utilities.html">mlclouds.utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.utilities.calc_time_step.html">mlclouds.utilities.calc_time_step</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.utilities.calc_time_step.html#mlclouds.utilities.calc_time_step"><code class="docutils literal notranslate"><span class="pre">calc_time_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.utilities.extract_file_meta.html">mlclouds.utilities.extract_file_meta</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.utilities.extract_file_meta.html#mlclouds.utilities.extract_file_meta"><code class="docutils literal notranslate"><span class="pre">extract_file_meta()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.utilities.get_valid_surf_sites.html">mlclouds.utilities.get_valid_surf_sites</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.utilities.get_valid_surf_sites.html#mlclouds.utilities.get_valid_surf_sites"><code class="docutils literal notranslate"><span class="pre">get_valid_surf_sites()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.utilities.surf_meta.html">mlclouds.utilities.surf_meta</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.utilities.surf_meta.html#mlclouds.utilities.surf_meta"><code class="docutils literal notranslate"><span class="pre">surf_meta()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mlclouds.validator.html">mlclouds.validator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mlclouds.validator.Validator.html">mlclouds.validator.Validator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mlclouds.validator.Validator.html#mlclouds.validator.Validator"><code class="docutils literal notranslate"><span class="pre">Validator</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">mlclouds</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="mlclouds.html">mlclouds</a></li>
+          <li class="breadcrumb-item"><a href="mlclouds.nsrdb.html">mlclouds.nsrdb</a></li>
+      <li class="breadcrumb-item active">mlclouds.nsrdb.NSRDBFeatures</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/nrel/mlclouds/blob/main/docs/source/_autosummary/mlclouds.nsrdb.NSRDBFeatures.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mlclouds-nsrdb-nsrdbfeatures">
+<h1>mlclouds.nsrdb.NSRDBFeatures<a class="headerlink" href="#mlclouds-nsrdb-nsrdbfeatures" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NSRDBFeatures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h5_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str_decode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_lapse_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hsds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hsds_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mlclouds/nsrdb.html#NSRDBFeatures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NSRDB</span></code></p>
+<p>NSRDB Features extractor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>h5_file</strong> (<em>str</em>) – String filepath to .h5 file to extract resource from. Can also
+be a path to an HSDS file (starts with /nrel/) or S3 file
+(starts with s3://)</p></li>
+<li><p><strong>mode</strong> (<em>str, optional</em>) – Mode to instantiate h5py.File instance, by default ‘r’</p></li>
+<li><p><strong>unscale</strong> (<em>bool</em>) – Boolean flag to automatically unscale variables on extraction</p></li>
+<li><p><strong>str_decode</strong> (<em>bool</em>) – Boolean flag to decode the bytestring meta data into normal
+strings. Setting this to False will speed up the meta data read.</p></li>
+<li><p><strong>group</strong> (<em>str</em>) – Group within .h5 resource file to open</p></li>
+<li><p><strong>use_lapse_rate</strong> (<em>bool</em>) – If a dataset is only available at a single hub-height and this flag
+value is set to <cite>True</cite>, pressure / temperature values will be
+calculated using linear lapse rate adjustment from the available
+hub height to the requested one. If the flag value is set to
+<cite>False</cite>, the value of these variables at the single available
+hub-height will be returned for <em>all</em> requested heights. This
+option has no effect if data is available at multiple hub-heights.</p></li>
+<li><p><strong>hsds</strong> (<em>bool, optional</em>) – Boolean flag to use h5pyd to handle .h5 ‘files’ hosted on AWS
+behind HSDS, by default False. This is now redundant; file paths
+starting with /nrel/ will be treated as hsds=True by default</p></li>
+<li><p><strong>hsds_kwargs</strong> (<em>dict, optional</em>) – Dictionary of optional kwargs for h5pyd, e.g., bucket, username,
+password, by default None</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.close" title="mlclouds.nsrdb.NSRDBFeatures.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a>()</p></td>
+<td><p>Close h5 instance</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.df_str_decode" title="mlclouds.nsrdb.NSRDBFeatures.df_str_decode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">df_str_decode</span></code></a>(df)</p></td>
+<td><p>Decode a dataframe with byte string columns into ordinary str cols.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.extract_features" title="mlclouds.nsrdb.NSRDBFeatures.extract_features"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_features</span></code></a>(sites, features)</p></td>
+<td><p>Extract features from given sites and return as a dataframe</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.get_SAM_df" title="mlclouds.nsrdb.NSRDBFeatures.get_SAM_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_SAM_df</span></code></a>(site[, extra_cols])</p></td>
+<td><p>Get SAM solar resource DataFrame for given site</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.get_attrs" title="mlclouds.nsrdb.NSRDBFeatures.get_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_attrs</span></code></a>([dset])</p></td>
+<td><p>Get h5 attributes either from file or dataset</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.get_dset_properties" title="mlclouds.nsrdb.NSRDBFeatures.get_dset_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dset_properties</span></code></a>(dset)</p></td>
+<td><p>Get dataset properties (shape, dtype, chunks)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.get_meta_arr" title="mlclouds.nsrdb.NSRDBFeatures.get_meta_arr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_meta_arr</span></code></a>(rec_name[, rows])</p></td>
+<td><p>Get a meta array by name (faster than DataFrame extraction).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.get_scale_factor" title="mlclouds.nsrdb.NSRDBFeatures.get_scale_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_scale_factor</span></code></a>(dset)</p></td>
+<td><p>Get dataset scale factor</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.get_units" title="mlclouds.nsrdb.NSRDBFeatures.get_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units</span></code></a>(dset)</p></td>
+<td><p>Get dataset units</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.is_hsds_file" title="mlclouds.nsrdb.NSRDBFeatures.is_hsds_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_hsds_file</span></code></a>(file_path)</p></td>
+<td><p>Parse one or more filepath to determine if it is hsds</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.is_s3_file" title="mlclouds.nsrdb.NSRDBFeatures.is_s3_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_s3_file</span></code></a>(file_path)</p></td>
+<td><p>Parse one or more filepath to determine if it is s3</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.open_dataset" title="mlclouds.nsrdb.NSRDBFeatures.open_dataset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open_dataset</span></code></a>(ds_name)</p></td>
+<td><p>Open resource dataset</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.open_file" title="mlclouds.nsrdb.NSRDBFeatures.open_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open_file</span></code></a>(file_path[, mode, hsds, hsds_kwargs])</p></td>
+<td><p>Open a filepath to an h5, s3, or hsds nrel resource file with the appropriate python object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.preload_SAM" title="mlclouds.nsrdb.NSRDBFeatures.preload_SAM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preload_SAM</span></code></a>(h5_file, sites[, unscale, ...])</p></td>
+<td><p>Pre-load project_points for SAM</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ADD_ATTR</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">INTERPOLABLE_DSETS</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.LAPSE_RATES" title="mlclouds.nsrdb.NSRDBFeatures.LAPSE_RATES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LAPSE_RATES</span></code></a></p></td>
+<td><p>Air Temperature and Pressure lapse rate in C/km and Pa/km</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SCALE_ATTR</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">UNIT_ATTR</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">VARIABLE_NAME</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">VARIABLE_UNIT</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.adders" title="mlclouds.nsrdb.NSRDBFeatures.adders"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adders</span></code></a></p></td>
+<td><p>Dictionary of all dataset add offset factors</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.attrs" title="mlclouds.nsrdb.NSRDBFeatures.attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">attrs</span></code></a></p></td>
+<td><p>Dictionary of all dataset attributes</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.chunks" title="mlclouds.nsrdb.NSRDBFeatures.chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunks</span></code></a></p></td>
+<td><p>Dictionary of all dataset chunk sizes</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.coordinates" title="mlclouds.nsrdb.NSRDBFeatures.coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code></a></p></td>
+<td><p>(lat, lon) pairs</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.data_version" title="mlclouds.nsrdb.NSRDBFeatures.data_version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_version</span></code></a></p></td>
+<td><p>Get the version attribute of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.datasets" title="mlclouds.nsrdb.NSRDBFeatures.datasets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datasets</span></code></a></p></td>
+<td><p>Datasets available</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.dsets" title="mlclouds.nsrdb.NSRDBFeatures.dsets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dsets</span></code></a></p></td>
+<td><p>Datasets available</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.dtypes" title="mlclouds.nsrdb.NSRDBFeatures.dtypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtypes</span></code></a></p></td>
+<td><p>Dictionary of all dataset dtypes</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.global_attrs" title="mlclouds.nsrdb.NSRDBFeatures.global_attrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">global_attrs</span></code></a></p></td>
+<td><p>Global (file) attributes</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.groups" title="mlclouds.nsrdb.NSRDBFeatures.groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">groups</span></code></a></p></td>
+<td><p>Groups available</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.h5" title="mlclouds.nsrdb.NSRDBFeatures.h5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">h5</span></code></a></p></td>
+<td><p>Open h5py File instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.lat_lon" title="mlclouds.nsrdb.NSRDBFeatures.lat_lon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lat_lon</span></code></a></p></td>
+<td><p>Extract (latitude, longitude) pairs</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.meta" title="mlclouds.nsrdb.NSRDBFeatures.meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">meta</span></code></a></p></td>
+<td><p>Resource meta data DataFrame</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.res_dsets" title="mlclouds.nsrdb.NSRDBFeatures.res_dsets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">res_dsets</span></code></a></p></td>
+<td><p>Available resource datasets</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.resource_datasets" title="mlclouds.nsrdb.NSRDBFeatures.resource_datasets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resource_datasets</span></code></a></p></td>
+<td><p>Available resource datasets</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.scale_factors" title="mlclouds.nsrdb.NSRDBFeatures.scale_factors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scale_factors</span></code></a></p></td>
+<td><p>Dictionary of all dataset scale factors</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.shape" title="mlclouds.nsrdb.NSRDBFeatures.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>Resource shape (timesteps, sites) shape = (len(time_index), len(meta))</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.shapes" title="mlclouds.nsrdb.NSRDBFeatures.shapes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shapes</span></code></a></p></td>
+<td><p>Dictionary of all dataset shapes</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.time_index" title="mlclouds.nsrdb.NSRDBFeatures.time_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time_index</span></code></a></p></td>
+<td><p>Resource DatetimeIndex</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mlclouds.nsrdb.NSRDBFeatures.units" title="mlclouds.nsrdb.NSRDBFeatures.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a></p></td>
+<td><p>Dictionary of all dataset units</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.extract_features">
+<span class="sig-name descname"><span class="pre">extract_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mlclouds/nsrdb.html#NSRDBFeatures.extract_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.extract_features" title="Link to this definition"></a></dt>
+<dd><p>Extract features from given sites and return as a dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sites</strong> (<em>int | list | slice</em>) – sites to extract from NSRDB</p></li>
+<li><p><strong>features</strong> (<em>str | list</em>) – Dataset(s) to extract from NSRDB</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>features_df</strong> (<em>pandas.DataFrame</em>) – Features DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.LAPSE_RATES">
+<span class="sig-name descname"><span class="pre">LAPSE_RATES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'pressure':</span> <span class="pre">11109,</span> <span class="pre">'temperature':</span> <span class="pre">6.56}</span></em><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.LAPSE_RATES" title="Link to this definition"></a></dt>
+<dd><p>Air Temperature and Pressure lapse rate in C/km and Pa/km</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.adders">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">adders</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.adders" title="Link to this definition"></a></dt>
+<dd><p>Dictionary of all dataset add offset factors</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>adders</strong> (<em>dict</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.attrs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attrs</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.attrs" title="Link to this definition"></a></dt>
+<dd><p>Dictionary of all dataset attributes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>attrs</strong> (<em>dict</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.chunks">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">chunks</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.chunks" title="Link to this definition"></a></dt>
+<dd><p>Dictionary of all dataset chunk sizes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>chunks</strong> (<em>dict</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.close" title="Link to this definition"></a></dt>
+<dd><p>Close h5 instance</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.coordinates">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coordinates</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.coordinates" title="Link to this definition"></a></dt>
+<dd><p>(lat, lon) pairs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lat_lon</strong> (<em>ndarray</em>)</p>
+</dd>
+<dt class="field-even">Type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Coordinates</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.data_version">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_version</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.data_version" title="Link to this definition"></a></dt>
+<dd><p>Get the version attribute of the data. None if not available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>version</strong> (<em>str | None</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.datasets">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">datasets</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.datasets" title="Link to this definition"></a></dt>
+<dd><p>Datasets available</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.df_str_decode">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">df_str_decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.df_str_decode" title="Link to this definition"></a></dt>
+<dd><p>Decode a dataframe with byte string columns into ordinary str cols.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> (<em>pd.DataFrame</em>) – Dataframe with some columns being byte strings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df</strong> (<em>pd.DataFrame</em>) – DataFrame with str columns instead of byte str columns.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.dsets">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dsets</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.dsets" title="Link to this definition"></a></dt>
+<dd><p>Datasets available</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.dtypes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dtypes</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.dtypes" title="Link to this definition"></a></dt>
+<dd><p>Dictionary of all dataset dtypes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dtypes</strong> (<em>dict</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.get_SAM_df">
+<span class="sig-name descname"><span class="pre">get_SAM_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">site</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.get_SAM_df" title="Link to this definition"></a></dt>
+<dd><p>Get SAM solar resource DataFrame for given site</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>site</strong> (<em>int</em>) – Site to extract SAM DataFrame for.</p></li>
+<li><p><strong>extra_cols</strong> (<em>dict, optional</em>) – A dictionary where they keys are extra columns
+to extract from the SAM solar resource DataFrame
+and the values are the names the new columns should
+have (e.g. extra_cols={‘surface_albedo’: ‘Surface
+Albedo’} will extract the ‘surface_albedo’ from the
+resource file and call it ‘Surface Albedo’ in the output).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>res_df</strong> (<em>pandas.DataFrame</em>) – time-series DataFrame of resource variables needed to run SAM</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.get_attrs">
+<span class="sig-name descname"><span class="pre">get_attrs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.get_attrs" title="Link to this definition"></a></dt>
+<dd><p>Get h5 attributes either from file or dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dset</strong> (<em>str</em>) – Dataset to get attributes for, if None get file (global) attributes</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>attrs</strong> (<em>dict</em>) – Dataset or file attributes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.get_dset_properties">
+<span class="sig-name descname"><span class="pre">get_dset_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.get_dset_properties" title="Link to this definition"></a></dt>
+<dd><p>Get dataset properties (shape, dtype, chunks)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dset</strong> (<em>str</em>) – Dataset to get scale factor for</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>shape</strong> (<em>tuple</em>) – Dataset array shape</p></li>
+<li><p><strong>dtype</strong> (<em>str</em>) – Dataset array dtype</p></li>
+<li><p><strong>chunks</strong> (<em>tuple</em>) – Dataset chunk size</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.get_meta_arr">
+<span class="sig-name descname"><span class="pre">get_meta_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rec_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">slice(None,</span> <span class="pre">None,</span> <span class="pre">None)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.get_meta_arr" title="Link to this definition"></a></dt>
+<dd><p>Get a meta array by name (faster than DataFrame extraction).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rec_name</strong> (<em>str</em>) – Named record from the meta data to retrieve.</p></li>
+<li><p><strong>rows</strong> (<em>slice</em>) – Rows of the record to extract.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>meta_arr</strong> (<em>np.ndarray</em>) – Extracted array from the meta data record name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.get_scale_factor">
+<span class="sig-name descname"><span class="pre">get_scale_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.get_scale_factor" title="Link to this definition"></a></dt>
+<dd><p>Get dataset scale factor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dset</strong> (<em>str</em>) – Dataset to get scale factor for</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – Dataset scale factor, used to unscale int values to floats</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.get_units">
+<span class="sig-name descname"><span class="pre">get_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.get_units" title="Link to this definition"></a></dt>
+<dd><p>Get dataset units</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dset</strong> (<em>str</em>) – Dataset to get units for</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>str</em> – Dataset units, None if not defined</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.global_attrs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">global_attrs</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.global_attrs" title="Link to this definition"></a></dt>
+<dd><p>Global (file) attributes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>global_attrs</strong> (<em>dict</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.groups">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">groups</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.groups" title="Link to this definition"></a></dt>
+<dd><p>Groups available</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>groups</strong> (<em>list</em>) – List of groups</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.h5">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">h5</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.h5" title="Link to this definition"></a></dt>
+<dd><p>Open h5py File instance. If _group is not None return open Group</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>h5</strong> (<em>h5py.File | h5py.Group</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.is_hsds_file">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_hsds_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.is_hsds_file" title="Link to this definition"></a></dt>
+<dd><p>Parse one or more filepath to determine if it is hsds</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str | list</em>) – One or more file paths (only the first is parsed if multiple)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>is_hsds_file</strong> (<em>bool</em>) – True if hsds</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.is_s3_file">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_s3_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.is_s3_file" title="Link to this definition"></a></dt>
+<dd><p>Parse one or more filepath to determine if it is s3</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str | list</em>) – One or more file paths (only the first is parsed if multiple)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>is_s3_file</strong> (<em>bool</em>) – True if s3</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.lat_lon">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lat_lon</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.lat_lon" title="Link to this definition"></a></dt>
+<dd><p>Extract (latitude, longitude) pairs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lat_lon</strong> (<em>ndarray</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.meta">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">meta</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.meta" title="Link to this definition"></a></dt>
+<dd><p>Resource meta data DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>meta</strong> (<em>pandas.DataFrame</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.open_dataset">
+<span class="sig-name descname"><span class="pre">open_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.open_dataset" title="Link to this definition"></a></dt>
+<dd><p>Open resource dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ds_name</strong> (<em>str</em>) – Dataset name to open</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ds</strong> (<em>ResourceDataset</em>) – Resource for open resource dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.open_file">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">open_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hsds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hsds_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.open_file" title="Link to this definition"></a></dt>
+<dd><p>Open a filepath to an h5, s3, or hsds nrel resource file with the
+appropriate python object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>str</em>) – String filepath to .h5 file to extract resource from. Can also
+be a path to an HSDS file (starts with /nrel/) or S3 file
+(starts with s3://)</p></li>
+<li><p><strong>mode</strong> (<em>str, optional</em>) – Mode to instantiate h5py.File instance, by default ‘r’</p></li>
+<li><p><strong>hsds</strong> (<em>bool, optional</em>) – Boolean flag to use h5pyd to handle .h5 ‘files’ hosted on AWS
+behind HSDS, by default False. This is now redundant; file paths
+starting with /nrel/ will be treated as hsds=True by default</p></li>
+<li><p><strong>hsds_kwargs</strong> (<em>dict, optional</em>) – Dictionary of optional kwargs for h5pyd, e.g., bucket, username,
+password, by default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>file</strong> (<em>h5py.File | h5pyd.File</em>) – H5 file handler either opening the local file using h5py, or the
+file on s3 using h5py and fsspec, or the file on HSDS using h5pyd.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.preload_SAM">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">preload_SAM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h5_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str_decode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hsds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hsds_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tech</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pvwattsv8'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_index_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">means</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clearsky</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bifacial</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.preload_SAM" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Pre-load project_points for SAM</p>
+<dl class="simple">
+<dt>h5_file<span class="classifier">str</span></dt><dd><p>String filepath to .h5 file to extract resource from. Can also
+be a path to an HSDS file (starts with /nrel/) or S3 file
+(starts with s3://)</p>
+</dd>
+<dt>sites<span class="classifier">list</span></dt><dd><p>List of sites to be provided to SAM
+(sites is synonymous with gids aka spatial indices)</p>
+</dd>
+<dt>unscale<span class="classifier">bool</span></dt><dd><p>Boolean flag to automatically unscale variables on extraction</p>
+</dd>
+<dt>str_decode<span class="classifier">bool</span></dt><dd><p>Boolean flag to decode the bytestring meta data into normal
+strings. Setting this to False will speed up the meta data read.</p>
+</dd>
+<dt>group<span class="classifier">str</span></dt><dd><p>Group within .h5 resource file to open</p>
+</dd>
+<dt>hsds<span class="classifier">bool, optional</span></dt><dd><p>Boolean flag to use h5pyd to handle .h5 ‘files’ hosted on AWS
+behind HSDS, by default False. This is now redundant; file paths
+starting with /nrel/ will be treated as hsds=True by default</p>
+</dd>
+<dt>hsds_kwargs<span class="classifier">dict, optional</span></dt><dd><p>Dictionary of optional kwargs for h5pyd, e.g., bucket, username,
+password, by default None</p>
+</dd>
+<dt>tech<span class="classifier">str, optional</span></dt><dd><p>SAM technology string, by default ‘pvwattsv8’</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl>
+<dt>time_index_step: int, optional</dt><dd><blockquote>
+<div><p>Step size for time_index, used to reduce temporal resolution,
+by default None</p>
+</div></blockquote>
+<dl class="simple">
+<dt>means<span class="classifier">bool, optional</span></dt><dd><p>Boolean flag to compute mean resource when res_array is set,
+by default False</p>
+</dd>
+<dt>clearsky<span class="classifier">bool</span></dt><dd><p>Boolean flag to pull clearsky instead of real irradiance</p>
+</dd>
+<dt>bifacial<span class="classifier">bool</span></dt><dd><p>Boolean flag to pull surface albedo for bifacial modeling.</p>
+</dd>
+<dt>downscale<span class="classifier">NoneType | dict</span></dt><dd><p>Option for NSRDB resource downscaling to higher temporal
+resolution. Expects a dict of downscaling kwargs with a minimum
+requirement of the desired frequency e.g. ‘frequency’: ‘5min’
+and an option to add “variability_kwargs”.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>SAM_res<span class="classifier">SAMResource</span></dt><dd><p>Instance of SAMResource pre-loaded with Solar resource for sites
+in project_points</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.res_dsets">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">res_dsets</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.res_dsets" title="Link to this definition"></a></dt>
+<dd><p>Available resource datasets</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.resource_datasets">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">resource_datasets</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.resource_datasets" title="Link to this definition"></a></dt>
+<dd><p>Available resource datasets</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.scale_factors">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scale_factors</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.scale_factors" title="Link to this definition"></a></dt>
+<dd><p>Dictionary of all dataset scale factors</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scale_factors</strong> (<em>dict</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.shape">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.shape" title="Link to this definition"></a></dt>
+<dd><p>Resource shape (timesteps, sites)
+shape = (len(time_index), len(meta))</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>shape</strong> (<em>tuple</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.shapes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shapes</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.shapes" title="Link to this definition"></a></dt>
+<dd><p>Dictionary of all dataset shapes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>shapes</strong> (<em>dict</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.time_index">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">time_index</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.time_index" title="Link to this definition"></a></dt>
+<dd><p>Resource DatetimeIndex</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>time_index</strong> (<em>pandas.DatetimeIndex</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mlclouds.nsrdb.NSRDBFeatures.units">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">units</span></span><a class="headerlink" href="#mlclouds.nsrdb.NSRDBFeatures.units" title="Link to this definition"></a></dt>
+<dd><p>Dictionary of all dataset units</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>units</strong> (<em>dict</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mlclouds.nsrdb.html" class="btn btn-neutral float-left" title="mlclouds.nsrdb" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mlclouds.p_fun.html" class="btn btn-neutral float-right" title="mlclouds.p_fun" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Alliance for Sustainable Energy, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

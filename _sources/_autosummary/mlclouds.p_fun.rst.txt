@@ -1,0 +1,35 @@
+mlclouds.p\_fun
+===============
+
+.. automodule:: mlclouds.p_fun
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      decode_sky_type
+      encode_sky_type
+      get_sky_type
+      get_variable
+      p_fun_all_sky
+      p_fun_dummy
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

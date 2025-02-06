@@ -1,0 +1,6 @@
+mlclouds.tdisc.tdisc
+====================
+
+.. currentmodule:: mlclouds.tdisc
+
+.. autofunction:: tdisc

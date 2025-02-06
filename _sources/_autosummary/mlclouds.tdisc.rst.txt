@@ -1,0 +1,30 @@
+mlclouds.tdisc
+==============
+
+.. automodule:: mlclouds.tdisc
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      tdisc
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

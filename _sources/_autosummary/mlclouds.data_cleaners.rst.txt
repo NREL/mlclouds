@@ -1,0 +1,31 @@
+mlclouds.data\_cleaners
+=======================
+
+.. automodule:: mlclouds.data_cleaners
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      clean_cloud_df
+      sky_class_filter
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

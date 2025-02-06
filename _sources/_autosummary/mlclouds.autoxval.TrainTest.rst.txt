@@ -1,0 +1,25 @@
+mlclouds.autoxval.TrainTest
+===========================
+
+.. currentmodule:: mlclouds.autoxval
+
+.. autoclass:: TrainTest
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~TrainTest.save_history
+      ~TrainTest.save_model
+   
+   
+
+   
+   
+   

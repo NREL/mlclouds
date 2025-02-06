@@ -1,0 +1,26 @@
+mlclouds.autoxval.AutoXVal
+==========================
+
+.. currentmodule:: mlclouds.autoxval
+
+.. autoclass:: AutoXVal
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AutoXVal.k_fold
+      ~AutoXVal.kxn_fold
+      ~AutoXVal.save_stats
+   
+   
+
+   
+   
+   

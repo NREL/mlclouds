@@ -1,0 +1,26 @@
+mlclouds.data\_handlers.TrainData
+=================================
+
+.. currentmodule:: mlclouds.data_handlers
+
+.. autoclass:: TrainData
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~TrainData.cache_exists
+      ~TrainData.load_all_data
+      ~TrainData.save_all_data
+   
+   
+
+   
+   
+   
